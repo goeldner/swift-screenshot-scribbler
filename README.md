@@ -11,6 +11,14 @@ $ swift build --configuration release
 $ cp -f .build/release/scrscr /usr/local/bin/scrscr
 ```
 
+## Execute
+
+By default the tool places the caption on top and the screenshot on bottom of the image. It uses a white background, black text and a subtle shadow around the screenshot:
+
+```
+$ scrscr --caption "Scribble this caption" --input example-screenshot.png --output example-result.png
+```
+
 ## About
 
 I developed this tool as a side project, because I did not want to use fastlane for any reason, which provides something similar.
