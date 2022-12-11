@@ -23,7 +23,9 @@ $ scrscr --caption "Scribble this caption" --input example-screenshot.png --outp
 
 I developed this tool as a side project, because I did not want to use fastlane for any reason, which provides something similar.
 
-There will be updates and new features from time to time and I try to keep it working, as long as I use it myself.
+It uses CoreGraphics and CoreText APIs directly for layouting (no AppKit or UIKit), so it should be quite portable.
+
+There will be updates and new features from time to time and I try to keep working on it, as long as I use it by myself.
 
 ## Coffee
 
