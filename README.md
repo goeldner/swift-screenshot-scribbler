@@ -11,13 +11,37 @@ $ swift build --configuration release
 $ cp -f .build/release/scrscr /usr/local/bin/scrscr
 ```
 
-## Execute
+_(See also install.sh)_
+
+## Usage
 
 By default the tool places the caption on top and the screenshot on bottom of the image. It uses a white background, black text and a subtle shadow around the screenshot:
 
 ```
-$ scrscr --caption "Scribble this caption" --input example-screenshot.png --output example-result.png
+$ scrscr --caption "Scribble this caption" --input example-input.png --output example-output-default.png
 ```
+
+The layout may be customized with command line options. Following example defines all possible options including their default values:
+
+```
+$ scrscr \
+    --caption "Example output with default options and long caption" \
+    --input example-input.png \
+    --output example-output-default.png \
+    --layout-type "text-before-image" \
+    --text-area-ratio 0.25 \
+    --image-size-reduction 0.85 \
+    --background-color "#FFFFFF" \
+    --text-color "#000000" \
+    --font-name "SF Compact" \
+    --font-style "Bold" \
+    --font-size 32 \
+    --shadow-color "#000000" \
+    --shadow-size 5 \
+    --verbose
+```
+
+_(See also example.sh)_
 
 ## About
 
