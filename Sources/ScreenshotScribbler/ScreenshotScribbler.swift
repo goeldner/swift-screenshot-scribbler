@@ -41,28 +41,39 @@ public struct ScreenshotScribbler {
             throw RuntimeError("Error initializing CGContext")
         }
         
-        // Currently only one layout implemented
-        if self.layout.layoutType != LayoutType.textBeforeImage {
-            throw RuntimeError("Layout type not implemented yet: \(self.layout.layoutType)")
-        }
-        
-        // Calculate areas
+        // Common area sizes
         let totalArea = CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height)
-        let (topArea, bottomArea) = totalArea.divided(atDistance: totalArea.height * self.layout.textAreaRatio, from: .maxYEdge)
+        let textAreaHeight = totalArea.height * self.layout.textAreaRatio
         let textAreaMargin = (totalArea.width - (totalArea.width * self.layout.imageSizeReduction)) / 2
-        let textArea = topArea.insetBy(dx: textAreaMargin, dy: 0)
+        
+        // Layout specific area calculations
+        let textArea, imageArea: CGRect
+        let imageAtTopEdgeOfArea: Bool
+        switch self.layout.layoutType {
+        case .textBeforeImage:
+            let (topArea, bottomArea) = totalArea.divided(atDistance: textAreaHeight, from: .maxYEdge)
+            textArea = topArea.insetBy(dx: textAreaMargin, dy: 0)
+            imageArea = bottomArea
+            imageAtTopEdgeOfArea = true
+        case .textAfterImage:
+            let (topArea, bottomArea) = totalArea.divided(atDistance: totalArea.height - textAreaHeight, from: .maxYEdge)
+            textArea = bottomArea.insetBy(dx: textAreaMargin, dy: 0)
+            imageArea = topArea
+            imageAtTopEdgeOfArea = false
+        case .textBetweenImages:
+            throw RuntimeError("Layout textBetweenImages not yet implemented.")
+        }
         
         // Cover the whole area with a background color
         drawRect(totalArea, color: self.layout.backgroundColor, context: context)
-        //drawRect(topArea, color: CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1.0), context: context)
-        //drawRect(textArea, color: CGColor(red: 0.0, green: 1.0, blue: 1.0, alpha: 1.0), context: context)
-        //drawRect(bottomArea, color: CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1.0), context: context)
+        //drawRect(textArea, color: CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1.0), context: context)
+        //drawRect(imageArea, color: CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1.0), context: context)
         
-        // Place the caption centered inside the top area
+        // Place the caption centered inside the text area
         drawText(caption, in: textArea, context: context)
         
-        // Reduce size of screenshot and add it below the caption
-        drawImage(cgImage, in: bottomArea, context: context)
+        // Reduce size of screenshot and add it next to the caption
+        drawImage(cgImage, in: imageArea, atTopEdge: imageAtTopEdgeOfArea, context: context)
         
         // Generate output PNG
         let outputImageData = try createPNG(context)
@@ -87,14 +98,15 @@ public struct ScreenshotScribbler {
         context.restoreGState()
     }
     
-    /// Draws the given image in reduced size aligned to the top of the given area.
+    /// Draws the given image in reduced size aligned to the top or bottom edge of the given area.
     ///
     /// - Parameters:
     ///   - image: The image to draw.
     ///   - area: The area to use.
+    ///   - atTopEdge: true if image top edge shall be aligned to top edge of area; false for bottom alignment
     ///   - context: The graphics context.
     ///
-    private func drawImage(_ image: CGImage, in area: CGRect, context: CGContext) {
+    private func drawImage(_ image: CGImage, in area: CGRect, atTopEdge: Bool, context: CGContext) {
         context.saveGState()
         
         // Reduce image size
@@ -105,14 +117,19 @@ public struct ScreenshotScribbler {
         
         // Center the image horizontally
         let centerX = area.width / 2
-        let newPosX = centerX - (reducedWidth / 2)
+        let imagePosX = centerX - (reducedWidth / 2)
         
-        // Place the top image position at the top begin of the area
-        let newPosY = area.maxY - reducedHeight - shadowSize
+        // Align the top edge of the image to the top edge of the area; otherwise bottom to bottom
+        let imagePosY: CGFloat
+        if atTopEdge {
+            imagePosY = area.maxY - reducedHeight - shadowSize
+        } else {
+            imagePosY = area.minY + shadowSize
+        }
         
         // Draw image with a shadow
         context.setShadow(offset: CGSize(width: 0, height: 0), blur: shadowSize, color: self.layout.shadowColor)
-        context.draw(image, in: CGRect(origin: CGPoint(x: newPosX, y: newPosY), size: reducedSize))
+        context.draw(image, in: CGRect(origin: CGPoint(x: imagePosX, y: imagePosY), size: reducedSize))
         
         context.restoreGState()
     }

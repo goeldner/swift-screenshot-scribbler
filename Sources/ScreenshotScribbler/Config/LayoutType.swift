@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// Differenty types of layout arrangements, i.e. how the caption and the screenshot are ordered.
+/// Different types of layout arrangements, i.e. how the caption and the screenshot are ordered.
 public enum LayoutType: String {
     
     /// Caption on top, screenshot below.

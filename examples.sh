@@ -22,6 +22,13 @@ swift run scrscr \
     --shadow-color "#000000" \
     --shadow-size 5
 
+# Layout: text-after-image (with default options)
+swift run scrscr \
+    --caption "Example output with default options and caption at bottom" \
+    --input Examples/example-input.png \
+    --output Examples/example-output-text-after-image.png \
+    --layout-type "text-after-image"
+
 # Smaller text area and fully visible screenshot with dark background
 swift run scrscr \
     --caption "Dark example with full screenshot" \
