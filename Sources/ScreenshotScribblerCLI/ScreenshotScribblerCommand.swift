@@ -21,34 +21,34 @@ struct ScreenshotScribblerCommand: ParsableCommand {
     @Option(name: [.short, .customLong("output")], help: "The output image to write.")
     var outputFile: String
 
-    @Option(name: .long, help: "Arrangement of the caption and the screenshot. (\"text-before-image\" by default)", transform: transformLayoutType)
+    @Option(name: .long, help: "Arrangement of the caption and the screenshot. (Default: \"text-before-image\"; More options: \"text-after-image\", \"text-between-images\")", transform: transformLayoutType)
     var layoutType: LayoutType?
     
-    @Option(name: .long, help: "Amount of the text area in vertical direction. (25% by default)")
+    @Option(name: .long, help: "Amount of the text area in vertical direction. (Default: 0.25 (25%))")
     var textAreaRatio: Double?
     
-    @Option(name: .long, help: "Percentage of the screenshot in reduced size. (85% by default)")
+    @Option(name: .long, help: "Percentage of the screenshot in reduced size. (Default: 0.85 (85%))")
     var imageSizeReduction: Double?
     
-    @Option(name: .long, help: "Color which covers the whole background. (white by default)", transform: transformColor)
+    @Option(name: .long, help: "Color which covers the whole background. (Default: \"#FFFFFF\" (white))", transform: transformColor)
     var backgroundColor: CGColor?
     
-    @Option(name: .long, help: "Color of the rendered caption. (black by default)", transform: transformColor)
+    @Option(name: .long, help: "Color of the rendered caption. (Default: \"#000000\" (black))", transform: transformColor)
     var textColor: CGColor?
     
-    @Option(name: .long, help: "Font family name. (\"SF Compact\" by default)")
+    @Option(name: .long, help: "Font family name. (Default: \"SF Compact\")")
     var fontName: String?
     
-    @Option(name: .long, help: "Font style. (\"Bold\" by default)")
+    @Option(name: .long, help: "Font style. (Default: \"Bold\")")
     var fontStyle: String?
     
-    @Option(name: .long, help: "Font size. (32 by default)")
+    @Option(name: .long, help: "Font size. (Default: 32)")
     var fontSize: Int?
     
-    @Option(name: .long, help: "Size of the shadow blur. (5 by default)")
+    @Option(name: .long, help: "Size of the shadow blur. (Default: 5)")
     var shadowSize: Double?
     
-    @Option(name: .long, help: "Color of the shadow. (black by default)", transform: transformColor)
+    @Option(name: .long, help: "Color of the shadow. (Default: \"#000000\" (black))", transform: transformColor)
     var shadowColor: CGColor?
     
     @Flag(name: .shortAndLong, help: "Print details and progress updates.")
