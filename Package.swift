@@ -4,6 +4,12 @@ import PackageDescription
 
 let package = Package(
     name: "swift-screenshot-scribbler",
+    platforms: [
+        .macOS(.v11),
+        .iOS(.v15),
+        .tvOS(.v15),
+        .watchOS(.v8)
+    ],
     products: [
         .executable(name: "scrscr", targets: ["ScreenshotScribblerCLI"]),
         .library(name: "ScreenshotScribbler", targets: ["ScreenshotScribbler"]),

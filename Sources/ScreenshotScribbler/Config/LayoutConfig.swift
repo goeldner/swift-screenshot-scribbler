@@ -18,10 +18,10 @@ public struct LayoutConfig {
     public var imageSizeReduction: CGFloat = 0.85
     
     /// Color which covers the whole background. (white by default)
-    public var backgroundColor: CGColor = CGColor.white
+    public var backgroundColor: CGColor = white
     
     /// Color of the rendered caption. (black by default)
-    public var textColor: CGColor = CGColor.black
+    public var textColor: CGColor = black
     
     /// Font family name. ("SF Compact" by default)
     public var fontName: String = "SF Compact"
@@ -36,7 +36,13 @@ public struct LayoutConfig {
     public var shadowSize: CGFloat = 5
     
     /// Color of the shadow. (black by default)
-    public var shadowColor: CGColor = CGColor.black
+    public var shadowColor: CGColor = black
+    
+    /// White color, without using the CGColor.white shortcut, which is not available on iOS.
+    private static let white = CGColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
+    
+    /// Black color, without using the CGColor.black shortcut, which is not available on iOS.
+    private static let black = CGColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
     
     public init() {
     }

@@ -6,6 +6,7 @@ import Foundation
 import CoreGraphics
 import CoreText
 import ImageIO
+import UniformTypeIdentifiers
 
 public struct ScreenshotScribbler {
 
@@ -248,7 +249,8 @@ public struct ScreenshotScribbler {
         guard let unlimitedMutableData = CFDataCreateMutable(nil, 0) else {
             throw RuntimeError("Error: CFDataCreateMutable")
         }
-        guard let outputImageDestination = CGImageDestinationCreateWithData(unlimitedMutableData, kUTTypePNG, 1, nil) else {
+        let outputType = UTType.png.identifier as CFString
+        guard let outputImageDestination = CGImageDestinationCreateWithData(unlimitedMutableData, outputType, 1, nil) else {
             throw RuntimeError("Error: CGImageDestinationCreateWithData")
         }
         CGImageDestinationAddImage(outputImageDestination, outputImage, nil)
