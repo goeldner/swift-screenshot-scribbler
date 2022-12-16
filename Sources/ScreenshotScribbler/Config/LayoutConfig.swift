@@ -17,6 +17,9 @@ public struct LayoutConfig {
     /// Percentage of the screenshot in reduced size. (85% by default)
     public var imageSizeReduction: CGFloat = 0.85
     
+    /// Corner radius of the screenshot. (5 by default)
+    public var imageCornerRadius: CGFloat = 5
+    
     /// Color which covers the whole background. (white by default)
     public var backgroundColor: CGColor = white
     

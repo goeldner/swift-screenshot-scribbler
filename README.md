@@ -31,6 +31,7 @@ $ scrscr \
     --layout-type "text-before-image" \
     --text-area-ratio 0.25 \
     --image-size-reduction 0.85 \
+    --image-corner-radius 5 \
     --background-color "#FFFFFF" \
     --text-color "#000000" \
     --font-name "SF Compact" \

@@ -30,6 +30,9 @@ struct ScreenshotScribblerCommand: ParsableCommand {
     @Option(name: .long, help: "Percentage of the screenshot in reduced size. (Default: 0.85 (85%))")
     var imageSizeReduction: Double?
     
+    @Option(name: .long, help: "Corner radius of the screenshot. (Default: 5)")
+    var imageCornerRadius: Double?
+    
     @Option(name: .long, help: "Color which covers the whole background. (Default: \"#FFFFFF\" (white))", transform: transformColor)
     var backgroundColor: CGColor?
     
@@ -101,6 +104,9 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         }
         if let imageSizeReduction {
             layout.imageSizeReduction = imageSizeReduction
+        }
+        if let imageCornerRadius {
+            layout.imageCornerRadius = imageCornerRadius
         }
         if let backgroundColor {
             layout.backgroundColor = backgroundColor

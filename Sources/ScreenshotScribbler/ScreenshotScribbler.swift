@@ -163,7 +163,8 @@ public struct ScreenshotScribbler {
         context.restoreGState()
     }
     
-    /// Draws the given image in reduced size aligned to the top or bottom edge of the given area.
+    /// Draws the given image in reduced size aligned to the top or bottom edge of the given area,
+    /// including an optional shadow and optionally clipped to rounded corners.
     ///
     /// - Parameters:
     ///   - image: The image to draw.
@@ -172,13 +173,13 @@ public struct ScreenshotScribbler {
     ///   - context: The graphics context.
     ///
     private func drawImage(_ image: CGImage, in area: CGRect, atTopEdge: Bool, context: CGContext) {
-        context.saveGState()
         
         // Reduce image size
         let reducedWidth = Double(image.width) * self.layout.imageSizeReduction
         let reducedHeight = Double(image.height) * self.layout.imageSizeReduction
         let reducedSize = CGSize(width: reducedWidth, height: reducedHeight)
         let shadowSize = self.layout.shadowSize * CGFloat(deviceScale(context.width))
+        let cornerRadius = self.layout.imageCornerRadius * CGFloat(deviceScale(context.width))
         
         // Center the image horizontally
         let centerX = area.width / 2
@@ -192,9 +193,35 @@ public struct ScreenshotScribbler {
             imagePosY = area.minY + shadowSize
         }
         
-        // Draw image with a shadow
-        context.setShadow(offset: CGSize(width: 0, height: 0), blur: shadowSize, color: self.layout.shadowColor)
-        context.draw(image, in: CGRect(origin: CGPoint(x: imagePosX, y: imagePosY), size: reducedSize))
+        // Prepare the original image rect to draw and one with clipped rounded corners
+        let imageRect = CGRect(x: imagePosX, y: imagePosY, width: reducedSize.width, height: reducedSize.height)
+        let imageRectWithCornerRadius = CGPath(roundedRect: imageRect, cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
+        let shadowRectWithCornerRadius = CGPath(roundedRect: imageRect.insetBy(dx: 1, dy: 1), cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
+        
+        // Draw the shadow first behind the image, otherwise it would be clipped away, if drawn with the clipped image
+        if self.layout.shadowSize > 0 {
+            context.saveGState()
+            context.beginPath()
+            context.addPath(shadowRectWithCornerRadius)
+            context.closePath()
+            context.setShadow(offset: CGSize(width: 0, height: 0), blur: shadowSize, color: self.layout.shadowColor)
+            context.setFillColor(self.layout.backgroundColor)
+            context.fillPath()
+            context.restoreGState()
+        }
+        
+        context.saveGState()
+        
+        // Clip the context to the rounded corners of the image
+        if self.layout.imageCornerRadius > 0 {
+            context.beginPath()
+            context.addPath(imageRectWithCornerRadius)
+            context.closePath()
+            context.clip()
+        }
+        
+        // Draw image, optionally clipped to range defined above
+        context.draw(image, in: imageRect)
         
         context.restoreGState()
     }
