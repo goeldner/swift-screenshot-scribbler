@@ -11,7 +11,7 @@ $ swift build --configuration release
 $ cp -f .build/release/scrscr /usr/local/bin/scrscr
 ```
 
-_(See also install.sh)_
+You can also use the `install.sh` script.
 
 ## Usage
 
@@ -41,15 +41,15 @@ $ scrscr \
     --verbose
 ```
 
-_(See also example.sh)_
+Please also have a look at the `examples.sh` script and `Examples` folder for more usage scenarios.
 
 ## About
 
-I developed this tool as a side project, because I did not want to use fastlane for any reason, which provides something similar.
+I started developing this tool as a side project, because I did not want to use fastlane for any reason, which provides something similar with its frameit plugin. I wanted to have a simple command line tool, which I just can call in my scripts (that already generate screenshots automatically) in order to beautify them for the App Store.
 
-It uses CoreGraphics and CoreText APIs directly for layouting (no AppKit or UIKit), so it should be quite portable.
+This project uses pure CoreGraphics and CoreText APIs for layouting (no AppKit or UIKit), so it should be quite portable.
 
-There will be updates and new features from time to time and I try to keep working on it, as long as I use it by myself.
+There will be updates and new features from time to time and I try to keep working on it, as long as I use it myself.
 
 ## Coffee
 

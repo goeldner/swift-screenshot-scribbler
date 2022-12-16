@@ -29,6 +29,13 @@ swift run scrscr \
     --output Examples/example-output-text-after-image.png \
     --layout-type "text-after-image"
 
+# Layout: text-between-images (with default options)
+swift run scrscr \
+    --caption "Example output with default options and caption in between" \
+    --input Examples/example-input.png \
+    --output Examples/example-output-text-between-images.png \
+    --layout-type "text-between-images"
+
 # Smaller text area and fully visible screenshot with dark background
 swift run scrscr \
     --caption "Dark example with full screenshot" \

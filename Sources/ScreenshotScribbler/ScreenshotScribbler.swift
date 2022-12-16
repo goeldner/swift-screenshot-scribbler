@@ -42,43 +42,107 @@ public struct ScreenshotScribbler {
             throw RuntimeError("Error initializing CGContext")
         }
         
-        // Common area sizes
+        // Calculate total area and cover it with a background color
         let totalArea = CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height)
-        let textAreaHeight = totalArea.height * self.layout.textAreaRatio
-        let textAreaMargin = (totalArea.width - (totalArea.width * self.layout.imageSizeReduction)) / 2
+        drawRect(totalArea, color: self.layout.backgroundColor, context: context)
         
-        // Layout specific area calculations
-        let textArea, imageArea: CGRect
-        let imageAtTopEdgeOfArea: Bool
+        // Perform further layout specific drawing
         switch self.layout.layoutType {
         case .textBeforeImage:
-            let (topArea, bottomArea) = totalArea.divided(atDistance: textAreaHeight, from: .maxYEdge)
-            textArea = topArea.insetBy(dx: textAreaMargin, dy: 0)
-            imageArea = bottomArea
-            imageAtTopEdgeOfArea = true
+            drawLayoutTextBeforeImage(in: totalArea, image: cgImage, context: context)
         case .textAfterImage:
-            let (topArea, bottomArea) = totalArea.divided(atDistance: totalArea.height - textAreaHeight, from: .maxYEdge)
-            textArea = bottomArea.insetBy(dx: textAreaMargin, dy: 0)
-            imageArea = topArea
-            imageAtTopEdgeOfArea = false
+            drawLayoutTextAfterImage(in: totalArea, image: cgImage, context: context)
         case .textBetweenImages:
-            throw RuntimeError("Layout textBetweenImages not yet implemented.")
+            drawLayoutTextBetweenImages(in: totalArea, image: cgImage, context: context)
         }
-        
-        // Cover the whole area with a background color
-        drawRect(totalArea, color: self.layout.backgroundColor, context: context)
-        //drawRect(textArea, color: CGColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1.0), context: context)
-        //drawRect(imageArea, color: CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1.0), context: context)
-        
-        // Place the caption centered inside the text area
-        drawText(caption, in: textArea, context: context)
-        
-        // Reduce size of screenshot and add it next to the caption
-        drawImage(cgImage, in: imageArea, atTopEdge: imageAtTopEdgeOfArea, context: context)
         
         // Generate output PNG
         let outputImageData = try createPNG(context)
         return outputImageData
+    }
+    
+    /// Draws the text before the image inside the given rectangle.
+    ///
+    /// - Parameters:
+    ///   - rect: The rectangle to cover with text and image.
+    ///   - image: The image to draw.
+    ///   - context: The graphics context.
+    ///
+    private func drawLayoutTextBeforeImage(in rect: CGRect, image: CGImage, context: CGContext) {
+        
+        // Divide rect after height of text area
+        let textAreaHeight = rect.height * self.layout.textAreaRatio
+        let (topArea, bottomArea) = rect.divided(atDistance: textAreaHeight, from: .maxYEdge)
+        
+        // Place the caption centered inside the text area, with margin
+        let textAreaMargin = (rect.width - (rect.width * self.layout.imageSizeReduction)) / 2
+        let textArea = topArea.insetBy(dx: textAreaMargin, dy: 0)
+        drawText(caption, in: textArea, context: context)
+        
+        // Place the screenshot below the caption
+        let imageArea = bottomArea
+        let imageAtTopEdgeOfArea = true
+        drawImage(image, in: imageArea, atTopEdge: imageAtTopEdgeOfArea, context: context)
+    }
+    
+    /// Draws the text after the image inside the given rectangle.
+    ///
+    /// - Parameters:
+    ///   - rect: The rectangle to cover with text and image.
+    ///   - image: The image to draw.
+    ///   - context: The graphics context.
+    ///
+    private func drawLayoutTextAfterImage(in rect: CGRect, image: CGImage, context: CGContext) {
+        
+        // Divide rect after height of image area (total height without text area height)
+        let textAreaHeight = rect.height * self.layout.textAreaRatio
+        let (topArea, bottomArea) = rect.divided(atDistance: rect.height - textAreaHeight, from: .maxYEdge)
+        
+        // Place the caption centered inside the text area, with margin
+        let textAreaMargin = (rect.width - (rect.width * self.layout.imageSizeReduction)) / 2
+        let textArea = bottomArea.insetBy(dx: textAreaMargin, dy: 0)
+        drawText(caption, in: textArea, context: context)
+        
+        // Place the screenshot above the caption
+        let imageArea = topArea
+        let imageAtTopEdgeOfArea = false
+        drawImage(image, in: imageArea, atTopEdge: imageAtTopEdgeOfArea, context: context)
+    }
+    
+    /// Draws the text surrounded by two parts of the image on top and bottom inside the given rectangle.
+    ///
+    /// - Parameters:
+    ///   - rect: The rectangle to cover with text and image.
+    ///   - image: The image to draw.
+    ///   - context: The graphics context.
+    ///
+    private func drawLayoutTextBetweenImages(in rect: CGRect, image: CGImage, context: CGContext) {
+        
+        // First, divide rect after height of half image area
+        let textAreaHeight = rect.height * self.layout.textAreaRatio
+        let halfImageAreaHeight = (rect.height - textAreaHeight) / 2
+        let (topArea, remainingRect) = rect.divided(atDistance: halfImageAreaHeight, from: .maxYEdge)
+        
+        // Second, divide remaining rect after height of text area, so we get:
+        // - topArea:    half image
+        // - middleArea: text
+        // - bottomArea: half image
+        let (middleArea, bottomArea) = remainingRect.divided(atDistance: textAreaHeight, from: .maxYEdge)
+        
+        // Place the caption centered inside the text area, with margin
+        let textAreaMargin = (rect.width - (rect.width * self.layout.imageSizeReduction)) / 2
+        let textArea = middleArea.insetBy(dx: textAreaMargin, dy: 0)
+        drawText(caption, in: textArea, context: context)
+        
+        // Place one half of the screenshot above the caption
+        let image1Area = topArea
+        let image1AtTopEdgeOfArea = false
+        drawImage(image, in: image1Area, atTopEdge: image1AtTopEdgeOfArea, context: context)
+        
+        // Place the other half of the screenshot below the caption
+        let image2Area = bottomArea
+        let image2AtTopEdgeOfArea = true
+        drawImage(image, in: image2Area, atTopEdge: image2AtTopEdgeOfArea, context: context)
     }
     
     /// Draws the given rectancle in given color.
