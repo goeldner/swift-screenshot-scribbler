@@ -12,16 +12,16 @@ swift run scrscr \
     --input Examples/example-input.png \
     --output Examples/example-output-default-2.png \
     --layout-type "text-before-image" \
-    --text-area-ratio 0.25 \
-    --image-size-reduction 0.85 \
-    --image-corner-radius 5 \
+    --layout-text-ratio 0.25 \
     --background-color "#FFFFFF" \
     --text-color "#000000" \
     --font-name "SF Compact" \
     --font-style "Bold" \
     --font-size 32 \
-    --shadow-color "#000000" \
-    --shadow-size 5
+    --image-size-reduction 0.85 \
+    --image-corner-radius 5 \
+    --image-shadow-color "#000000" \
+    --image-shadow-size 5
 
 # Layout: text-before-image
 swift run scrscr \
@@ -53,12 +53,12 @@ swift run scrscr \
     --input Examples/example-input.png \
     --output Examples/example-output-full-screenshot.png \
     --layout-type "text-before-image" \
-    --text-area-ratio 0.15 \
-    --image-size-reduction 0.80 \
-    --image-corner-radius 8 \
+    --layout-text-ratio 0.15 \
     --background-color "#000000" \
     --text-color "#EEDD00" \
     --font-name "Futura" \
     --font-style "Bold" \
     --font-size 28 \
-    --shadow-size 0
+    --image-size-reduction 0.80 \
+    --image-corner-radius 8 \
+    --image-shadow-size 0

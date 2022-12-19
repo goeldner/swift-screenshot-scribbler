@@ -11,19 +11,13 @@ public struct LayoutConfig {
     /// Arrangement of the caption and the screenshot.
     public var layoutType: LayoutType = .textBeforeImage
     
-    /// Amount of the text area in vertical direction. (25% by default)
-    public var textAreaRatio: CGFloat = 0.25
-    
-    /// Percentage of the screenshot in reduced size. (85% by default)
-    public var imageSizeReduction: CGFloat = 0.85
-    
-    /// Corner radius of the screenshot. (5 by default)
-    public var imageCornerRadius: CGFloat = 5
+    /// Percentage of the text area inside the layout in vertical direction. (25% by default)
+    public var layoutTextRatio: CGFloat = 0.25
     
     /// Color which covers the whole background. (white by default)
     public var backgroundColor: CGColor = white
     
-    /// Color of the rendered caption. (black by default)
+    /// Color of the rendered text. (black by default)
     public var textColor: CGColor = black
     
     /// Font family name. ("SF Compact" by default)
@@ -35,11 +29,17 @@ public struct LayoutConfig {
     /// Font size. (32 by default)
     public var fontSize: Int = 32
     
-    /// Size of the shadow blur. (5 by default)
-    public var shadowSize: CGFloat = 5
+    /// Percentage of the screenshot in reduced size. (85% by default)
+    public var imageSizeReduction: CGFloat = 0.85
     
-    /// Color of the shadow. (black by default)
-    public var shadowColor: CGColor = black
+    /// Corner radius of the screenshot. (5 by default)
+    public var imageCornerRadius: CGFloat = 5
+    
+    /// Size of the shadow blur behind the screenshot. (5 by default)
+    public var imageShadowSize: CGFloat = 5
+    
+    /// Color of the shadow behind the screenshot. (black by default)
+    public var imageShadowColor: CGColor = black
     
     /// White color, without using the CGColor.white shortcut, which is not available on iOS.
     private static let white = CGColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)

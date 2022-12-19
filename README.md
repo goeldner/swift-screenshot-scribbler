@@ -29,16 +29,16 @@ $ scrscr \
     --input example-input.png \
     --output example-output-default.png \
     --layout-type "text-before-image" \
-    --text-area-ratio 0.25 \
-    --image-size-reduction 0.85 \
-    --image-corner-radius 5 \
+    --layout-text-ratio 0.25 \
     --background-color "#FFFFFF" \
     --text-color "#000000" \
     --font-name "SF Compact" \
     --font-style "Bold" \
     --font-size 32 \
-    --shadow-color "#000000" \
-    --shadow-size 5 \
+    --image-size-reduction 0.85 \
+    --image-corner-radius 5 \
+    --image-shadow-color "#000000" \
+    --image-shadow-size 5 \
     --verbose
 ```
 

@@ -71,7 +71,7 @@ public struct ScreenshotScribbler {
     private func drawLayoutTextBeforeImage(in rect: CGRect, image: CGImage, context: CGContext) {
         
         // Divide rect after height of text area
-        let textAreaHeight = rect.height * self.layout.textAreaRatio
+        let textAreaHeight = rect.height * self.layout.layoutTextRatio
         let (topArea, bottomArea) = rect.divided(atDistance: textAreaHeight, from: .maxYEdge)
         
         // Place the caption centered inside the text area, with margin
@@ -95,7 +95,7 @@ public struct ScreenshotScribbler {
     private func drawLayoutTextAfterImage(in rect: CGRect, image: CGImage, context: CGContext) {
         
         // Divide rect after height of image area (total height without text area height)
-        let textAreaHeight = rect.height * self.layout.textAreaRatio
+        let textAreaHeight = rect.height * self.layout.layoutTextRatio
         let (topArea, bottomArea) = rect.divided(atDistance: rect.height - textAreaHeight, from: .maxYEdge)
         
         // Place the caption centered inside the text area, with margin
@@ -119,7 +119,7 @@ public struct ScreenshotScribbler {
     private func drawLayoutTextBetweenImages(in rect: CGRect, image: CGImage, context: CGContext) {
         
         // First, divide rect after height of half image area
-        let textAreaHeight = rect.height * self.layout.textAreaRatio
+        let textAreaHeight = rect.height * self.layout.layoutTextRatio
         let halfImageAreaHeight = (rect.height - textAreaHeight) / 2
         let (topArea, remainingRect) = rect.divided(atDistance: halfImageAreaHeight, from: .maxYEdge)
         
@@ -178,7 +178,7 @@ public struct ScreenshotScribbler {
         let reducedWidth = Double(image.width) * self.layout.imageSizeReduction
         let reducedHeight = Double(image.height) * self.layout.imageSizeReduction
         let reducedSize = CGSize(width: reducedWidth, height: reducedHeight)
-        let shadowSize = self.layout.shadowSize * CGFloat(deviceScale(context.width))
+        let shadowSize = self.layout.imageShadowSize * CGFloat(deviceScale(context.width))
         let cornerRadius = self.layout.imageCornerRadius * CGFloat(deviceScale(context.width))
         
         // Center the image horizontally
@@ -199,12 +199,12 @@ public struct ScreenshotScribbler {
         let shadowRectWithCornerRadius = CGPath(roundedRect: imageRect.insetBy(dx: 1, dy: 1), cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
         
         // Draw the shadow first behind the image, otherwise it would be clipped away, if drawn with the clipped image
-        if self.layout.shadowSize > 0 {
+        if self.layout.imageShadowSize > 0 {
             context.saveGState()
             context.beginPath()
             context.addPath(shadowRectWithCornerRadius)
             context.closePath()
-            context.setShadow(offset: CGSize(width: 0, height: 0), blur: shadowSize, color: self.layout.shadowColor)
+            context.setShadow(offset: CGSize(width: 0, height: 0), blur: shadowSize, color: self.layout.imageShadowColor)
             context.setFillColor(self.layout.backgroundColor)
             context.fillPath()
             context.restoreGState()
