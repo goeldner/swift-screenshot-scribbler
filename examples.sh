@@ -29,7 +29,7 @@ swift run scrscr \
     --input Examples/example-input.png \
     --output Examples/example-output-text-before-image.png \
     --layout-type "text-before-image" \
-    --background-color "#CAFFEE"
+    --background-color "#C0FFEE"
 
 # Layout: text-after-image
 swift run scrscr \
@@ -37,7 +37,7 @@ swift run scrscr \
     --input Examples/example-input.png \
     --output Examples/example-output-text-after-image.png \
     --layout-type "text-after-image" \
-    --background-color "#CAFFEE"
+    --background-color "#C0FFEE"
 
 # Layout: text-between-images
 swift run scrscr \
@@ -45,7 +45,7 @@ swift run scrscr \
     --input Examples/example-input.png \
     --output Examples/example-output-text-between-images.png \
     --layout-type "text-between-images" \
-    --background-color "#CAFFEE"
+    --background-color "#C0FFEE"
 
 # Smaller text area and fully visible screenshot with dark background
 swift run scrscr \
