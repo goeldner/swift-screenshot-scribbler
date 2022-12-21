@@ -25,7 +25,7 @@ swift run scrscr \
 
 # Layout: caption-before-screenshot
 swift run scrscr \
-    --caption "Example output with caption before image" \
+    --caption "Example with caption before screenshot" \
     --screenshot Examples/example-input.png \
     --output Examples/example-output-caption-before-screenshot.png \
     --layout "caption-before-screenshot" \
@@ -33,7 +33,7 @@ swift run scrscr \
 
 # Layout: caption-after-screenshot
 swift run scrscr \
-    --caption "Example output with caption after image" \
+    --caption "Example with caption after screenshot" \
     --screenshot Examples/example-input.png \
     --output Examples/example-output-caption-after-screenshot.png \
     --layout "caption-after-screenshot" \
@@ -41,7 +41,7 @@ swift run scrscr \
 
 # Layout: caption-between-screenshots
 swift run scrscr \
-    --caption "Example output with caption between both image parts" \
+    --caption "Example with caption between both screenshot parts" \
     --screenshot Examples/example-input.png \
     --output Examples/example-output-caption-between-screenshots.png \
     --layout "caption-between-screenshots" \
