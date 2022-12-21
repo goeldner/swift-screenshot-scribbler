@@ -241,8 +241,8 @@ public struct ScreenshotScribbler {
         let fontSize = self.layout.captionFontSize * deviceScale(context.width)
         let font = createFont(name: self.layout.captionFontName, size: fontSize, style: self.layout.captionFontStyle)
         
-        // Create a centered paragraph
-        let paragraphStyle = createParagraphStyle(alignment: .center)
+        // Create a paragraph style with text alignment
+        let paragraphStyle = createParagraphStyle(alignment: self.layout.captionAlignment)
         
         // Create an attributed string with that font, color and paragraph settings
         let attributes: [CFString : Any] = [

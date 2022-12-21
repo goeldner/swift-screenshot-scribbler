@@ -5,6 +5,7 @@
 import Foundation
 import ArgumentParser
 import CoreGraphics
+import CoreText
 import ScreenshotScribbler
 
 @main
@@ -58,6 +59,9 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         
         @Option(name: .long, help: "Percentage of the caption area height relative to the total height of the output image. (Default: 0.25 (25%))")
         var captionSizeFactor: Double?
+        
+        @Option(name: .long, help: "Horizontal alignment of the caption. (Default: \"center\"; Options: \"left\", \"right\", \"justified\")", transform: transformTextAlignment)
+        var captionAlignment: CTTextAlignment?
         
         @Option(name: .long, help: "Color of the caption. (Default: \"#000000\" (black))", transform: transformColor)
         var captionColor: CGColor?
@@ -141,6 +145,9 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         if let captionSizeFactor = self.captionStyleOptions.captionSizeFactor {
             layout.captionSizeFactor = captionSizeFactor
         }
+        if let captionAlignment = self.captionStyleOptions.captionAlignment {
+            layout.captionAlignment = captionAlignment
+        }
         if let captionColor = self.captionStyleOptions.captionColor {
             layout.captionColor = captionColor
         }
@@ -178,6 +185,20 @@ struct ScreenshotScribblerCommand: ParsableCommand {
             return .captionBetweenScreenshots
         } else {
             throw RuntimeError("Unsupported layout type: \(string)")
+        }
+    }
+    
+    private static func transformTextAlignment(_ string: String) throws -> CTTextAlignment {
+        if string == "center" {
+            return .center
+        } else if string == "left" {
+            return .left
+        } else if string == "right" {
+            return .right
+        } else if string == "justified" {
+            return .justified
+        } else {
+            throw RuntimeError("Unsupported text alignment: \(string)")
         }
     }
     

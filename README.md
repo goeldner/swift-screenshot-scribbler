@@ -31,6 +31,7 @@ $ scrscr \
     --layout "caption-before-screenshot" \
     --background-color "#FFFFFF" \
     --caption-size-factor 0.25 \
+    --caption-alignment "center" \
     --caption-color "#000000" \
     --caption-font-name "SF Compact" \
     --caption-font-style "Bold" \

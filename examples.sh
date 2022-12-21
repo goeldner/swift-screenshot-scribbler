@@ -14,6 +14,7 @@ swift run scrscr \
     --layout "caption-before-screenshot" \
     --background-color "#FFFFFF" \
     --caption-size-factor 0.25 \
+    --caption-alignment "center" \
     --caption-color "#000000" \
     --caption-font-name "SF Compact" \
     --caption-font-style "Bold" \
@@ -45,8 +46,9 @@ swift run scrscr \
     --screenshot Examples/example-input.png \
     --output Examples/example-output-caption-between-screenshots.png \
     --layout "caption-between-screenshots" \
-    --background-color "#C0FFEE"
-
+    --background-color "#C0FFEE" \
+    --caption-alignment "left"
+    
 # Smaller caption area and fully visible screenshot with dark background
 swift run scrscr \
     --caption "Dark example with full screenshot" \

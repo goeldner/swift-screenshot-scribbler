@@ -4,6 +4,7 @@
 
 import Foundation
 import CoreGraphics
+import CoreText
 
 /// Layout configuration
 public struct LayoutConfig {
@@ -16,6 +17,9 @@ public struct LayoutConfig {
     
     /// Percentage of the caption area height relative to the total height of the output image. (Default: 0.25 (25%))
     public var captionSizeFactor: CGFloat = 0.25
+    
+    /// Horizontal alignment of the caption. (Default: center)
+    public var captionAlignment: CTTextAlignment = .center
     
     /// Color of the caption. (Default: black)
     public var captionColor: CGColor = black
