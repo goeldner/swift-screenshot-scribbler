@@ -8,38 +8,38 @@ import CoreGraphics
 /// Layout configuration
 public struct LayoutConfig {
     
-    /// Arrangement of the caption and the screenshot.
-    public var layoutType: LayoutType = .textBeforeImage
+    /// Arrangement of the caption and screenshot. (Default: captionBeforeScreenshot)
+    public var layoutType: LayoutType = .captionBeforeScreenshot
     
-    /// Percentage of the text area inside the layout in vertical direction. (25% by default)
-    public var layoutTextRatio: CGFloat = 0.25
-    
-    /// Color which covers the whole background. (white by default)
+    /// Color which covers the whole background. (Default: white)
     public var backgroundColor: CGColor = white
     
-    /// Color of the rendered text. (black by default)
-    public var textColor: CGColor = black
+    /// Percentage of the caption area height relative to the total height of the output image. (Default: 0.25 (25%))
+    public var captionSizeFactor: CGFloat = 0.25
     
-    /// Font family name. ("SF Compact" by default)
-    public var fontName: String = "SF Compact"
+    /// Color of the caption. (Default: black)
+    public var captionColor: CGColor = black
     
-    /// Font style. ("Bold" by default)
-    public var fontStyle: String = "Bold" // "Regular"
+    /// Font family name of the caption. (Default: "SF Compact")
+    public var captionFontName: String = "SF Compact"
     
-    /// Font size. (32 by default)
-    public var fontSize: Int = 32
+    /// Font style of the caption. (Default: "Bold")
+    public var captionFontStyle: String = "Bold" // "Regular"
     
-    /// Percentage of the screenshot in reduced size. (85% by default)
-    public var imageSizeReduction: CGFloat = 0.85
+    /// Font size of the caption. (Default: 32)
+    public var captionFontSize: Int = 32
     
-    /// Corner radius of the screenshot. (5 by default)
-    public var imageCornerRadius: CGFloat = 5
+    /// Percentage of the rendered screenshot size relative to its original size. (Default: 0.85 (85%))
+    public var screenshotSizeFactor: CGFloat = 0.85
     
-    /// Size of the shadow blur behind the screenshot. (5 by default)
-    public var imageShadowSize: CGFloat = 5
+    /// Corner radius of the screenshot. (Default: 5)
+    public var screenshotCornerRadius: CGFloat = 5
     
-    /// Color of the shadow behind the screenshot. (black by default)
-    public var imageShadowColor: CGColor = black
+    /// Size of the shadow blur behind the screenshot. (Default: 5)
+    public var screenshotShadowSize: CGFloat = 5
+    
+    /// Color of the shadow behind the screenshot. (Default: black)
+    public var screenshotShadowColor: CGColor = black
     
     /// White color, without using the CGColor.white shortcut, which is not available on iOS.
     private static let white = CGColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)

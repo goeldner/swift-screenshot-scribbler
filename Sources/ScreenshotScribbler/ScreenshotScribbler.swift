@@ -10,31 +10,31 @@ import UniformTypeIdentifiers
 
 public struct ScreenshotScribbler {
 
+    private let screenshot: Data
     private let caption: String
-    private let input: Data
     private let layout: LayoutConfig
 
-    /// Initializes the screenshot scribbler with an input image and caption.
+    /// Initializes the screenshot scribbler with a screenshot image and caption.
     ///
     /// - Parameters:
-    ///   - input: The input image in PNG data format.
-    ///   - caption: The caption to display besides the screenshot.
+    ///   - screenshot: The screenshot image in PNG data format.
+    ///   - caption: The caption to display next to the screenshot.
     ///   - layout: The layout configuration (optional).
     ///
-    public init(input: Data, caption: String, layout: LayoutConfig = LayoutConfig()) {
-        self.input = input
+    public init(screenshot: Data, caption: String, layout: LayoutConfig = LayoutConfig()) {
+        self.screenshot = screenshot
         self.caption = caption
         self.layout = layout
     }
 
-    /// Generates the output image based on the configured input image, caption and layout settings.
+    /// Generates the output image based on the configured screenshot image, caption and layout settings.
     ///
     /// - Returns: The output image as PNG data.
     ///
     public func generate() throws -> Data {
         
         // Read the input PNG image data
-        let cgImage = try createImage(fromPNG: self.input)
+        let cgImage = try createImage(fromPNG: self.screenshot)
         
         // Create graphics context with same size as input PNG
         let colorSpace = cgImage.colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB)!
@@ -48,12 +48,12 @@ public struct ScreenshotScribbler {
         
         // Perform further layout specific drawing
         switch self.layout.layoutType {
-        case .textBeforeImage:
-            drawLayoutTextBeforeImage(in: totalArea, image: cgImage, context: context)
-        case .textAfterImage:
-            drawLayoutTextAfterImage(in: totalArea, image: cgImage, context: context)
-        case .textBetweenImages:
-            drawLayoutTextBetweenImages(in: totalArea, image: cgImage, context: context)
+        case .captionBeforeScreenshot:
+            drawLayoutCaptionBeforeScreenshot(in: totalArea, screenshot: cgImage, context: context)
+        case .captionAfterScreenshot:
+            drawLayoutCaptionAfterScreenshot(in: totalArea, screenshot: cgImage, context: context)
+        case .captionBetweenScreenshots:
+            drawLayoutCaptionBetweenScreenshots(in: totalArea, screenshot: cgImage, context: context)
         }
         
         // Generate output PNG
@@ -61,65 +61,65 @@ public struct ScreenshotScribbler {
         return outputImageData
     }
     
-    /// Draws the text before the image inside the given rectangle.
+    /// Draws the caption before the screenshot inside the given rectangle.
     ///
     /// - Parameters:
-    ///   - rect: The rectangle to cover with text and image.
-    ///   - image: The image to draw.
+    ///   - rect: The rectangle to cover with caption and screenshot.
+    ///   - screenshot: The screenshot to draw.
     ///   - context: The graphics context.
     ///
-    private func drawLayoutTextBeforeImage(in rect: CGRect, image: CGImage, context: CGContext) {
+    private func drawLayoutCaptionBeforeScreenshot(in rect: CGRect, screenshot: CGImage, context: CGContext) {
         
         // Divide rect after height of text area
-        let textAreaHeight = rect.height * self.layout.layoutTextRatio
+        let textAreaHeight = rect.height * self.layout.captionSizeFactor
         let (topArea, bottomArea) = rect.divided(atDistance: textAreaHeight, from: .maxYEdge)
         
         // Place the caption centered inside the text area, with margin
-        let textAreaMargin = (rect.width - (rect.width * self.layout.imageSizeReduction)) / 2
+        let textAreaMargin = (rect.width - (rect.width * self.layout.screenshotSizeFactor)) / 2
         let textArea = topArea.insetBy(dx: textAreaMargin, dy: 0)
         drawText(caption, in: textArea, context: context)
         
         // Place the screenshot below the caption
         let imageArea = bottomArea
         let imageAtTopEdgeOfArea = true
-        drawImage(image, in: imageArea, atTopEdge: imageAtTopEdgeOfArea, context: context)
+        drawImage(screenshot, in: imageArea, atTopEdge: imageAtTopEdgeOfArea, context: context)
     }
     
-    /// Draws the text after the image inside the given rectangle.
+    /// Draws the caption after the screenshot inside the given rectangle.
     ///
     /// - Parameters:
-    ///   - rect: The rectangle to cover with text and image.
-    ///   - image: The image to draw.
+    ///   - rect: The rectangle to cover with caption and screenshot.
+    ///   - screenshot: The screenshot to draw.
     ///   - context: The graphics context.
     ///
-    private func drawLayoutTextAfterImage(in rect: CGRect, image: CGImage, context: CGContext) {
+    private func drawLayoutCaptionAfterScreenshot(in rect: CGRect, screenshot: CGImage, context: CGContext) {
         
         // Divide rect after height of image area (total height without text area height)
-        let textAreaHeight = rect.height * self.layout.layoutTextRatio
+        let textAreaHeight = rect.height * self.layout.captionSizeFactor
         let (topArea, bottomArea) = rect.divided(atDistance: rect.height - textAreaHeight, from: .maxYEdge)
         
         // Place the caption centered inside the text area, with margin
-        let textAreaMargin = (rect.width - (rect.width * self.layout.imageSizeReduction)) / 2
+        let textAreaMargin = (rect.width - (rect.width * self.layout.screenshotSizeFactor)) / 2
         let textArea = bottomArea.insetBy(dx: textAreaMargin, dy: 0)
         drawText(caption, in: textArea, context: context)
         
         // Place the screenshot above the caption
         let imageArea = topArea
         let imageAtTopEdgeOfArea = false
-        drawImage(image, in: imageArea, atTopEdge: imageAtTopEdgeOfArea, context: context)
+        drawImage(screenshot, in: imageArea, atTopEdge: imageAtTopEdgeOfArea, context: context)
     }
     
-    /// Draws the text surrounded by two parts of the image on top and bottom inside the given rectangle.
+    /// Draws the caption surrounded by two parts of the screenshot on top and bottom inside the given rectangle.
     ///
     /// - Parameters:
-    ///   - rect: The rectangle to cover with text and image.
-    ///   - image: The image to draw.
+    ///   - rect: The rectangle to cover with caption and screenshot.
+    ///   - screenshot: The screenshot to draw.
     ///   - context: The graphics context.
     ///
-    private func drawLayoutTextBetweenImages(in rect: CGRect, image: CGImage, context: CGContext) {
+    private func drawLayoutCaptionBetweenScreenshots(in rect: CGRect, screenshot: CGImage, context: CGContext) {
         
         // First, divide rect after height of half image area
-        let textAreaHeight = rect.height * self.layout.layoutTextRatio
+        let textAreaHeight = rect.height * self.layout.captionSizeFactor
         let halfImageAreaHeight = (rect.height - textAreaHeight) / 2
         let (topArea, remainingRect) = rect.divided(atDistance: halfImageAreaHeight, from: .maxYEdge)
         
@@ -130,19 +130,19 @@ public struct ScreenshotScribbler {
         let (middleArea, bottomArea) = remainingRect.divided(atDistance: textAreaHeight, from: .maxYEdge)
         
         // Place the caption centered inside the text area, with margin
-        let textAreaMargin = (rect.width - (rect.width * self.layout.imageSizeReduction)) / 2
+        let textAreaMargin = (rect.width - (rect.width * self.layout.screenshotSizeFactor)) / 2
         let textArea = middleArea.insetBy(dx: textAreaMargin, dy: 0)
         drawText(caption, in: textArea, context: context)
         
         // Place one half of the screenshot above the caption
         let image1Area = topArea
         let image1AtTopEdgeOfArea = false
-        drawImage(image, in: image1Area, atTopEdge: image1AtTopEdgeOfArea, context: context)
+        drawImage(screenshot, in: image1Area, atTopEdge: image1AtTopEdgeOfArea, context: context)
         
         // Place the other half of the screenshot below the caption
         let image2Area = bottomArea
         let image2AtTopEdgeOfArea = true
-        drawImage(image, in: image2Area, atTopEdge: image2AtTopEdgeOfArea, context: context)
+        drawImage(screenshot, in: image2Area, atTopEdge: image2AtTopEdgeOfArea, context: context)
     }
     
     /// Draws the given rectancle in given color.
@@ -175,11 +175,11 @@ public struct ScreenshotScribbler {
     private func drawImage(_ image: CGImage, in area: CGRect, atTopEdge: Bool, context: CGContext) {
         
         // Reduce image size
-        let reducedWidth = Double(image.width) * self.layout.imageSizeReduction
-        let reducedHeight = Double(image.height) * self.layout.imageSizeReduction
+        let reducedWidth = Double(image.width) * self.layout.screenshotSizeFactor
+        let reducedHeight = Double(image.height) * self.layout.screenshotSizeFactor
         let reducedSize = CGSize(width: reducedWidth, height: reducedHeight)
-        let shadowSize = self.layout.imageShadowSize * CGFloat(deviceScale(context.width))
-        let cornerRadius = self.layout.imageCornerRadius * CGFloat(deviceScale(context.width))
+        let shadowSize = self.layout.screenshotShadowSize * CGFloat(deviceScale(context.width))
+        let cornerRadius = self.layout.screenshotCornerRadius * CGFloat(deviceScale(context.width))
         
         // Center the image horizontally
         let centerX = area.width / 2
@@ -199,12 +199,12 @@ public struct ScreenshotScribbler {
         let shadowRectWithCornerRadius = CGPath(roundedRect: imageRect.insetBy(dx: 1, dy: 1), cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
         
         // Draw the shadow first behind the image, otherwise it would be clipped away, if drawn with the clipped image
-        if self.layout.imageShadowSize > 0 {
+        if shadowSize > 0 {
             context.saveGState()
             context.beginPath()
             context.addPath(shadowRectWithCornerRadius)
             context.closePath()
-            context.setShadow(offset: CGSize(width: 0, height: 0), blur: shadowSize, color: self.layout.imageShadowColor)
+            context.setShadow(offset: CGSize(width: 0, height: 0), blur: shadowSize, color: self.layout.screenshotShadowColor)
             context.setFillColor(self.layout.backgroundColor)
             context.fillPath()
             context.restoreGState()
@@ -213,7 +213,7 @@ public struct ScreenshotScribbler {
         context.saveGState()
         
         // Clip the context to the rounded corners of the image
-        if self.layout.imageCornerRadius > 0 {
+        if cornerRadius > 0 {
             context.beginPath()
             context.addPath(imageRectWithCornerRadius)
             context.closePath()
@@ -237,8 +237,9 @@ public struct ScreenshotScribbler {
         context.saveGState()
         
         // Create the font
-        let fontSize = self.layout.fontSize * deviceScale(context.width)
-        let font = createFont(name: self.layout.fontName, size: fontSize, style: self.layout.fontStyle)
+        let fontColor = self.layout.captionColor
+        let fontSize = self.layout.captionFontSize * deviceScale(context.width)
+        let font = createFont(name: self.layout.captionFontName, size: fontSize, style: self.layout.captionFontStyle)
         
         // Create a centered paragraph
         let paragraphStyle = createParagraphStyle(alignment: .center)
@@ -246,7 +247,7 @@ public struct ScreenshotScribbler {
         // Create an attributed string with that font, color and paragraph settings
         let attributes: [CFString : Any] = [
             kCTFontAttributeName : font,
-            kCTForegroundColorAttributeName : self.layout.textColor,
+            kCTForegroundColorAttributeName : fontColor,
             kCTParagraphStyleAttributeName : paragraphStyle
         ]
         let attributedString = CFAttributedStringCreate(kCFAllocatorDefault, text as CFString, attributes as CFDictionary)!

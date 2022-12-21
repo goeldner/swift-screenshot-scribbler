@@ -12,99 +12,93 @@ struct ScreenshotScribblerCommand: ParsableCommand {
 
     static let configuration = CommandConfiguration(
         commandName: "scrscr",
-        abstract: "Creates a new image with same dimensions as a given screenshot, adds a background, reduces the size of the original screenshot, places it nicely and scribbles a caption besides it.",
+        abstract: "Creates a new image with same dimensions as a given screenshot, adds a background, reduces the size of the original screenshot, places it nicely and scribbles a caption next to it.",
         version: "1.0.0"
     )
 
-    @OptionGroup(title: "Required")
-    var inputOutputOptions: InputOutputOptions
-    
-    @OptionGroup(title: "Layout")
-    var layoutOptions: LayoutOptions
+    @OptionGroup(title: "Basic")
+    var basicOptions: BasicOptions
     
     @OptionGroup(title: "Background style")
-    var backgroundOptions: BackgroundOptions
+    var backgroundStyleOptions: BackgroundStyleOptions
     
-    @OptionGroup(title: "Text style")
-    var textOptions: TextOptions
+    @OptionGroup(title: "Caption style")
+    var captionStyleOptions: CaptionStyleOptions
 
-    @OptionGroup(title: "Image style")
-    var imageOptions: ImageOptions
+    @OptionGroup(title: "Screenshot style")
+    var screenshotStyleOptions: ScreenshotStyleOptions
     
-    @Flag(name: .shortAndLong, help: "Show detailed progress updates.")
+    @Flag(name: .long, help: "Show detailed progress updates.")
     var verbose = false
 
-    struct InputOutputOptions: ParsableCommand {
+    struct BasicOptions: ParsableCommand {
         
         @Option(name: .long, help: "The caption to scribble.")
         var caption: String
         
-        @Option(name: .customLong("input"), help: "The screenshot file to read.")
-        var inputFile: String
+        @Option(name: .customLong("screenshot"), help: "The screenshot image file to read.")
+        var screenshotFile: String
         
-        @Option(name: .customLong("output"), help: "The output image to write.")
+        @Option(name: .customLong("output"), help: "The output image file to write.")
         var outputFile: String
         
-    }
-    
-    struct LayoutOptions: ParsableCommand {
-        
-        @Option(name: .long, help: "Arrangement of the text and image area. (Default: \"text-before-image\"; More options: \"text-after-image\", \"text-between-images\")", transform: transformLayoutType)
+        @Option(name: .customLong("layout"), help: "Arrangement of the caption and screenshot. (Default: \"\(LayoutType.captionBeforeScreenshot.rawValue)\"; Options: \"\(LayoutType.captionAfterScreenshot.rawValue)\", \"\(LayoutType.captionBetweenScreenshots.rawValue)\")", transform: transformLayoutType)
         var layoutType: LayoutType?
-    
-        @Option(name: .long, help: "Percentage of the text area inside the layout in vertical direction. (Default: 0.25 (25%))")
-        var layoutTextRatio: Double?
         
     }
     
-    struct BackgroundOptions: ParsableCommand {
+    struct BackgroundStyleOptions: ParsableCommand {
         
         @Option(name: .long, help: "Color which covers the whole background. (Default: \"#FFFFFF\" (white))", transform: transformColor)
         var backgroundColor: CGColor?
         
     }
     
-    struct TextOptions: ParsableCommand {
+    struct CaptionStyleOptions: ParsableCommand {
         
-        @Option(name: .long, help: "Color of the rendered text. (Default: \"#000000\" (black))", transform: transformColor)
-        var textColor: CGColor?
+        @Option(name: .long, help: "Percentage of the caption area height relative to the total height of the output image. (Default: 0.25 (25%))")
+        var captionSizeFactor: Double?
         
-        @Option(name: .long, help: "Font family name. (Default: \"SF Compact\")")
-        var fontName: String?
+        @Option(name: .long, help: "Color of the caption. (Default: \"#000000\" (black))", transform: transformColor)
+        var captionColor: CGColor?
         
-        @Option(name: .long, help: "Font style. (Default: \"Bold\")")
-        var fontStyle: String?
+        @Option(name: .long, help: "Font family name of the caption. (Default: \"SF Compact\")")
+        var captionFontName: String?
         
-        @Option(name: .long, help: "Font size. (Default: 32)")
-        var fontSize: Int?
+        @Option(name: .long, help: "Font style of the caption. (Default: \"Bold\")")
+        var captionFontStyle: String?
+        
+        @Option(name: .long, help: "Font size of the caption. (Default: 32)")
+        var captionFontSize: Int?
         
     }
     
-    struct ImageOptions: ParsableCommand {
+    struct ScreenshotStyleOptions: ParsableCommand {
         
-        @Option(name: .long, help: "Percentage of the screenshot in reduced size. (Default: 0.85 (85%))")
-        var imageSizeReduction: Double?
+        @Option(name: .long, help: "Percentage of the rendered screenshot size relative to its original size. (Default: 0.85 (85%))")
+        var screenshotSizeFactor: Double?
         
         @Option(name: .long, help: "Corner radius of the screenshot. (Default: 5)")
-        var imageCornerRadius: Double?
+        var screenshotCornerRadius: Double?
         
         @Option(name: .long, help: "Size of the shadow blur behind the screenshot. (Default: 5)")
-        var imageShadowSize: Double?
+        var screenshotShadowSize: Double?
         
         @Option(name: .long, help: "Color of the shadow behind the screenshot. (Default: \"#000000\" (black))", transform: transformColor)
-        var imageShadowColor: CGColor?
+        var screenshotShadowColor: CGColor?
+
     }
     
     func run() throws {
 
         // Read data of input file
-        print("input: \(self.inputOutputOptions.inputFile)")
-        let inputUrl = URL(fileURLWithPath: self.inputOutputOptions.inputFile)
+        print("Screenshot: \(self.basicOptions.screenshotFile)")
+        let screenshotUrl = URL(fileURLWithPath: self.basicOptions.screenshotFile)
         if verbose {
-            print(" => \(inputUrl)")
+            print(" => \(screenshotUrl)")
         }
-        guard let inputData = try? Data(contentsOf: inputUrl) else {
-            throw RuntimeError("Could not read from: \(inputUrl)")
+        guard let screenshotData = try? Data(contentsOf: screenshotUrl) else {
+            throw RuntimeError("Could not read from: \(screenshotUrl)")
         }
         
         // Parse the layout configuration options
@@ -112,15 +106,15 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         
         // Generate the new image
         if verbose {
-            print("generating image...")
+            print("Generating output image...")
         }
-        let caption = self.inputOutputOptions.caption
-        let scribbler = ScreenshotScribbler(input: inputData, caption: caption, layout: layoutConfig)
+        let caption = self.basicOptions.caption
+        let scribbler = ScreenshotScribbler(screenshot: screenshotData, caption: caption, layout: layoutConfig)
         let output = try scribbler.generate()
 
         // Write data to output file
-        print("output: \(self.inputOutputOptions.outputFile)")
-        let outputUrl = URL(fileURLWithPath: self.inputOutputOptions.outputFile)
+        print("Output: \(self.basicOptions.outputFile)")
+        let outputUrl = URL(fileURLWithPath: self.basicOptions.outputFile)
         if verbose {
             print(" => \(outputUrl)")
         }
@@ -129,59 +123,59 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         }
         
         if verbose {
-            print("success")
+            print("Success")
         }
     }
     
     private func parseLayoutOptions() -> LayoutConfig {
         var layout = LayoutConfig()
-        // Layout options
-        if let layoutType = self.layoutOptions.layoutType {
+        // Layout type
+        if let layoutType = self.basicOptions.layoutType {
             layout.layoutType = layoutType
         }
-        if let layoutTextRatio = self.layoutOptions.layoutTextRatio {
-            layout.layoutTextRatio = layoutTextRatio
-        }
-        // Background options
-        if let backgroundColor = self.backgroundOptions.backgroundColor {
+        // Background style options
+        if let backgroundColor = self.backgroundStyleOptions.backgroundColor {
             layout.backgroundColor = backgroundColor
         }
-        // Text options
-        if let textColor = self.textOptions.textColor {
-            layout.textColor = textColor
+        // Caption style options
+        if let captionSizeFactor = self.captionStyleOptions.captionSizeFactor {
+            layout.captionSizeFactor = captionSizeFactor
         }
-        if let fontName = self.textOptions.fontName {
-            layout.fontName = fontName
+        if let captionColor = self.captionStyleOptions.captionColor {
+            layout.captionColor = captionColor
         }
-        if let fontStyle = self.textOptions.fontStyle {
-            layout.fontStyle = fontStyle
+        if let captionFontName = self.captionStyleOptions.captionFontName {
+            layout.captionFontName = captionFontName
         }
-        if let fontSize = self.textOptions.fontSize {
-            layout.fontSize = fontSize
+        if let captionFontStyle = self.captionStyleOptions.captionFontStyle {
+            layout.captionFontStyle = captionFontStyle
         }
-        // Image options
-        if let imageSizeReduction = self.imageOptions.imageSizeReduction {
-            layout.imageSizeReduction = imageSizeReduction
+        if let captionFontSize = self.captionStyleOptions.captionFontSize {
+            layout.captionFontSize = captionFontSize
         }
-        if let imageCornerRadius = self.imageOptions.imageCornerRadius {
-            layout.imageCornerRadius = imageCornerRadius
+        // Screenshot style options
+        if let screenshotSizeFactor = self.screenshotStyleOptions.screenshotSizeFactor {
+            layout.screenshotSizeFactor = screenshotSizeFactor
         }
-        if let imageShadowSize = self.imageOptions.imageShadowSize {
-            layout.imageShadowSize = imageShadowSize
+        if let screenshotCornerRadius = self.screenshotStyleOptions.screenshotCornerRadius {
+            layout.screenshotCornerRadius = screenshotCornerRadius
         }
-        if let imageShadowColor = self.imageOptions.imageShadowColor {
-            layout.imageShadowColor = imageShadowColor
+        if let screenshotShadowSize = self.screenshotStyleOptions.screenshotShadowSize {
+            layout.screenshotShadowSize = screenshotShadowSize
+        }
+        if let screenshotShadowColor = self.screenshotStyleOptions.screenshotShadowColor {
+            layout.screenshotShadowColor = screenshotShadowColor
         }
         return layout
     }
     
     private static func transformLayoutType(_ string: String) throws -> LayoutType {
-        if string == "text-before-image" {
-            return .textBeforeImage
-        } else if string == "text-after-image" {
-            return .textAfterImage
-        } else if string == "text-between-images" {
-            return .textBetweenImages
+        if string == LayoutType.captionBeforeScreenshot.rawValue {
+            return .captionBeforeScreenshot
+        } else if string == LayoutType.captionAfterScreenshot.rawValue {
+            return .captionAfterScreenshot
+        } else if string == LayoutType.captionBetweenScreenshots.rawValue {
+            return .captionBetweenScreenshots
         } else {
             throw RuntimeError("Unsupported layout type: \(string)")
         }

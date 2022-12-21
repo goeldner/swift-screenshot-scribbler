@@ -7,13 +7,13 @@ import Foundation
 /// Different types of layout arrangements, i.e. how the caption and the screenshot are ordered.
 public enum LayoutType: String {
     
-    /// Caption on top, screenshot below.
-    case textBeforeImage
+    /// Caption first, then screenshot
+    case captionBeforeScreenshot = "caption-before-screenshot"
     
-    /// Screenshot on top, caption below.
-    case textAfterImage
+    /// Screenshot first, then caption.
+    case captionAfterScreenshot = "caption-after-screenshot"
     
-    /// Parts of the screenshot on top and bottom, caption between both.
-    case textBetweenImages
+    /// One half of the screenshot first, then caption, then other half of the screenshot.
+    case captionBetweenScreenshots = "caption-between-screenshots"
     
 }

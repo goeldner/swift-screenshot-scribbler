@@ -1,6 +1,6 @@
 # ScreenshotScribbler (scrscr)
 
-A command line tool and library that creates a new image with same dimensions as a given screenshot, adds a background, reduces the size of the original screenshot, places it nicely and scribbles a caption besides it.
+A command line tool and library that creates a new image with same dimensions as a given screenshot, adds a background, reduces the size of the original screenshot, places it nicely and scribbles a caption next to it.
 
 ## Build and install
 
@@ -15,10 +15,10 @@ You can also use the `install.sh` script.
 
 ## Usage
 
-By default the tool places the caption on top and the screenshot on bottom of the image. It uses a white background, black text and a subtle shadow around the screenshot:
+By default the tool places the caption on top and the screenshot on bottom of the image. It uses a white background, black caption and a subtle shadow behind the screenshot:
 
 ```
-$ scrscr --caption "Scribble this caption" --input example-input.png --output example-output-default.png
+$ scrscr --caption "Scribble this caption" --screenshot example-input.png --output example-output-default.png
 ```
 
 The layout may be customized with command line options. Following example defines all possible options including their default values:
@@ -26,19 +26,19 @@ The layout may be customized with command line options. Following example define
 ```
 $ scrscr \
     --caption "Example output with default options and long caption" \
-    --input example-input.png \
+    --screenshot example-input.png \
     --output example-output-default.png \
-    --layout-type "text-before-image" \
-    --layout-text-ratio 0.25 \
+    --layout "caption-before-screenshot" \
     --background-color "#FFFFFF" \
-    --text-color "#000000" \
-    --font-name "SF Compact" \
-    --font-style "Bold" \
-    --font-size 32 \
-    --image-size-reduction 0.85 \
-    --image-corner-radius 5 \
-    --image-shadow-color "#000000" \
-    --image-shadow-size 5 \
+    --caption-size-factor 0.25 \
+    --caption-color "#000000" \
+    --caption-font-name "SF Compact" \
+    --caption-font-style "Bold" \
+    --caption-font-size 32 \
+    --screenshot-size-factor 0.85 \
+    --screenshot-corner-radius 5 \
+    --screenshot-shadow-color "#000000" \
+    --screenshot-shadow-size 5 \
     --verbose
 ```
 
