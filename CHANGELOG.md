@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+<!-- After release: *No changes yet.* -->
+
 *No changes yet.*
 
 ---
@@ -39,3 +41,9 @@ Please have a look at the README and the examples for a more detailed overview
 about the possible options.
 
 ---
+
+<!-- Link references for releases -->
+
+[Unreleased]: https://github.com/goeldner/swift-screenshot-scribbler/compare/1.0.0...HEAD
+[1.1.0]: https://github.com/goeldner/swift-screenshot-scribbler/compare/1.0.0...1.1.0
+[1.0.0]: https://github.com/goeldner/swift-screenshot-scribbler/releases/tag/1.0.0
