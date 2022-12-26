@@ -16,4 +16,7 @@ public enum LayoutType: String {
     /// One half of the screenshot first, then caption, then other half of the screenshot.
     case captionBetweenScreenshots = "caption-between-screenshots"
     
+    /// Screenshot only, omitting any caption.
+    case screenshotOnly = "screenshot-only"
+    
 }

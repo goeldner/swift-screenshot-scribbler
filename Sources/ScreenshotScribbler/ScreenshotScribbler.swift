@@ -54,6 +54,8 @@ public struct ScreenshotScribbler {
             drawLayoutCaptionAfterScreenshot(in: totalArea, screenshot: cgImage, context: context)
         case .captionBetweenScreenshots:
             drawLayoutCaptionBetweenScreenshots(in: totalArea, screenshot: cgImage, context: context)
+        case .screenshotOnly:
+            drawLayoutScreenshotOnly(in: totalArea, screenshot: cgImage, context: context)
         }
         
         // Generate output PNG
@@ -82,9 +84,7 @@ public struct ScreenshotScribbler {
         }
         
         // Place the screenshot below the caption
-        let imageArea = bottomArea
-        let imageAtTopEdgeOfArea = true
-        drawImage(screenshot, in: imageArea, atTopEdge: imageAtTopEdgeOfArea, context: context)
+        drawImage(screenshot, in: bottomArea, verticalAlignment: .top, context: context)
     }
     
     /// Draws the caption after the screenshot inside the given rectangle.
@@ -108,9 +108,7 @@ public struct ScreenshotScribbler {
         }
         
         // Place the screenshot above the caption
-        let imageArea = topArea
-        let imageAtTopEdgeOfArea = false
-        drawImage(screenshot, in: imageArea, atTopEdge: imageAtTopEdgeOfArea, context: context)
+        drawImage(screenshot, in: topArea, verticalAlignment: .bottom, context: context)
     }
     
     /// Draws the caption surrounded by two parts of the screenshot on top and bottom inside the given rectangle.
@@ -141,14 +139,21 @@ public struct ScreenshotScribbler {
         }
         
         // Place one half of the screenshot above the caption
-        let image1Area = topArea
-        let image1AtTopEdgeOfArea = false
-        drawImage(screenshot, in: image1Area, atTopEdge: image1AtTopEdgeOfArea, context: context)
+        drawImage(screenshot, in: topArea, verticalAlignment: .bottom, context: context)
         
         // Place the other half of the screenshot below the caption
-        let image2Area = bottomArea
-        let image2AtTopEdgeOfArea = true
-        drawImage(screenshot, in: image2Area, atTopEdge: image2AtTopEdgeOfArea, context: context)
+        drawImage(screenshot, in: bottomArea, verticalAlignment: .top, context: context)
+    }
+    
+    /// Draws the screenshot centered inside the given rectangle, omitting any caption.
+    ///
+    /// - Parameters:
+    ///   - rect: The rectangle to cover with caption and screenshot.
+    ///   - screenshot: The screenshot to draw.
+    ///   - context: The graphics context.
+    ///
+    private func drawLayoutScreenshotOnly(in rect: CGRect, screenshot: CGImage, context: CGContext) {
+        drawImage(screenshot, in: rect, verticalAlignment: .middle, context: context)
     }
     
     /// Draws the given rectancle in given color.
@@ -169,16 +174,16 @@ public struct ScreenshotScribbler {
         context.restoreGState()
     }
     
-    /// Draws the given image in reduced size aligned to the top or bottom edge of the given area,
+    /// Draws the given image in reduced size, aligned to the top or bottom edge of the given area or centered in the middle,
     /// including an optional shadow and optionally clipped to rounded corners.
     ///
     /// - Parameters:
     ///   - image: The image to draw.
     ///   - area: The area to use.
-    ///   - atTopEdge: true if image top edge shall be aligned to top edge of area; false for bottom alignment
+    ///   - verticalAlignment: The vertical alignment of the image inside the area.
     ///   - context: The graphics context.
     ///
-    private func drawImage(_ image: CGImage, in area: CGRect, atTopEdge: Bool, context: CGContext) {
+    private func drawImage(_ image: CGImage, in area: CGRect, verticalAlignment: VerticalAlignment, context: CGContext) {
         
         // Reduce image size
         let reducedWidth = Double(image.width) * self.layout.screenshotSizeFactor
@@ -191,12 +196,15 @@ public struct ScreenshotScribbler {
         let centerX = area.width / 2
         let imagePosX = centerX - (reducedWidth / 2)
         
-        // Align the top edge of the image to the top edge of the area; otherwise bottom to bottom
+        // Align the image vertically inside the area
         let imagePosY: CGFloat
-        if atTopEdge {
+        switch verticalAlignment {
+        case .top:
             imagePosY = area.maxY - reducedHeight - shadowSize
-        } else {
+        case .bottom:
             imagePosY = area.minY + shadowSize
+        case .middle:
+            imagePosY = area.minY + ((area.height - reducedHeight) / 2)
         }
         
         // Prepare the original image rect to draw and one with clipped rounded corners

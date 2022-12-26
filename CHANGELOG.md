@@ -4,6 +4,10 @@
 
 <!-- After release: *No changes yet.* -->
 
+### Added
+
+- New layout type "screenshot-only" that enables to render a screenshot without a caption. The screenshot is centered inside the original image at the desired size factor and may be decorated with a shadow and background as usual.
+
 ### Changed
 
 - The caption parameter is now optional, in order to support the "screenshot-only" layout. This enables to use the other layouts without a caption, too. Note that the caption area is still reserved unless the "caption-size-factor" is reduced accordingly.

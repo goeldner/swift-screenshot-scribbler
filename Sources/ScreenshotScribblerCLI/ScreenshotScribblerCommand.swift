@@ -43,7 +43,7 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         @Option(name: .customLong("output"), help: "The output image file to write. (Required)")
         var outputFile: String
         
-        @Option(name: .customLong("layout"), help: "Arrangement of the caption and screenshot. (Default: \"\(LayoutType.captionBeforeScreenshot.rawValue)\"; Options: \"\(LayoutType.captionAfterScreenshot.rawValue)\", \"\(LayoutType.captionBetweenScreenshots.rawValue)\")", transform: transformLayoutType)
+        @Option(name: .customLong("layout"), help: "Arrangement of the caption and screenshot. (Default: \"\(LayoutType.captionBeforeScreenshot.rawValue)\"; Options: \"\(LayoutType.captionAfterScreenshot.rawValue)\", \"\(LayoutType.captionBetweenScreenshots.rawValue)\", \"\(LayoutType.screenshotOnly.rawValue)\")", transform: transformLayoutType)
         var layoutType: LayoutType?
         
     }
@@ -183,6 +183,8 @@ struct ScreenshotScribblerCommand: ParsableCommand {
             return .captionAfterScreenshot
         } else if string == LayoutType.captionBetweenScreenshots.rawValue {
             return .captionBetweenScreenshots
+        } else if string == LayoutType.screenshotOnly.rawValue {
+            return .screenshotOnly
         } else {
             throw RuntimeError("Unsupported layout type: \(string)")
         }
