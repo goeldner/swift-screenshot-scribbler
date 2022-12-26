@@ -11,17 +11,17 @@ import UniformTypeIdentifiers
 public struct ScreenshotScribbler {
 
     private let screenshot: Data
-    private let caption: String
+    private let caption: String?
     private let layout: LayoutConfig
 
     /// Initializes the screenshot scribbler with a screenshot image and caption.
     ///
     /// - Parameters:
     ///   - screenshot: The screenshot image in PNG data format.
-    ///   - caption: The caption to display next to the screenshot.
+    ///   - caption: The caption to display next to the screenshot (optional).
     ///   - layout: The layout configuration (optional).
     ///
-    public init(screenshot: Data, caption: String, layout: LayoutConfig = LayoutConfig()) {
+    public init(screenshot: Data, caption: String?, layout: LayoutConfig = LayoutConfig()) {
         self.screenshot = screenshot
         self.caption = caption
         self.layout = layout
@@ -75,9 +75,11 @@ public struct ScreenshotScribbler {
         let (topArea, bottomArea) = rect.divided(atDistance: textAreaHeight, from: .maxYEdge)
         
         // Place the caption centered inside the text area, with margin
-        let textAreaMargin = (rect.width - (rect.width * self.layout.screenshotSizeFactor)) / 2
-        let textArea = topArea.insetBy(dx: textAreaMargin, dy: 0)
-        drawText(caption, in: textArea, context: context)
+        if let caption {
+            let textAreaMargin = (rect.width - (rect.width * self.layout.screenshotSizeFactor)) / 2
+            let textArea = topArea.insetBy(dx: textAreaMargin, dy: 0)
+            drawText(caption, in: textArea, context: context)
+        }
         
         // Place the screenshot below the caption
         let imageArea = bottomArea
@@ -99,9 +101,11 @@ public struct ScreenshotScribbler {
         let (topArea, bottomArea) = rect.divided(atDistance: rect.height - textAreaHeight, from: .maxYEdge)
         
         // Place the caption centered inside the text area, with margin
-        let textAreaMargin = (rect.width - (rect.width * self.layout.screenshotSizeFactor)) / 2
-        let textArea = bottomArea.insetBy(dx: textAreaMargin, dy: 0)
-        drawText(caption, in: textArea, context: context)
+        if let caption {
+            let textAreaMargin = (rect.width - (rect.width * self.layout.screenshotSizeFactor)) / 2
+            let textArea = bottomArea.insetBy(dx: textAreaMargin, dy: 0)
+            drawText(caption, in: textArea, context: context)
+        }
         
         // Place the screenshot above the caption
         let imageArea = topArea
@@ -130,9 +134,11 @@ public struct ScreenshotScribbler {
         let (middleArea, bottomArea) = remainingRect.divided(atDistance: textAreaHeight, from: .maxYEdge)
         
         // Place the caption centered inside the text area, with margin
-        let textAreaMargin = (rect.width - (rect.width * self.layout.screenshotSizeFactor)) / 2
-        let textArea = middleArea.insetBy(dx: textAreaMargin, dy: 0)
-        drawText(caption, in: textArea, context: context)
+        if let caption {
+            let textAreaMargin = (rect.width - (rect.width * self.layout.screenshotSizeFactor)) / 2
+            let textArea = middleArea.insetBy(dx: textAreaMargin, dy: 0)
+            drawText(caption, in: textArea, context: context)
+        }
         
         // Place one half of the screenshot above the caption
         let image1Area = topArea

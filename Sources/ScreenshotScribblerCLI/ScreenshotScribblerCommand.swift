@@ -34,13 +34,13 @@ struct ScreenshotScribblerCommand: ParsableCommand {
 
     struct BasicOptions: ParsableCommand {
         
-        @Option(name: .long, help: "The caption to scribble.")
-        var caption: String
+        @Option(name: .long, help: "The caption to scribble. (Optional)")
+        var caption: String?
         
-        @Option(name: .customLong("screenshot"), help: "The screenshot image file to read.")
+        @Option(name: .customLong("screenshot"), help: "The screenshot image file to read. (Required)")
         var screenshotFile: String
         
-        @Option(name: .customLong("output"), help: "The output image file to write.")
+        @Option(name: .customLong("output"), help: "The output image file to write. (Required)")
         var outputFile: String
         
         @Option(name: .customLong("layout"), help: "Arrangement of the caption and screenshot. (Default: \"\(LayoutType.captionBeforeScreenshot.rawValue)\"; Options: \"\(LayoutType.captionAfterScreenshot.rawValue)\", \"\(LayoutType.captionBetweenScreenshots.rawValue)\")", transform: transformLayoutType)
