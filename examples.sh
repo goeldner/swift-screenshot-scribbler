@@ -48,7 +48,14 @@ swift run scrscr \
     --layout "caption-between-screenshots" \
     --background-color "#C0FFEE" \
     --caption-alignment "left"
-    
+
+# Layout: screenshot-only
+swift run scrscr \
+    --screenshot Examples/example-input.png \
+    --output Examples/example-output-screenshot-only.png \
+    --layout "screenshot-only" \
+    --background-color "#C0FFEE"
+
 # Smaller caption area and fully visible screenshot with dark background
 swift run scrscr \
     --caption "Dark example with full screenshot" \
