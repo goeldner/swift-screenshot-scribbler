@@ -5,7 +5,6 @@
 import Foundation
 import CoreGraphics
 import CoreText
-import ImageIO
 import UniformTypeIdentifiers
 
 public struct ScreenshotScribbler {
@@ -17,7 +16,7 @@ public struct ScreenshotScribbler {
     /// Initializes the screenshot scribbler with a screenshot image and caption.
     ///
     /// - Parameters:
-    ///   - screenshot: The screenshot image in PNG data format.
+    ///   - screenshot: The screenshot in PNG or JPEG format.
     ///   - caption: The caption to display next to the screenshot (optional).
     ///   - layout: The layout configuration (optional).
     ///
@@ -33,33 +32,29 @@ public struct ScreenshotScribbler {
     ///
     public func generate() throws -> Data {
         
-        // Read the input PNG image data
-        let cgImage = try createImage(fromPNG: self.screenshot)
-        
-        // Create graphics context with same size as input PNG
-        let colorSpace = cgImage.colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB)!
-        guard let context = CGContext(data: nil, width: cgImage.width, height: cgImage.height, bitsPerComponent: cgImage.bitsPerComponent, bytesPerRow: cgImage.bytesPerRow, space: colorSpace, bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else {
-            throw RuntimeError("Error initializing CGContext")
-        }
+        // Read the input image and create a graphics context with same size
+        let image = try self.screenshot.createCGImage()
+        let context = try image.createCGContext()
         
         // Calculate total area and cover it with a background color
-        let totalArea = CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height)
+        let totalArea = CGRect(x: 0, y: 0, width: image.width, height: image.height)
         drawRect(totalArea, color: self.layout.backgroundColor, context: context)
         
         // Perform further layout specific drawing
         switch self.layout.layoutType {
         case .captionBeforeScreenshot:
-            drawLayoutCaptionBeforeScreenshot(in: totalArea, screenshot: cgImage, context: context)
+            drawLayoutCaptionBeforeScreenshot(in: totalArea, screenshot: image, context: context)
         case .captionAfterScreenshot:
-            drawLayoutCaptionAfterScreenshot(in: totalArea, screenshot: cgImage, context: context)
+            drawLayoutCaptionAfterScreenshot(in: totalArea, screenshot: image, context: context)
         case .captionBetweenScreenshots:
-            drawLayoutCaptionBetweenScreenshots(in: totalArea, screenshot: cgImage, context: context)
+            drawLayoutCaptionBetweenScreenshots(in: totalArea, screenshot: image, context: context)
         case .screenshotOnly:
-            drawLayoutScreenshotOnly(in: totalArea, screenshot: cgImage, context: context)
+            drawLayoutScreenshotOnly(in: totalArea, screenshot: image, context: context)
         }
         
         // Generate output PNG
-        let outputImageData = try createPNG(context)
+        let outputImage = try context.createCGImage()
+        let outputImageData = try outputImage.encode(encoding: .png)
         return outputImageData
     }
     
@@ -324,47 +319,6 @@ public struct ScreenshotScribbler {
             
             return ctParagraphStyle
         }
-    }
-    
-    /// Creates a CoreGraphics image based on the given PNG data.
-    ///
-    /// - Parameter data: The data in PNG format.
-    /// - Returns: The CoreGraphics image.
-    /// - Throws: `RuntimeError` if one of the transformation steps fails.
-    ///
-    private func createImage(fromPNG data: Data) throws -> CGImage {
-        guard let cgDataProvider = CGDataProvider(data: data as CFData) else {
-            throw RuntimeError("Error initializing CGDataProvider")
-        }
-        guard let cgImage = CGImage(pngDataProviderSource: cgDataProvider, decode: nil, shouldInterpolate: true, intent: .defaultIntent) else {
-            throw RuntimeError("Error initializing CGImage")
-        }
-        return cgImage
-    }
-    
-    /// Generates a CoreGraphics image of the given graphics context and transforms it into PNG data.
-    ///
-    /// - Parameter context: The graphics context.
-    /// - Returns: The PNG data.
-    /// - Throws: `RuntimeError` if one of the transformation steps fails.
-    ///
-    private func createPNG(_ context: CGContext) throws -> Data {
-        guard let outputImage = context.makeImage() else {
-            throw RuntimeError("Error: CGContext.makeImage()")
-        }
-        guard let unlimitedMutableData = CFDataCreateMutable(nil, 0) else {
-            throw RuntimeError("Error: CFDataCreateMutable")
-        }
-        let outputType = UTType.png.identifier as CFString
-        guard let outputImageDestination = CGImageDestinationCreateWithData(unlimitedMutableData, outputType, 1, nil) else {
-            throw RuntimeError("Error: CGImageDestinationCreateWithData")
-        }
-        CGImageDestinationAddImage(outputImageDestination, outputImage, nil)
-        guard CGImageDestinationFinalize(outputImageDestination) else {
-            throw RuntimeError("Error: CGImageDestinationFinalize")
-        }
-        let outputImageData = unlimitedMutableData as Data
-        return outputImageData
     }
     
     /// Guesses the scaling factor (e.g. @2x, @3x) based on the pixel size of the image.
