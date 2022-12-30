@@ -1,16 +1,22 @@
 #!/bin/bash
 
-# Default 1: all optional options ommitted
+# Default 1: all optional options omitted; JPEG input
 swift run scrscr \
-    --caption "Example output with default options and long caption" \
-    --screenshot Examples/example-input.png \
+    --caption "Example with small JPEG image as input" \
+    --screenshot Examples/example-input.jpg \
     --output Examples/example-output-default-1.png
 
-# Default 2: all options explicitly defined
+# Default 2: all optional options omitted; PNG input
 swift run scrscr \
     --caption "Example output with default options and long caption" \
     --screenshot Examples/example-input.png \
-    --output Examples/example-output-default-2.png \
+    --output Examples/example-output-default-2.png
+
+# Default 3: all options explicitly defined; PNG input
+swift run scrscr \
+    --caption "Example output with default options and long caption" \
+    --screenshot Examples/example-input.png \
+    --output Examples/example-output-default-3.png \
     --layout "caption-before-screenshot" \
     --background-color "#FFFFFF" \
     --caption-size-factor 0.25 \
