@@ -38,7 +38,8 @@ public struct ScreenshotScribbler {
         
         // Calculate total area and cover it with a background color
         let totalArea = CGRect(x: 0, y: 0, width: image.width, height: image.height)
-        drawRect(totalArea, color: self.layout.backgroundColor, context: context)
+        let totalAreaRendering = RectangleRendering(fillColor: self.layout.backgroundColor)
+        totalAreaRendering.draw(in: totalArea, context: context)
         
         // Perform further layout specific drawing
         switch self.layout.layoutType {
@@ -150,25 +151,7 @@ public struct ScreenshotScribbler {
     private func drawLayoutScreenshotOnly(in rect: CGRect, screenshot: CGImage, context: CGContext) {
         drawImage(screenshot, in: rect, verticalAlignment: .middle, context: context)
     }
-    
-    /// Draws the given rectancle in given color.
-    ///
-    /// - Parameters:
-    ///   - rect: The rectangle to draw.
-    ///   - color: The color to use.
-    ///   - context: The graphics context.
-    ///
-    private func drawRect(_ rect: CGRect, color: CGColor, context: CGContext) {
-        context.saveGState()
-        
-        context.addRect(rect)
-        context.setFillColor(color)
-        context.setStrokeColor(color)
-        context.drawPath(using: .fillStroke)
-        
-        context.restoreGState()
-    }
-    
+
     /// Draws the given image in reduced size, aligned to the top or bottom edge of the given area or centered in the middle,
     /// including an optional shadow and optionally clipped to rounded corners.
     ///
@@ -184,8 +167,10 @@ public struct ScreenshotScribbler {
         let reducedWidth = Double(image.width) * self.layout.screenshotSizeFactor
         let reducedHeight = Double(image.height) * self.layout.screenshotSizeFactor
         let reducedSize = CGSize(width: reducedWidth, height: reducedHeight)
-        let shadowSize = self.layout.screenshotShadowSize * CGFloat(deviceScale(context.width))
         let cornerRadius = self.layout.screenshotCornerRadius * CGFloat(deviceScale(context.width))
+        let shadowSize = self.layout.screenshotShadowSize * CGFloat(deviceScale(context.width))
+        let shadowColor = self.layout.screenshotShadowColor
+        let borderColor = self.layout.backgroundColor
         
         // Center the image horizontally
         let centerX = area.width / 2
@@ -202,36 +187,23 @@ public struct ScreenshotScribbler {
             imagePosY = area.minY + ((area.height - reducedHeight) / 2)
         }
         
-        // Prepare the original image rect to draw and one with clipped rounded corners
+        // Prepare the original image rect and a rendering definition that considers the rounded corners
         let imageRect = CGRect(x: imagePosX, y: imagePosY, width: reducedSize.width, height: reducedSize.height)
-        let imageRectWithCornerRadius = CGPath(roundedRect: imageRect, cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
-        let shadowRectWithCornerRadius = CGPath(roundedRect: imageRect.insetBy(dx: 1, dy: 1), cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
+        let imageRectRendering = RectangleRendering(cornerRadius: cornerRadius)
         
-        // Draw the shadow first behind the image, otherwise it would be clipped away, if drawn with the clipped image
-        if shadowSize > 0 {
-            context.saveGState()
-            context.beginPath()
-            context.addPath(shadowRectWithCornerRadius)
-            context.closePath()
-            context.setShadow(offset: CGSize(width: 0, height: 0), blur: shadowSize, color: self.layout.screenshotShadowColor)
-            context.setFillColor(self.layout.backgroundColor)
-            context.fillPath()
-            context.restoreGState()
-        }
+        // Prepare another rect for applying the shadow, also considering the rounded corners.
+        // This rect is slightly smaller to avoid artifacts at the screenshot edges.
+        let shadowRect = imageRect.insetBy(dx: 1, dy: 1)
+        let shadowRectRendering = RectangleRendering(fillColor: borderColor, cornerRadius: cornerRadius, shadowSize: shadowSize, shadowColor: shadowColor)
         
+        // Draw the shadow in a first pass behind the image.
+        // Otherwise it would be clipped away, if the shadow would be drawn with the clipped image.
+        shadowRectRendering.draw(in: shadowRect, context: context)
+        
+        // Draw image to the context, that is optionally clipped to the rounded corners of the image
         context.saveGState()
-        
-        // Clip the context to the rounded corners of the image
-        if cornerRadius > 0 {
-            context.beginPath()
-            context.addPath(imageRectWithCornerRadius)
-            context.closePath()
-            context.clip()
-        }
-        
-        // Draw image, optionally clipped to range defined above
+        imageRectRendering.clip(to: imageRect, context: context)
         context.draw(image, in: imageRect)
-        
         context.restoreGState()
     }
     
