@@ -27,8 +27,10 @@ swift run scrscr \
     --caption-font-size 32 \
     --screenshot-size-factor 0.85 \
     --screenshot-corner-radius 5 \
+    --screenshot-shadow-size 5 \
     --screenshot-shadow-color "#000000" \
-    --screenshot-shadow-size 5
+    --screenshot-border-size 0 \
+    --screenshot-border-color "#000000"
 
 # Layout: caption-before-screenshot
 swift run scrscr \

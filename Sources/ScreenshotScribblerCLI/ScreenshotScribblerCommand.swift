@@ -91,6 +91,12 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         @Option(name: .long, help: "Color of the shadow behind the screenshot. (Default: \"#000000\" (black))", transform: transformColor)
         var screenshotShadowColor: CGColor?
 
+        @Option(name: .long, help: "Size of the border around the screenshot. (Default: 0)")
+        var screenshotBorderSize: Double?
+        
+        @Option(name: .long, help: "Color of the border around the screenshot. (Default: \"#000000\" (black))", transform: transformColor)
+        var screenshotBorderColor: CGColor?
+        
     }
     
     func run() throws {
@@ -113,8 +119,8 @@ struct ScreenshotScribblerCommand: ParsableCommand {
             print("Generating output image...")
         }
         let caption = self.basicOptions.caption
-        let scribbler = ScreenshotScribbler(screenshot: screenshotData, caption: caption, layout: layoutConfig)
-        let output = try scribbler.generate()
+        let scrscr = ScreenshotScribbler(screenshot: screenshotData, caption: caption, layout: layoutConfig)
+        let output = try scrscr.generate()
 
         // Write data to output file
         print("Output: \(self.basicOptions.outputFile)")
@@ -172,6 +178,12 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         }
         if let screenshotShadowColor = self.screenshotStyleOptions.screenshotShadowColor {
             layout.screenshotShadowColor = screenshotShadowColor
+        }
+        if let screenshotBorderSize = self.screenshotStyleOptions.screenshotBorderSize {
+            layout.screenshotBorderSize = screenshotBorderSize
+        }
+        if let screenshotBorderColor = self.screenshotStyleOptions.screenshotBorderColor {
+            layout.screenshotBorderColor = screenshotBorderColor
         }
         return layout
     }

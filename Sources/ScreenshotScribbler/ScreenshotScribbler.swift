@@ -170,7 +170,8 @@ public struct ScreenshotScribbler {
         let cornerRadius = self.layout.screenshotCornerRadius * CGFloat(deviceScale(context.width))
         let shadowSize = self.layout.screenshotShadowSize * CGFloat(deviceScale(context.width))
         let shadowColor = self.layout.screenshotShadowColor
-        let borderColor = self.layout.backgroundColor
+        let borderSize = self.layout.screenshotBorderSize * CGFloat(deviceScale(context.width))
+        let borderColor = self.layout.screenshotBorderColor
         
         // Center the image horizontally
         let centerX = area.width / 2
@@ -180,9 +181,9 @@ public struct ScreenshotScribbler {
         let imagePosY: CGFloat
         switch verticalAlignment {
         case .top:
-            imagePosY = area.maxY - reducedHeight - shadowSize
+            imagePosY = area.maxY - reducedHeight - shadowSize - borderSize
         case .bottom:
-            imagePosY = area.minY + shadowSize
+            imagePosY = area.minY + shadowSize + borderSize
         case .middle:
             imagePosY = area.minY + ((area.height - reducedHeight) / 2)
         }
@@ -191,14 +192,16 @@ public struct ScreenshotScribbler {
         let imageRect = CGRect(x: imagePosX, y: imagePosY, width: reducedSize.width, height: reducedSize.height)
         let imageRectRendering = RectangleRendering(cornerRadius: cornerRadius)
         
-        // Prepare another rect for applying the shadow, also considering the rounded corners.
-        // This rect is slightly smaller to avoid artifacts at the screenshot edges.
-        let shadowRect = imageRect.insetBy(dx: 1, dy: 1)
-        let shadowRectRendering = RectangleRendering(fillColor: borderColor, cornerRadius: cornerRadius, shadowSize: shadowSize, shadowColor: shadowColor)
+        // Prepare another rect for applying the border and shadow, also considering the rounded corners.
+        // If only a shadow is rendered, this rect is slightly smaller to avoid artifacts at the screenshot edges.
+        let borderRelatedCornerRadius = cornerRadius + borderSize
+        let borderOrShadowInset = borderSize > 0 ? -borderSize : 1
+        let borderAndShadowRect = imageRect.insetBy(dx: borderOrShadowInset, dy: borderOrShadowInset)
+        let borderAndShadowRectRendering = RectangleRendering(fillColor: borderColor, cornerRadius: borderRelatedCornerRadius, shadowSize: shadowSize, shadowColor: shadowColor)
         
-        // Draw the shadow in a first pass behind the image.
-        // Otherwise it would be clipped away, if the shadow would be drawn with the clipped image.
-        shadowRectRendering.draw(in: shadowRect, context: context)
+        // Draw the border and shadow in a first pass behind the image.
+        // Otherwise it would be clipped away, if drawn inside the clipped image range.
+        borderAndShadowRectRendering.draw(in: borderAndShadowRect, context: context)
         
         // Draw image to the context, that is optionally clipped to the rounded corners of the image
         context.saveGState()

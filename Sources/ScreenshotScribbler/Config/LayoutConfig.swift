@@ -45,6 +45,12 @@ public struct LayoutConfig {
     /// Color of the shadow behind the screenshot. (Default: black)
     public var screenshotShadowColor: CGColor = black
     
+    /// Size of the border around the screenshot. (Default: 0)
+    public var screenshotBorderSize: CGFloat = 0
+    
+    /// Color of the border around the screenshot. (Default: black)
+    public var screenshotBorderColor: CGColor = black
+    
     /// White color, without using the CGColor.white shortcut, which is not available on iOS.
     private static let white = CGColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
     

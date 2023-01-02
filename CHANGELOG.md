@@ -6,8 +6,9 @@
 
 ### Added
 
-- New layout type "screenshot-only" that enables to render a screenshot without a caption. The screenshot is centered inside the original image at the desired size factor and may be decorated with a shadow and background as usual.
-- Now also screenshots in JPEG format are supported, additionally to PNG. Note that the output is still always in PNG format.
+- Draw a colored border around the screenshot by using the new options "screenshot-border-size" and "screenshot-border-color".
+- New layout type "screenshot-only" that enables to render a screenshot without a caption. The screenshot is centered inside the original image at the desired size factor and may be decorated with a background, border and shadow as usual.
+- Support screenshots in JPEG format, additionally to PNG. Note that the output is still always in PNG format.
 
 ### Changed
 
