@@ -145,7 +145,7 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         }
         // Background style options
         if let backgroundColor = self.backgroundStyleOptions.backgroundColor {
-            layout.backgroundColor = backgroundColor
+            layout.backgroundColor = .solid(color: backgroundColor)
         }
         // Caption style options
         if let captionSizeFactor = self.captionStyleOptions.captionSizeFactor {
@@ -183,7 +183,7 @@ struct ScreenshotScribblerCommand: ParsableCommand {
             layout.screenshotBorderSize = screenshotBorderSize
         }
         if let screenshotBorderColor = self.screenshotStyleOptions.screenshotBorderColor {
-            layout.screenshotBorderColor = screenshotBorderColor
+            layout.screenshotBorderColor = .solid(color: screenshotBorderColor)
         }
         return layout
     }

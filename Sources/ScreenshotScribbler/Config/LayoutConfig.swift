@@ -13,7 +13,7 @@ public struct LayoutConfig {
     public var layoutType: LayoutType = .captionBeforeScreenshot
     
     /// Color which covers the whole background. (Default: white)
-    public var backgroundColor: CGColor = white
+    public var backgroundColor: ColorType = .solid(color: DefaultColor.CSS.white)
     
     /// Percentage of the caption area height relative to the total height of the output image. (Default: 0.25 (25%))
     public var captionSizeFactor: CGFloat = 0.25
@@ -22,7 +22,7 @@ public struct LayoutConfig {
     public var captionAlignment: CTTextAlignment = .center
     
     /// Color of the caption. (Default: black)
-    public var captionColor: CGColor = black
+    public var captionColor: CGColor = DefaultColor.CSS.black
     
     /// Font family name of the caption. (Default: "SF Compact")
     public var captionFontName: String = "SF Compact"
@@ -43,19 +43,13 @@ public struct LayoutConfig {
     public var screenshotShadowSize: CGFloat = 5
     
     /// Color of the shadow behind the screenshot. (Default: black)
-    public var screenshotShadowColor: CGColor = black
+    public var screenshotShadowColor: CGColor = DefaultColor.CSS.black
     
     /// Size of the border around the screenshot. (Default: 0)
     public var screenshotBorderSize: CGFloat = 0
     
     /// Color of the border around the screenshot. (Default: black)
-    public var screenshotBorderColor: CGColor = black
-    
-    /// White color, without using the CGColor.white shortcut, which is not available on iOS.
-    private static let white = CGColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
-    
-    /// Black color, without using the CGColor.black shortcut, which is not available on iOS.
-    private static let black = CGColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
+    public var screenshotBorderColor: ColorType = .solid(color: DefaultColor.CSS.black)
     
     public init() {
     }
