@@ -7,6 +7,10 @@ import CoreGraphics
 import CoreText
 import UniformTypeIdentifiers
 
+///
+/// The main class of this library that coordinates the screenshot scribbling and
+/// is invoked using the `generate` function as entry point.
+/// 
 public struct ScreenshotScribbler {
 
     private let screenshot: Data

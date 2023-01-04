@@ -15,13 +15,21 @@ You can also use the `install.sh` script.
 
 ## Usage
 
-By default the tool places the caption on top and the screenshot on bottom of the image. It uses a white background, black caption and a subtle shadow behind the screenshot:
+By default, the tool places the caption on top and the screenshot on bottom of the image. It uses a white background, black caption and a subtle shadow behind the screenshot.
+
+Following example uses the default settings:
 
 ```
-$ scrscr --caption "Scribble this caption" --screenshot example-input.png --output example-output-default.png
+$ scrscr --caption "Scribble this caption" --screenshot example-input.png --output example-output.png
 ```
 
-The layout may be customized with command line options. Following example defines all possible options including their default values:
+The layout may be customized by using several command line options. The `--help` describes all options:
+
+```
+$ scrscr --help
+```
+
+Following example defines all possible options including their default values:
 
 ```
 $ scrscr \
@@ -46,6 +54,30 @@ $ scrscr \
 ```
 
 Please also have a look at the `examples.sh` script and `Examples` folder for more usage scenarios.
+
+### Colors and gradients
+
+Defining colors on the command line is inspired by a subset of the widely known CSS syntax.
+
+A single color may be defined in hexadecimal syntax as follows, where each two digits define the red, green and blue part of the color:
+
+```
+--background-color "#0099FF"
+```
+
+Some options also support gradients, i.e. the `--background-color` and `--screenshot-border-color`. For gradients, at least two colors have to be defined. The colors are rendered from top to bottom.
+
+Linear gradients:
+
+```
+--background-color "linear-gradient(#FF0000, #FFA500, #FFFF00, #00FF00, #0000FF, #FF00FF)"
+```
+
+Radial gradients:
+
+```
+--background-color "radial-gradient(#FF0000, #0000FF)"
+```
 
 ## About
 

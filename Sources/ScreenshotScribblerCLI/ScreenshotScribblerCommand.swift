@@ -8,6 +8,9 @@ import CoreGraphics
 import CoreText
 import ScreenshotScribbler
 
+///
+/// Command line interface of the `ScreenshotScribbler` library.
+///
 @main
 struct ScreenshotScribblerCommand: ParsableCommand {
 
@@ -50,8 +53,8 @@ struct ScreenshotScribblerCommand: ParsableCommand {
     
     struct BackgroundStyleOptions: ParsableCommand {
         
-        @Option(name: .long, help: "Color which covers the whole background. (Default: \"#FFFFFF\" (white))", transform: transformColor)
-        var backgroundColor: CGColor?
+        @Option(name: .long, help: "Color which covers the whole background. (Default: \"#FFFFFF\" (white); Supports gradients)", transform: transformColorType)
+        var backgroundColor: ColorType?
         
     }
     
@@ -94,8 +97,8 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         @Option(name: .long, help: "Size of the border around the screenshot. (Default: 0)")
         var screenshotBorderSize: Double?
         
-        @Option(name: .long, help: "Color of the border around the screenshot. (Default: \"#000000\" (black))", transform: transformColor)
-        var screenshotBorderColor: CGColor?
+        @Option(name: .long, help: "Color of the border around the screenshot. (Default: \"#000000\" (black); Supports gradients)", transform: transformColorType)
+        var screenshotBorderColor: ColorType?
         
     }
     
@@ -145,7 +148,7 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         }
         // Background style options
         if let backgroundColor = self.backgroundStyleOptions.backgroundColor {
-            layout.backgroundColor = .solid(color: backgroundColor)
+            layout.backgroundColor = backgroundColor
         }
         // Caption style options
         if let captionSizeFactor = self.captionStyleOptions.captionSizeFactor {
@@ -183,7 +186,7 @@ struct ScreenshotScribblerCommand: ParsableCommand {
             layout.screenshotBorderSize = screenshotBorderSize
         }
         if let screenshotBorderColor = self.screenshotStyleOptions.screenshotBorderColor {
-            layout.screenshotBorderColor = .solid(color: screenshotBorderColor)
+            layout.screenshotBorderColor = screenshotBorderColor
         }
         return layout
     }
@@ -216,27 +219,23 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         }
     }
     
-    private static func transformColor(_ string: String) throws -> CGColor {
-        let rgb = try parseRGB(string)
-        let r = CGFloat(rgb.r) / 255
-        let g = CGFloat(rgb.g) / 255
-        let b = CGFloat(rgb.b) / 255
-        return CGColor(red: r, green: g, blue: b, alpha: 1.0)
+    private static func transformColorType(_ string: String) throws -> ColorType {
+        let colorParser = ColorParser()
+        if colorParser.isHexColor(string) {
+            return .solid(color: try colorParser.parseHexColor(string))
+        }
+        if colorParser.isGradient(string) {
+            return try colorParser.parseGradient(string)
+        }
+        throw RuntimeError("Unsupported color format: \(string)")
     }
     
-    private static func parseRGB(_ string: String) throws -> (r: Int, g: Int, b: Int) {
-        let regex = try NSRegularExpression(pattern: "\\#([A-Fa-f0-9]{2})([A-Fa-f0-9]{2})([A-Fa-f0-9]{2})")
-        let match = regex.firstMatch(in: string, options: [], range: NSRange(location: 0, length: string.count))
-        guard let match else {
-            throw RuntimeError("Unsupported RGB hex string format. Required: #??????")
+    private static func transformColor(_ string: String) throws -> CGColor {
+        let colorParser = ColorParser()
+        if colorParser.isHexColor(string) {
+            return try colorParser.parseHexColor(string)
         }
-        let nsString = string as NSString
-        let hexR = nsString.substring(with: match.range(at: 1))
-        let hexG = nsString.substring(with: match.range(at: 2))
-        let hexB = nsString.substring(with: match.range(at: 3))
-        let r = Int(hexR, radix: 16)!
-        let g = Int(hexG, radix: 16)!
-        let b = Int(hexB, radix: 16)!
-        return (r, g, b)
+        throw RuntimeError("Unsupported color format: \(string)")
     }
+    
 }
