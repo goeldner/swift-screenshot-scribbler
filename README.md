@@ -70,20 +70,24 @@ Examples of the four different layout types:
 
 <img
   src="https://github.com/goeldner/swift-screenshot-scribbler/blob/main/Examples/example-output-layout-caption-before-screenshot.png?raw=true"
-  alt="Layout: caption-before-screenshot" title="Layout: caption-before-screenshot"
-  width="160" style="margin-right: 20px; max-width: 160px">
+  alt="Layout: caption-before-screenshot"
+  title="Layout: caption-before-screenshot"
+  width="160"> &nbsp; 
 <img
   src="https://github.com/goeldner/swift-screenshot-scribbler/blob/main/Examples/example-output-layout-caption-after-screenshot.png?raw=true"
-  alt="Layout: caption-after-screenshot" title="Layout: caption-after-screenshot"
-  width="160" style="margin-right: 20px; max-width: 160px">
+  alt="Layout: caption-after-screenshot"
+  title="Layout: caption-after-screenshot"
+  width="160"> &nbsp; 
 <img
   src="https://github.com/goeldner/swift-screenshot-scribbler/blob/main/Examples/example-output-layout-caption-between-screenshots.png?raw=true"
-  alt="Layout: caption-between-screenshots" title="Layout: caption-between-screenshots"
-  width="160" style="margin-right: 20px; max-width: 160px">
+  alt="Layout: caption-between-screenshots"
+  title="Layout: caption-between-screenshots"
+  width="160"> &nbsp; 
 <img
   src="https://github.com/goeldner/swift-screenshot-scribbler/blob/main/Examples/example-output-layout-screenshot-only.png?raw=true"
-  alt="Layout: screenshot-only" title="Layout: screenshot-only"
-  width="160" style="margin-right: 20px; max-width: 160px">
+  alt="Layout: screenshot-only"
+  title="Layout: screenshot-only"
+  width="160">
 
 ### Colors and gradients
 
@@ -113,12 +117,14 @@ Examples of the two different gradient types:
 
 <img
   src="https://github.com/goeldner/swift-screenshot-scribbler/blob/main/Examples/example-output-gradient-linear-rainbow.png?raw=true"
-  alt="Gradient: linear-gradient" title="Gradient: linear-gradient"
-  width="160" style="margin-right: 20px; max-width: 160px">
+  alt="Gradient: linear-gradient"
+  title="Gradient: linear-gradient"
+  width="160"> &nbsp;
 <img
   src="https://github.com/goeldner/swift-screenshot-scribbler/blob/main/Examples/example-output-gradient-radial-red-blue.png?raw=true"
-  alt="Gradient: radial-gradient" title="Gradient: radial-gradient"
-  width="160" style="margin-right: 20px; max-width: 160px">
+  alt="Gradient: radial-gradient"
+  title="Gradient: radial-gradient"
+  width="160">
 
 ## About
 
