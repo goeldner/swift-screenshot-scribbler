@@ -185,9 +185,9 @@ public struct ScreenshotScribbler {
         let imagePosY: CGFloat
         switch verticalAlignment {
         case .top:
-            imagePosY = area.maxY - reducedHeight - shadowSize - borderSize
+            imagePosY = area.maxY - reducedHeight - borderSize
         case .bottom:
-            imagePosY = area.minY + shadowSize + borderSize
+            imagePosY = area.minY + borderSize
         case .middle:
             imagePosY = area.minY + ((area.height - reducedHeight) / 2)
         }
