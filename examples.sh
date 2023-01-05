@@ -84,10 +84,13 @@ swift run scrscr \
 
 # Gradient: Background with linear gradient in rainbow colors, screenshot surrounded by "white cloud" border
 swift run scrscr \
+    --caption "Linear gradient" \
     --screenshot Examples/example-input.png \
     --output Examples/example-output-gradient-linear-rainbow.png \
-    --layout "screenshot-only" \
+    --layout "caption-before-screenshot" \
     --background-color "linear-gradient(#FF0000,#FFA500,#FFFF00,#00FF00,#0000FF,#FF00FF)" \
+    --caption-size-factor 0.15 \
+    --caption-color "#FFFFFF" \
     --screenshot-size-factor 0.75 \
     --screenshot-shadow-size 15 \
     --screenshot-shadow-color "#FFFFFF" \
