@@ -36,7 +36,7 @@ swift run scrscr \
 swift run scrscr \
     --caption "Example with caption before screenshot" \
     --screenshot Examples/example-input.png \
-    --output Examples/example-output-caption-before-screenshot.png \
+    --output Examples/example-output-layout-caption-before-screenshot.png \
     --layout "caption-before-screenshot" \
     --background-color "#C0FFEE"
 
@@ -44,7 +44,7 @@ swift run scrscr \
 swift run scrscr \
     --caption "Example with caption after screenshot" \
     --screenshot Examples/example-input.png \
-    --output Examples/example-output-caption-after-screenshot.png \
+    --output Examples/example-output-layout-caption-after-screenshot.png \
     --layout "caption-after-screenshot" \
     --background-color "#C0FFEE"
 
@@ -52,7 +52,7 @@ swift run scrscr \
 swift run scrscr \
     --caption "Example with caption between both screenshot parts" \
     --screenshot Examples/example-input.png \
-    --output Examples/example-output-caption-between-screenshots.png \
+    --output Examples/example-output-layout-caption-between-screenshots.png \
     --layout "caption-between-screenshots" \
     --background-color "#C0FFEE" \
     --caption-alignment "left"
@@ -60,7 +60,7 @@ swift run scrscr \
 # Layout: screenshot-only
 swift run scrscr \
     --screenshot Examples/example-input.png \
-    --output Examples/example-output-screenshot-only.png \
+    --output Examples/example-output-layout-screenshot-only.png \
     --layout "screenshot-only" \
     --background-color "#C0FFEE"
 
