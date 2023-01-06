@@ -4,7 +4,6 @@
 
 import Foundation
 import CoreGraphics
-import CoreText
 
 /// Layout configuration
 public struct LayoutConfig {
@@ -19,7 +18,7 @@ public struct LayoutConfig {
     public var captionSizeFactor: CGFloat = 0.25
     
     /// Horizontal alignment of the caption. (Default: center)
-    public var captionAlignment: CTTextAlignment = .center
+    public var captionAlignment: HorizontalTextAlignment = .center
     
     /// Color of the caption. (Default: black)
     public var captionColor: CGColor = DefaultColor.CSS.black
@@ -51,6 +50,7 @@ public struct LayoutConfig {
     /// Color of the border around the screenshot. (Default: black)
     public var screenshotBorderColor: ColorType = .solid(color: DefaultColor.CSS.black)
     
+    /// Public initializer.
     public init() {
     }
 }

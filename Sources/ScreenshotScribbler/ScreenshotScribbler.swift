@@ -4,7 +4,6 @@
 
 import Foundation
 import CoreGraphics
-import CoreText
 import UniformTypeIdentifiers
 
 ///
@@ -178,18 +177,17 @@ public struct ScreenshotScribbler {
         let borderColor = self.layout.screenshotBorderColor
         
         // Center the image horizontally
-        let centerX = area.width / 2
-        let imagePosX = centerX - (reducedWidth / 2)
+        let imagePosX = area.midX - (reducedWidth / 2)
         
-        // Align the image vertically inside the area
+        // Align the image vertically
         let imagePosY: CGFloat
         switch verticalAlignment {
         case .top:
             imagePosY = area.maxY - reducedHeight - borderSize
+        case .middle:
+            imagePosY = area.midY - (reducedHeight / 2)
         case .bottom:
             imagePosY = area.minY + borderSize
-        case .middle:
-            imagePosY = area.minY + ((area.height - reducedHeight) / 2)
         }
         
         // Prepare the original image rect and a rendering definition that considers the rounded corners
@@ -208,13 +206,14 @@ public struct ScreenshotScribbler {
         borderAndShadowRectRendering.draw(in: borderAndShadowRect, context: context)
         
         // Draw image to the context, that is optionally clipped to the rounded corners of the image
+        let imageRendering = ImageRendering(image: image, scaling: .stretchFill)
         context.saveGState()
         imageRectRendering.clip(to: imageRect, context: context)
-        context.draw(image, in: imageRect)
+        imageRendering.draw(in: imageRect, context: context)
         context.restoreGState()
     }
     
-    /// Draws the given text horizontally and vertically centered inside the given area.
+    /// Draws the given text inside the given area.
     ///
     /// - Parameters:
     ///   - text: The text to draw.
@@ -222,82 +221,18 @@ public struct ScreenshotScribbler {
     ///   - context: The graphics context.
     ///
     private func drawText(_ text: String, in area: CGRect, context: CGContext) {
-        context.saveGState()
         
-        // Create the font
-        let fontColor = self.layout.captionColor
+        // Prepare the rendering attributes
+        let color = self.layout.captionColor
+        let fontName = self.layout.captionFontName
+        let fontStyle = self.layout.captionFontStyle
         let fontSize = self.layout.captionFontSize * deviceScale(context.width)
-        let font = createFont(name: self.layout.captionFontName, size: fontSize, style: self.layout.captionFontStyle)
+        let horizontalAlignment = self.layout.captionAlignment
+        let verticalAlignment = VerticalAlignment.middle
         
-        // Create a paragraph style with text alignment
-        let paragraphStyle = createParagraphStyle(alignment: self.layout.captionAlignment)
-        
-        // Create an attributed string with that font, color and paragraph settings
-        let attributes: [CFString : Any] = [
-            kCTFontAttributeName : font,
-            kCTForegroundColorAttributeName : fontColor,
-            kCTParagraphStyleAttributeName : paragraphStyle
-        ]
-        let attributedString = CFAttributedStringCreate(kCFAllocatorDefault, text as CFString, attributes as CFDictionary)!
-        
-        // Calculate the frame where the text will be drawn by inspecting its actual required size
-        // and shifting the frame accordingly, so that the text will be vertically centered inside the given area
-        let framesetter = CTFramesetterCreateWithAttributedString(attributedString)
-        let actualTextSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRangeMake(0, 0), nil, area.size, nil)
-        let textPosY = area.origin.y + (area.height / 2) - (actualTextSize.height / 2)
-        let path = CGMutablePath()
-        path.addRect(CGRect(x: area.origin.x, y: textPosY, width: area.width, height: actualTextSize.height))
-        
-        // Draw the text inside the calculated frame
-        let frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), path, nil)
-        CTFrameDraw(frame, context)
-        
-        context.restoreGState()
-    }
-    
-    /// Creates a CoreText font with given font family name, size and style by using CoreText APIs only.
-    ///
-    /// - Parameters:
-    ///   - name: Font family name.
-    ///   - size: Font size.
-    ///   - style: Font style, e.g. "Regular" or "Bold".
-    /// - Returns: The CoreText font.
-    ///
-    private func createFont(name: String, size: Int, style: String) -> CTFont {
-        
-        let ctFontAttributes: [CFString : Any] = [
-            kCTFontFamilyNameAttribute : name as CFString,
-            kCTFontStyleNameAttribute : style as CFString,
-            kCTFontSizeAttribute : CGFloat(size)
-        ]
-        
-        let ctFontDescriptor = CTFontDescriptorCreateWithAttributes(ctFontAttributes as CFDictionary)
-        let ctFont = CTFontCreateWithFontDescriptor(ctFontDescriptor, 0.0, nil)
-        
-        return ctFont
-    }
-    
-    /// Creates a CoreText paragraph style with given alignment by using CoreText APIs only.
-    ///
-    /// - Parameter alignment: The alignment.
-    /// - Returns: The CoreText paragraph style.
-    ///
-    private func createParagraphStyle(alignment: CTTextAlignment) -> CTParagraphStyle {
-        withUnsafePointer(to: alignment) { alignmentPointer in
-            
-            let ctParagraphAlignment: CTParagraphStyleSetting = CTParagraphStyleSetting(
-                spec: CTParagraphStyleSpecifier.alignment,
-                valueSize: MemoryLayout<CTTextAlignment>.size,
-                value: alignmentPointer)
-            
-            let ctParagraphSettings: [CTParagraphStyleSetting] = [
-                ctParagraphAlignment
-            ]
-            
-            let ctParagraphStyle = CTParagraphStyleCreate(ctParagraphSettings, ctParagraphSettings.count)
-            
-            return ctParagraphStyle
-        }
+        // Render the text
+        let textRendering = TextRendering(text: text, color: color, fontName: fontName, fontStyle: fontStyle, fontSize: fontSize, horizontalAlignment: horizontalAlignment, verticalAlignment: verticalAlignment)
+        textRendering.draw(in: area, context: context)
     }
     
     /// Guesses the scaling factor (e.g. @2x, @3x) based on the pixel size of the image.

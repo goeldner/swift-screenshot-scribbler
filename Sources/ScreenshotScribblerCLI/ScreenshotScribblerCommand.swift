@@ -5,7 +5,6 @@
 import Foundation
 import ArgumentParser
 import CoreGraphics
-import CoreText
 import ScreenshotScribbler
 
 ///
@@ -64,7 +63,7 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         var captionSizeFactor: Double?
         
         @Option(name: .long, help: "Horizontal alignment of the caption. (Default: \"center\"; Options: \"left\", \"right\", \"justified\")", transform: transformTextAlignment)
-        var captionAlignment: CTTextAlignment?
+        var captionAlignment: HorizontalTextAlignment?
         
         @Option(name: .long, help: "Color of the caption. (Default: \"#000000\" (black))", transform: transformColor)
         var captionColor: CGColor?
@@ -205,7 +204,7 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         }
     }
     
-    private static func transformTextAlignment(_ string: String) throws -> CTTextAlignment {
+    private static func transformTextAlignment(_ string: String) throws -> HorizontalTextAlignment {
         if string == "center" {
             return .center
         } else if string == "left" {
