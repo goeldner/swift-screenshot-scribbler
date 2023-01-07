@@ -52,7 +52,7 @@ struct ScreenshotScribblerCommand: ParsableCommand {
     
     struct BackgroundStyleOptions: ParsableCommand {
         
-        @Option(name: .long, help: "Color which covers the whole background. (Default: \"#FFFFFF\" (white); Supports gradients)", transform: transformColorType)
+        @Option(name: .long, help: "Color which covers the whole background. (Default: \"#FFFFFF\" (white); Supports gradients)")
         var backgroundColor: ColorType?
         
     }
@@ -65,7 +65,7 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         @Option(name: .long, help: "Horizontal alignment of the caption. (\(HorizontalTextAlignment.defaultAndOptionsDescription(.center)))")
         var captionAlignment: HorizontalTextAlignment?
         
-        @Option(name: .long, help: "Color of the caption. (Default: \"#000000\" (black))", transform: transformColor)
+        @Option(name: .long, help: "Color of the caption. (Default: \"#000000\" (black))", transform: CGColor.initFromArgument)
         var captionColor: CGColor?
         
         @Option(name: .long, help: "Font family name of the caption. (Default: \"SF Compact\")")
@@ -90,13 +90,13 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         @Option(name: .long, help: "Size of the shadow blur behind the screenshot. (Default: 5)")
         var screenshotShadowSize: Double?
         
-        @Option(name: .long, help: "Color of the shadow behind the screenshot. (Default: \"#000000\" (black))", transform: transformColor)
+        @Option(name: .long, help: "Color of the shadow behind the screenshot. (Default: \"#000000\" (black))", transform: CGColor.initFromArgument)
         var screenshotShadowColor: CGColor?
 
         @Option(name: .long, help: "Size of the border around the screenshot. (Default: 0)")
         var screenshotBorderSize: Double?
         
-        @Option(name: .long, help: "Color of the border around the screenshot. (Default: \"#000000\" (black); Supports gradients)", transform: transformColorType)
+        @Option(name: .long, help: "Color of the border around the screenshot. (Default: \"#000000\" (black); Supports gradients)")
         var screenshotBorderColor: ColorType?
         
     }
@@ -193,25 +193,6 @@ struct ScreenshotScribblerCommand: ParsableCommand {
             layout.screenshotBorderColor = screenshotBorderColor
         }
         return layout
-    }
-    
-    private static func transformColorType(_ string: String) throws -> ColorType {
-        let colorParser = ColorParser()
-        if colorParser.isHexColor(string) {
-            return .solid(color: try colorParser.parseHexColor(string))
-        }
-        if colorParser.isGradient(string) {
-            return try colorParser.parseGradient(string)
-        }
-        throw RuntimeError("Unsupported color format: \(string)")
-    }
-    
-    private static func transformColor(_ string: String) throws -> CGColor {
-        let colorParser = ColorParser()
-        if colorParser.isHexColor(string) {
-            return try colorParser.parseHexColor(string)
-        }
-        throw RuntimeError("Unsupported color format: \(string)")
     }
     
 }
