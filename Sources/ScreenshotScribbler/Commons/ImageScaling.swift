@@ -5,7 +5,7 @@
 import Foundation
 
 /// Image scaling options.
-public enum ImageScaling: String {
+public enum ImageScaling: String, CaseIterable {
     
     /// Do not apply any scaling to the image.
     /// If the image is smaller than the available space, then the space may not be completely filled, but the whole image will be visible inside the space.

@@ -45,7 +45,7 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         @Option(name: .customLong("output"), help: "The output image file to write. (Required)")
         var outputFile: String
         
-        @Option(name: .customLong("layout"), help: "Arrangement of the caption and screenshot. (Default: \"\(LayoutType.captionBeforeScreenshot.rawValue)\"; Options: \"\(LayoutType.captionAfterScreenshot.rawValue)\", \"\(LayoutType.captionBetweenScreenshots.rawValue)\", \"\(LayoutType.screenshotOnly.rawValue)\")", transform: transformLayoutType)
+        @Option(name: .customLong("layout"), help: "Arrangement of the caption and screenshot. (\(LayoutType.defaultAndOptionsDescription(.captionBeforeScreenshot)))")
         var layoutType: LayoutType?
         
     }
@@ -62,7 +62,7 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         @Option(name: .long, help: "Percentage of the caption area height relative to the total height of the output image. (Default: 0.25 (25%))")
         var captionSizeFactor: Double?
         
-        @Option(name: .long, help: "Horizontal alignment of the caption. (Default: \"center\"; Options: \"left\", \"right\", \"justified\")", transform: transformTextAlignment)
+        @Option(name: .long, help: "Horizontal alignment of the caption. (\(HorizontalTextAlignment.defaultAndOptionsDescription(.center)))")
         var captionAlignment: HorizontalTextAlignment?
         
         @Option(name: .long, help: "Color of the caption. (Default: \"#000000\" (black))", transform: transformColor)
@@ -114,7 +114,7 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         }
         
         // Parse the layout configuration options
-        let layoutConfig = parseLayoutOptions()
+        let layoutConfig = createLayoutConfigFromOptions()
         
         // Generate the new image
         if verbose {
@@ -139,7 +139,12 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         }
     }
     
-    private func parseLayoutOptions() -> LayoutConfig {
+    /// Creates a default `LayoutConfig` instance and overwrites all values with those
+    /// that were defined on command line.
+    ///
+    /// - Returns: The `LayoutConfig` adapted to command line options.
+    ///
+    private func createLayoutConfigFromOptions() -> LayoutConfig {
         var layout = LayoutConfig()
         // Layout type
         if let layoutType = self.basicOptions.layoutType {
@@ -188,34 +193,6 @@ struct ScreenshotScribblerCommand: ParsableCommand {
             layout.screenshotBorderColor = screenshotBorderColor
         }
         return layout
-    }
-    
-    private static func transformLayoutType(_ string: String) throws -> LayoutType {
-        if string == LayoutType.captionBeforeScreenshot.rawValue {
-            return .captionBeforeScreenshot
-        } else if string == LayoutType.captionAfterScreenshot.rawValue {
-            return .captionAfterScreenshot
-        } else if string == LayoutType.captionBetweenScreenshots.rawValue {
-            return .captionBetweenScreenshots
-        } else if string == LayoutType.screenshotOnly.rawValue {
-            return .screenshotOnly
-        } else {
-            throw RuntimeError("Unsupported layout type: \(string)")
-        }
-    }
-    
-    private static func transformTextAlignment(_ string: String) throws -> HorizontalTextAlignment {
-        if string == "center" {
-            return .center
-        } else if string == "left" {
-            return .left
-        } else if string == "right" {
-            return .right
-        } else if string == "justified" {
-            return .justified
-        } else {
-            throw RuntimeError("Unsupported text alignment: \(string)")
-        }
     }
     
     private static func transformColorType(_ string: String) throws -> ColorType {

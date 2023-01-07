@@ -5,7 +5,7 @@
 import Foundation
 
 /// Different types of layout arrangements, i.e. how the caption and the screenshot are ordered.
-public enum LayoutType: String {
+public enum LayoutType: String, CaseIterable {
     
     /// Caption first, then screenshot
     case captionBeforeScreenshot = "caption-before-screenshot"

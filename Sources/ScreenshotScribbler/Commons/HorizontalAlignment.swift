@@ -5,7 +5,7 @@
 import Foundation
 
 /// Horizontal alignment.
-public enum HorizontalAlignment: String {
+public enum HorizontalAlignment: String, CaseIterable {
     
     /// Left alignment.
     case left
