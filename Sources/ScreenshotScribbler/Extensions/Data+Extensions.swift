@@ -8,6 +8,31 @@ import UniformTypeIdentifiers
 
 public extension Data {
     
+    /// Create a `Data` instance by reading the bytes from given file path.
+    ///
+    /// - Parameter path: The file path.
+    /// - Throws: `RuntimeError` if file cannot be read.
+    ///
+    init(fromFilePath path: String) throws {
+        let url = URL(fileURLWithPath: path)
+        guard let data = try? Data(contentsOf: url) else {
+            throw RuntimeError("Could not read data from file path: \(url)")
+        }
+        self = data
+    }
+    
+    /// Writes the bytes of this `Data` instance to given file path.
+    ///
+    /// - Parameter path: The file path.
+    /// - Throws: `RuntimeError` if file cannot be written.
+    ///
+    func writeToFilePath(_ path: String) throws {
+        let url = URL(fileURLWithPath: path)
+        guard let _ = try? self.write(to: url, options: .atomic) else {
+            throw RuntimeError("Could not write data to file path: \(url)")
+        }
+    }
+    
     /// Creates a CoreGraphics `CGImage` based on the encoded PNG or JPEG data.
     /// If no encoding is provided, it tries to resolve the type by examining the first bytes of this data instance.
     ///

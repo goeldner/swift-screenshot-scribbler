@@ -102,40 +102,41 @@ struct ScreenshotScribblerCommand: ParsableCommand {
     }
     
     func run() throws {
-
-        // Read data of input file
-        print("Screenshot: \(self.basicOptions.screenshotFile)")
-        let screenshotUrl = URL(fileURLWithPath: self.basicOptions.screenshotFile)
+        do {
+            printVerbose("Starting...")
+            
+            // Read data of input file
+            print("Screenshot: \(self.basicOptions.screenshotFile)")
+            let screenshotData = try Data(fromFilePath: self.basicOptions.screenshotFile)
+            
+            // Parse the layout configuration options
+            printVerbose("Preparing layout configuration...")
+            let layoutConfig = createLayoutConfigFromOptions()
+            
+            // Generate the new image
+            printVerbose("Generating output image...")
+            let caption = self.basicOptions.caption
+            let scrscr = ScreenshotScribbler(screenshot: screenshotData, caption: caption, layout: layoutConfig)
+            let output = try scrscr.generate()
+            
+            // Write data to output file
+            print("Output: \(self.basicOptions.outputFile)")
+            try output.writeToFilePath(self.basicOptions.outputFile)
+            
+            printVerbose("Finished successful.")
+        } catch {
+            printVerbose("Finished with error: \(error)")
+            throw error
+        }
+    }
+    
+    /// Prints the message if verbose mode is active.
+    ///
+    /// - Parameter message: The message.
+    ///
+    private func printVerbose(_ message: String) {
         if verbose {
-            print(" => \(screenshotUrl)")
-        }
-        guard let screenshotData = try? Data(contentsOf: screenshotUrl) else {
-            throw RuntimeError("Could not read from: \(screenshotUrl)")
-        }
-        
-        // Parse the layout configuration options
-        let layoutConfig = createLayoutConfigFromOptions()
-        
-        // Generate the new image
-        if verbose {
-            print("Generating output image...")
-        }
-        let caption = self.basicOptions.caption
-        let scrscr = ScreenshotScribbler(screenshot: screenshotData, caption: caption, layout: layoutConfig)
-        let output = try scrscr.generate()
-
-        // Write data to output file
-        print("Output: \(self.basicOptions.outputFile)")
-        let outputUrl = URL(fileURLWithPath: self.basicOptions.outputFile)
-        if verbose {
-            print(" => \(outputUrl)")
-        }
-        guard let _ = try? output.write(to: outputUrl, options: .atomic) else {
-            throw RuntimeError("Could not write to: \(outputUrl)")
-        }
-        
-        if verbose {
-            print("Success")
+            print(message)
         }
     }
     
