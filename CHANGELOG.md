@@ -7,6 +7,7 @@
 ### Added
 
 - Use linear and radial color gradients, instead of solid colors only. Can be used for "background-color" and "screenshot-border-color". See README for more details about color and gradient definition syntax.
+- Use an image file as background by using the new options "background-image", "background-image-scaling" and "background-image-alignment". 
 - Draw a colored border around the screenshot by using the new options "screenshot-border-size" and "screenshot-border-color".
 - New layout type "screenshot-only" that enables to render a screenshot without a caption. The screenshot is centered inside the original image at the desired size factor and may be decorated with a background, border and shadow as usual.
 - Support screenshots in JPEG format, additionally to PNG. Note that the output is still always in PNG format.

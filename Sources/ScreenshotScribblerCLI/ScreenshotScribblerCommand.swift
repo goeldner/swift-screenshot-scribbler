@@ -55,6 +55,15 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         @Option(name: .long, help: "Color which covers the whole background. (Default: \"#FFFFFF\" (white); Supports gradients)")
         var backgroundColor: ColorType?
         
+        @Option(name: .customLong("background-image"), help: "The background image file to read. (Default: none)")
+        var backgroundImageFile: String?
+        
+        @Option(name: .long, help: "Scaling mode or factor (as decimal number) of the background image. (\(ImageScalingMode.defaultAndOptionsDescription(.stretchFill)))")
+        var backgroundImageScaling: ImageScaling?
+        
+        @Option(name: .long, help: "Horizontal and/or vertical alignment of the background image, separated by space character. (Default: \"center middle\"; Options horizontal: \(HorizontalAlignment.allValueStrings); Options vertical: \(VerticalAlignment.allValueStrings))")
+        var backgroundImageAlignment: Alignment?
+        
     }
     
     struct CaptionStyleOptions: ParsableCommand {
@@ -105,9 +114,18 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         do {
             printVerbose("Starting...")
             
-            // Read data of input file
+            // Read data of screenshot file
             print("Screenshot: \(self.basicOptions.screenshotFile)")
             let screenshotData = try Data(fromFilePath: self.basicOptions.screenshotFile)
+            
+            // Optionally read data of background image file
+            let backgroundImageData: Data?
+            if let backgroundImage = self.backgroundStyleOptions.backgroundImageFile {
+                print("Background: \(backgroundImage)")
+                backgroundImageData = try Data(fromFilePath: backgroundImage)
+            } else {
+                backgroundImageData = nil
+            }
             
             // Parse the layout configuration options
             printVerbose("Preparing layout configuration...")
@@ -116,7 +134,10 @@ struct ScreenshotScribblerCommand: ParsableCommand {
             // Generate the new image
             printVerbose("Generating output image...")
             let caption = self.basicOptions.caption
-            let scrscr = ScreenshotScribbler(screenshot: screenshotData, caption: caption, layout: layoutConfig)
+            let scrscr = ScreenshotScribbler(screenshot: screenshotData,
+                                             backgroundImage: backgroundImageData,
+                                             caption: caption,
+                                             layout: layoutConfig)
             let output = try scrscr.generate()
             
             // Write data to output file
@@ -154,6 +175,12 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         // Background style options
         if let backgroundColor = self.backgroundStyleOptions.backgroundColor {
             layout.backgroundColor = backgroundColor
+        }
+        if let backgroundImageScaling = self.backgroundStyleOptions.backgroundImageScaling {
+            layout.backgroundImageScaling = backgroundImageScaling
+        }
+        if let backgroundImageAlignment = self.backgroundStyleOptions.backgroundImageAlignment {
+            layout.backgroundImageAlignment = backgroundImageAlignment
         }
         // Caption style options
         if let captionSizeFactor = self.captionStyleOptions.captionSizeFactor {

@@ -12,7 +12,7 @@ extension HorizontalAlignment: ExpressibleByArgument, HasDefaultAndOptions {
 extension HorizontalTextAlignment: ExpressibleByArgument, HasDefaultAndOptions {
 }
 
-extension ImageScaling: ExpressibleByArgument, HasDefaultAndOptions {
+extension ImageScalingMode: ExpressibleByArgument, HasDefaultAndOptions {
 }
 
 extension LayoutType: ExpressibleByArgument, HasDefaultAndOptions {

@@ -13,6 +13,7 @@ import UniformTypeIdentifiers
 public struct ScreenshotScribbler {
 
     private let screenshot: Data
+    private let backgroundImage: Data?
     private let caption: String?
     private let layout: LayoutConfig
 
@@ -20,11 +21,13 @@ public struct ScreenshotScribbler {
     ///
     /// - Parameters:
     ///   - screenshot: The screenshot in PNG or JPEG format.
+    ///   - backgroundImage: The image to use a background. (optional).
     ///   - caption: The caption to display next to the screenshot (optional).
     ///   - layout: The layout configuration (optional).
     ///
-    public init(screenshot: Data, caption: String?, layout: LayoutConfig = LayoutConfig()) {
+    public init(screenshot: Data, backgroundImage: Data? = nil, caption: String? = nil, layout: LayoutConfig = LayoutConfig()) {
         self.screenshot = screenshot
+        self.backgroundImage = backgroundImage
         self.caption = caption
         self.layout = layout
     }
@@ -41,8 +44,7 @@ public struct ScreenshotScribbler {
         
         // Calculate total area and cover it with a background color
         let totalArea = CGRect(x: 0, y: 0, width: image.width, height: image.height)
-        let totalAreaRendering = RectangleRendering(fillColor: self.layout.backgroundColor)
-        totalAreaRendering.draw(in: totalArea, context: context)
+        try drawBackground(in: totalArea, context: context)
         
         // Perform further layout specific drawing
         switch self.layout.layoutType {
@@ -60,6 +62,30 @@ public struct ScreenshotScribbler {
         let outputImage = try context.createCGImage()
         let outputImageData = try outputImage.encode(encoding: .png)
         return outputImageData
+    }
+    
+    /// Draws a background color covering the whole rect, and if a background image is defined,
+    /// draws the image according to its scaling and alignment options.
+    ///
+    /// - Parameters:
+    ///   - rect: The rectangle to cover with color and optional image.
+    ///   - context: The graphics context.
+    ///
+    private func drawBackground(in rect: CGRect, context: CGContext) throws {
+        
+        // background color
+        let colorRendering = RectangleRendering(fillColor: self.layout.backgroundColor)
+        colorRendering.draw(in: rect, context: context)
+        
+        // optional background image
+        if let backgroundImage {
+            let image = try backgroundImage.createCGImage()
+            let imageRendering = ImageRendering(image: image,
+                                                scaling: self.layout.backgroundImageScaling,
+                                                horizontalAlignment: self.layout.backgroundImageAlignment.horizontal,
+                                                verticalAlignment: self.layout.backgroundImageAlignment.vertical)
+            imageRendering.draw(in: rect, context: context)
+        }
     }
     
     /// Draws the caption before the screenshot inside the given rectangle.
@@ -206,7 +232,7 @@ public struct ScreenshotScribbler {
         borderAndShadowRectRendering.draw(in: borderAndShadowRect, context: context)
         
         // Draw image to the context, that is optionally clipped to the rounded corners of the image
-        let imageRendering = ImageRendering(image: image, scaling: .stretchFill)
+        let imageRendering = ImageRendering(image: image, scaling: .mode(.stretchFill))
         context.saveGState()
         imageRectRendering.clip(to: imageRect, context: context)
         imageRendering.draw(in: imageRect, context: context)

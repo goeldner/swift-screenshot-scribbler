@@ -6,7 +6,7 @@ import Foundation
 import CoreGraphics
 
 /// Types of one or more colors that may be drawn in different ways.
-public enum ColorType {
+public enum ColorType: Equatable {
     
     /// One solid color.
     case solid(color: CGColor)

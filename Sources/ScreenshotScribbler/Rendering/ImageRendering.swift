@@ -30,7 +30,7 @@ public class ImageRendering {
     ///   - horizontalAlignment: Horizontal alignment of the image, if it is not stretched to fill. (Default: center)
     ///   - verticalAlignment: Vertical alignment of the image, if it is not stretched to fill. (Default: middle)
     ///
-    public init(image: CGImage, scaling: ImageScaling = .stretchFill, horizontalAlignment: HorizontalAlignment = .center, verticalAlignment: VerticalAlignment = .middle) {
+    public init(image: CGImage, scaling: ImageScaling = .mode(.stretchFill), horizontalAlignment: HorizontalAlignment = .center, verticalAlignment: VerticalAlignment = .middle) {
         self.image = image
         self.scaling = scaling
         self.horizontalAlignment = horizontalAlignment
@@ -52,19 +52,24 @@ public class ImageRendering {
         let resizeFactorVertical = rect.height / CGFloat(image.height)
         let resizeFactor: CGFloat?
         switch scaling {
-        case .none:
-            // resize the image rect to the original image dimensions
-            resizeFactor = 1
-        case .stretchFill:
-            // context.draw(image) stretch-fills the image into the rect by default automatically,
-            // so there is nothing to resize manually here
-            resizeFactor = nil
-        case .aspectFill:
-            // take the larger factor, to ensure the whole space is filled
-            resizeFactor = max(resizeFactorHorizontal, resizeFactorVertical)
-        case .aspectFit:
-            // take the smaller factor, to ensure the image does not exceed the space
-            resizeFactor = min(resizeFactorHorizontal, resizeFactorVertical)
+        case .mode(let mode):
+            switch mode {
+            case .none:
+                // resize the image rect to the original image dimensions
+                resizeFactor = 1
+            case .stretchFill:
+                // context.draw(image) stretch-fills the image into the rect by default automatically,
+                // so there is nothing to resize manually here
+                resizeFactor = nil
+            case .aspectFill:
+                // take the larger factor, to ensure the whole space is filled
+                resizeFactor = max(resizeFactorHorizontal, resizeFactorVertical)
+            case .aspectFit:
+                // take the smaller factor, to ensure the image does not exceed the space
+                resizeFactor = min(resizeFactorHorizontal, resizeFactorVertical)
+            }
+        case .factor(let factor):
+            resizeFactor = factor
         }
         
         // optionally scale and align the image based on that factor
