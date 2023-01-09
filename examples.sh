@@ -64,18 +64,18 @@ swift run scrscr \
     --layout "screenshot-only" \
     --background-color "#C0FFEE"
 
-# Fully visible screenshot with dark background and yellow border, small caption area with yellow text
+# Background: Custom color (black) and yellow border, custom font and yellow text
 swift run scrscr \
-    --caption "Full screenshot and yellow border" \
     --screenshot Examples/example-input.png \
-    --output Examples/example-output-full-screenshot.png \
+    --output Examples/example-output-background-color-black.png \
     --layout "caption-before-screenshot" \
     --background-color "#000000" \
-    --caption-size-factor 0.15 \
+    --caption "Black background and custom font" \
     --caption-color "#EEDD00" \
     --caption-font-name "Futura" \
     --caption-font-style "Bold" \
     --caption-font-size 28 \
+    --caption-size-factor 0.15 \
     --screenshot-size-factor 0.80 \
     --screenshot-corner-radius 8 \
     --screenshot-shadow-size 0 \
