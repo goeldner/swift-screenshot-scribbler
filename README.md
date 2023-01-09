@@ -113,17 +113,32 @@ Radial gradients:
 --background-color "radial-gradient(#FF0000, #0000FF)"
 ```
 
-Examples of the two different gradient types:
+More specialized backgrounds are possible by defining a background image that is rendered behind the screenshot.
+
+Following options are available:
+
+```
+--background-image Examples/example-background.jpg
+--background-image-scaling "aspect-fill"
+--background-image-alignment "bottom"    
+```
+
+Examples of background gradients and images:
 
 <img
   src="https://github.com/goeldner/swift-screenshot-scribbler/blob/main/Examples/example-output-gradient-linear-rainbow.png?raw=true"
-  alt="Gradient: linear-gradient"
-  title="Gradient: linear-gradient"
+  alt="Background: linear-gradient"
+  title="Background: linear-gradient"
   width="160"> &nbsp;
 <img
   src="https://github.com/goeldner/swift-screenshot-scribbler/blob/main/Examples/example-output-gradient-radial-red-blue.png?raw=true"
-  alt="Gradient: radial-gradient"
-  title="Gradient: radial-gradient"
+  alt="Background: radial-gradient"
+  title="Background: radial-gradient"
+  width="160"> &nbsp;
+<img
+  src="https://github.com/goeldner/swift-screenshot-scribbler/blob/main/Examples/example-output-background-image.png?raw=true"
+  alt="Background: background-image"
+  title="Background: background-image"
   width="160">
 
 ## About
