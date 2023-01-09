@@ -113,9 +113,7 @@ Radial gradients:
 --background-color "radial-gradient(#FF0000, #0000FF)"
 ```
 
-More specialized backgrounds are possible by defining a background image that is rendered behind the screenshot.
-
-Following options are available:
+More specialized backgrounds are possible by defining a background image that is rendered behind the screenshot, for example with following options:
 
 ```
 --background-image Examples/example-background.jpg

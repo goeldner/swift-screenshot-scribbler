@@ -64,7 +64,7 @@ swift run scrscr \
     --layout "screenshot-only" \
     --background-color "#C0FFEE"
 
-# Background: Custom color (black) and yellow border, custom font and yellow text
+# Background: Custom background color and colored border, custom font and colored text
 swift run scrscr \
     --screenshot Examples/example-input.png \
     --output Examples/example-output-background-color-black.png \
@@ -82,7 +82,7 @@ swift run scrscr \
     --screenshot-border-size 5 \
     --screenshot-border-color "#EEDD00"
 
-# Background: Custom image
+# Background: Custom background image, radial gradient border
 swift run scrscr \
     --screenshot Examples/example-input.png \
     --output Examples/example-output-background-image.png \
@@ -96,7 +96,8 @@ swift run scrscr \
     --caption-size-factor 0.15 \
     --screenshot-size-factor 0.75 \
     --screenshot-shadow-size 15 \
-    --screenshot-border-size 5
+    --screenshot-border-size 5 \
+    --screenshot-border-color "radial-gradient(#CC0040, #0000FF)"
 
 # Gradient: Background with linear gradient in rainbow colors, screenshot surrounded by "white cloud" border
 swift run scrscr \
