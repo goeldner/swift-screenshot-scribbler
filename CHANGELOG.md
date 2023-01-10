@@ -15,6 +15,7 @@
 ### Changed
 
 - The caption parameter is now optional, in order to support the "screenshot-only" layout. This enables to use the other layouts without a caption, too. Note that the caption area is still reserved unless the "caption-size-factor" is reduced accordingly.
+- Replaced install.sh file with a Makefile, now supporting install, uninstall, build and clean commands.
 
 ---
 

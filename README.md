@@ -1,8 +1,24 @@
 # ScreenshotScribbler (scrscr)
 
-A command line tool and library that creates a new image with same dimensions as a given screenshot, adds a background, reduces the size of the original screenshot, places it nicely and scribbles a caption next to it.
+A command line tool `scrscr` and a library that creates a new image with same dimensions as a given screenshot, adds a background, reduces the size of the original screenshot, places it nicely and scribbles a caption next to it.
 
-## Build and install
+## Setup
+
+### Install with `make`
+
+There is a `Makefile` defined for this project. Clone the repository, change into the folder, then execute following to install the `scrscr` command to your `/usr/local/bin` folder:
+
+```
+$ make clean install
+```
+
+You can also uninstall by calling:
+
+```
+$ make uninstall
+```
+
+### Build and install manually
 
 Clone the repository, change into the folder, then execute:
 
@@ -11,7 +27,7 @@ $ swift build --configuration release
 $ cp -f .build/release/scrscr /usr/local/bin/scrscr
 ```
 
-You can also use the `install.sh` script.
+*Note: Using `make` is recommended.*
 
 ## Usage
 
