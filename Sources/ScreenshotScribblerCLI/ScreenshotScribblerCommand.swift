@@ -15,8 +15,8 @@ struct ScreenshotScribblerCommand: ParsableCommand {
 
     static let configuration = CommandConfiguration(
         commandName: "scrscr",
-        abstract: "Creates a new image with same dimensions as a given screenshot, adds a background, reduces the size of the original screenshot, places it nicely and scribbles a caption next to it.",
-        version: "1.0.0"
+        abstract: "A command line tool that decorates screenshots with nice backgrounds and captions.",
+        version: "1.1.0"
     )
 
     @OptionGroup(title: "Basic")

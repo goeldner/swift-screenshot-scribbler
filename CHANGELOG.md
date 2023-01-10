@@ -2,12 +2,18 @@
 
 ## [Unreleased]
 
-<!-- After release: *No changes yet.* -->
+<!-- After release: *No unreleased changes yet.* -->
+
+*No unreleased changes yet.*
+
+## [1.1.0] (2023-01-10)
+
+This release adds more features like color gradients, colored borders, background images, a new screenshot-only layout and JPEG support.
 
 ### Added
 
 - Use linear and radial color gradients, instead of solid colors only. Can be used for "background-color" and "screenshot-border-color". See README for more details about color and gradient definition syntax.
-- Use an image file as background by using the new options "background-image", "background-image-scaling" and "background-image-alignment". 
+- Use an image file as background by using the new options "background-image", "background-image-scaling" and "background-image-alignment".
 - Draw a colored border around the screenshot by using the new options "screenshot-border-size" and "screenshot-border-color".
 - New layout type "screenshot-only" that enables to render a screenshot without a caption. The screenshot is centered inside the original image at the desired size factor and may be decorated with a background, border and shadow as usual.
 - Support screenshots in JPEG format, additionally to PNG. Note that the output is still always in PNG format.
@@ -19,7 +25,7 @@
 
 ---
 
-## [1.0.0] - 2022-12-22
+## [1.0.0] (2022-12-22)
 
 This is the initial release of the `ScreenshotScribbler` library and `scrscr`
 command line tool.
@@ -55,6 +61,6 @@ about the possible options.
 
 <!-- Link references for releases -->
 
-[Unreleased]: https://github.com/goeldner/swift-screenshot-scribbler/compare/1.0.0...HEAD
+[Unreleased]: https://github.com/goeldner/swift-screenshot-scribbler/compare/1.1.0...HEAD
 [1.1.0]: https://github.com/goeldner/swift-screenshot-scribbler/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/goeldner/swift-screenshot-scribbler/releases/tag/1.0.0
