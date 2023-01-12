@@ -165,6 +165,7 @@ There will be updates and new features from time to time and I try to keep worki
 
 ## Coffee
 
-If you like this tool, you could buy me a coffee :)
+If you like this project, you could buy me a coffee or become my GitHub Sponsor:
 
-<a href="https://www.buymeacoffee.com/goeldner" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="50" width="217"></a>
+<a href="https://www.buymeacoffee.com/goeldner" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="35"></a> &nbsp; 
+<a href="https://github.com/sponsors/goeldner" target="_blank"><img src="https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=FF813F&style=flat-square" alt="GitHub Sponsor" height="35"></a>
