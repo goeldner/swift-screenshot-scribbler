@@ -4,30 +4,38 @@ A command line tool `scrscr` and a library that creates a new image with same di
 
 ## Setup
 
-### Install with `make`
+The `scrscr` command can be easily installed via Homebrew, or by cloning the repository and using the Makefile or by building everything manually.
 
-There is a `Makefile` defined for this project. Clone the repository, change into the folder, then execute following to install the `scrscr` command to your `/usr/local/bin` folder:
+### Homebrew
+
+Tap this repository:
+
+```
+$ brew tap goeldner/formulae
+```
+
+Install the package:
+
+```
+$ brew install scrscr
+```
+
+### Make
+
+If you want to use `make`, there is a `Makefile` defined for this project. Clone the repository, change into the folder, then execute following to install the `scrscr` command to your `/usr/local/bin` folder:
 
 ```
 $ make clean install
 ```
 
-You can also uninstall by calling:
+### Build
 
-```
-$ make uninstall
-```
-
-### Build and install manually
-
-Clone the repository, change into the folder, then execute:
+You can also build and install manually. Clone the repository, change into the folder, then execute:
 
 ```
 $ swift build --configuration release
 $ cp -f .build/release/scrscr /usr/local/bin/scrscr
 ```
-
-*Note: Using `make` is recommended.*
 
 ## Usage
 
