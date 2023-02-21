@@ -27,8 +27,8 @@ public class ColorParser {
     /// Checks whether the given string is a gradient definition, after stripping all whitespace.
     public func isGradient(_ string: String) -> Bool {
         do {
-            let cleanString = try stripWhitespace(string)
-            return try wholeMatch(cleanString, pattern: ColorParser.GradientPattern)
+            let cleanString = try string.stripWhitespace()
+            return try cleanString.wholeMatch(pattern: ColorParser.GradientPattern)
         } catch {
             return false
         }
@@ -37,8 +37,8 @@ public class ColorParser {
     /// Checks whether the given string is a single color definition, after stripping all whitespace.
     public func isHexColor(_ string: String) -> Bool {
         do {
-            let cleanString = try stripWhitespace(string)
-            return try wholeMatch(cleanString, pattern: ColorParser.HexColorPattern)
+            let cleanString = try string.stripWhitespace()
+            return try cleanString.wholeMatch(pattern: ColorParser.HexColorPattern)
         } catch {
             return false
         }
@@ -51,8 +51,8 @@ public class ColorParser {
     /// - Throws: `RuntimeError` if string cannot be parsed successfully for any reason.
     ///
     public func parseGradient(_ string: String) throws -> ColorType {
-        let cleanString = try stripWhitespace(string)
-        let (name, args) = try extractGradientNameAndArguments(cleanString)
+        let cleanString = try string.stripWhitespace()
+        var (name, args) = try extractGradientNameAndArguments(cleanString)
         let colors = try args.map { string in try parseHexColor(string) }
         return try createGradientColorType(name: name, colors: colors)
     }
@@ -64,7 +64,7 @@ public class ColorParser {
     /// - Throws: `RuntimeError` if string cannot be parsed successfully for any reason.
     ///
     public func parseHexColor(_ string: String) throws -> CGColor {
-        let cleanString = try stripWhitespace(string)
+        let cleanString = try string.stripWhitespace()
         let rgb = try extractRGB(cleanString)
         let r = CGFloat(rgb.r) / 255
         let g = CGFloat(rgb.g) / 255
@@ -84,7 +84,7 @@ public class ColorParser {
     ///
     private func extractGradientNameAndArguments(_ string: String) throws -> (name: String, args: [String]) {
         let regex = try NSRegularExpression(pattern: ColorParser.GradientPattern)
-        let match = regex.firstMatch(in: string, options: [], range: range(string))
+        let match = regex.firstMatch(in: string, options: [], range: string.nsRange())
         guard let match else {
             throw RuntimeError("Unsupported gradient syntax. Format: <name>(arg1,arg2,...)")
         }
@@ -125,7 +125,7 @@ public class ColorParser {
     ///
     private func extractRGB(_ string: String) throws -> (r: Int, g: Int, b: Int) {
         let regex = try NSRegularExpression(pattern: ColorParser.HexColorPattern)
-        let match = regex.firstMatch(in: string, options: [], range: range(string))
+        let match = regex.firstMatch(in: string, options: [], range: string.nsRange())
         guard let match else {
             throw RuntimeError("Unsupported hex color string syntax. Format: #xxxxxx")
         }
@@ -137,40 +137,6 @@ public class ColorParser {
         let g = Int(hexG, radix: 16)!
         let b = Int(hexB, radix: 16)!
         return (r, g, b)
-    }
-    
-    /// Strips all whitespace from the given string – at the begin, at the end, and everywhere in between.
-    ///
-    /// - Parameter string: The input string.
-    /// - Returns: The cleaned string.
-    ///
-    private func stripWhitespace(_ string: String) throws -> String {
-        let regex = try NSRegularExpression(pattern: "[[:whitespace:]]")
-        return regex.stringByReplacingMatches(in: string, range: range(string), withTemplate: "")
-    }
-    
-    /// Checks the string whether it matches the given pattern completely.
-    ///
-    /// - Parameters:
-    ///   - string: The string to check.
-    ///   - pattern: The regular expression pattern.
-    /// - Returns: `true` if it matches completely, otherwise `false`.
-    ///
-    private func wholeMatch(_ string: String, pattern: String) throws -> Bool {
-        let range = NSRange(location: 0, length: string.count)
-        let wholeMatchPattern = "^\(pattern)$"
-        let regex = try NSRegularExpression(pattern: wholeMatchPattern)
-        let matches = regex.matches(in: string, range: range)
-        return matches.count > 0
-    }
-
-    /// Creates a `NSRange` covering the whole given string.
-    ///
-    /// - Parameter string: The input string.
-    /// - Returns: The range.
-    ///
-    private func range(_ string: String) -> NSRange {
-        return NSRange(location: 0, length: string.count)
     }
 
 }

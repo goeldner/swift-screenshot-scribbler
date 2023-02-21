@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import CoreGraphics
 
 ///
 /// Parser for alignment syntax strings.
@@ -45,7 +44,7 @@ public class AlignmentParser {
         }
         
         // check if unparsed characters remain
-        let remainingStringContent = try stripWhitespace(candidateString)
+        let remainingStringContent = try candidateString.stripWhitespace()
         if remainingStringContent.count > 0 {
             throw RuntimeError("Following alignment content could not be parsed: \(remainingStringContent)")
         }
@@ -53,23 +52,4 @@ public class AlignmentParser {
         return Alignment(horizontal: horizontal, vertical: vertical)
     }
     
-    /// Strips all whitespace from the given string – at the begin, at the end, and everywhere in between.
-    ///
-    /// - Parameter string: The input string.
-    /// - Returns: The cleaned string.
-    ///
-    private func stripWhitespace(_ string: String) throws -> String {
-        let regex = try NSRegularExpression(pattern: "[[:whitespace:]]")
-        return regex.stringByReplacingMatches(in: string, range: range(string), withTemplate: "")
-    }
-    
-    /// Creates a `NSRange` covering the whole given string.
-    ///
-    /// - Parameter string: The input string.
-    /// - Returns: The range.
-    ///
-    private func range(_ string: String) -> NSRange {
-        return NSRange(location: 0, length: string.count)
-    }
-
 }
