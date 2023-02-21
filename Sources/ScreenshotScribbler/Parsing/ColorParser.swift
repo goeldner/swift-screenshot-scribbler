@@ -16,9 +16,17 @@ public class ColorParser {
     /// Matches a list of two or more colors, e.g. "#112233,#AABBCC"
     private static let HexColorListPattern = "(\(HexColorPattern)[,])+\(HexColorPattern)"
     
-    /// Matches a gradient definition with a list of two or more colors, e.g.
-    /// "linear-gradient(#112233,#AABBCC,#aabbcc)" or "radial-gradient(#112233,#AABBCC)"
-    private static let GradientPattern = "(linear\\-gradient|radial\\-gradient)\\((\(HexColorListPattern))\\)"
+    /// Matches a gradient type, e.g. "linear-gradient" or "radial-gradient"
+    private static let GradientTypePattern = "linear\\-gradient|radial\\-gradient"
+    
+    /// Matches a gradient definition with a list of two or more colors and an optional direction as first argument.
+    ///
+    /// Examples:
+    /// - "linear-gradient(#112233,#AABBCC,#aabbcc)"
+    /// - "linear-gradient(to-bottom-right,#112233,#AABBCC)"
+    /// - "radial-gradient(#112233,#AABBCC)"
+    ///
+    private static let GradientPattern = "(\(GradientTypePattern))\\(((\(DirectionParser.DirectionPattern)[,])?\(HexColorListPattern))\\)"
     
     /// Public initializer.
     public init() {
@@ -53,8 +61,19 @@ public class ColorParser {
     public func parseGradient(_ string: String) throws -> ColorType {
         let cleanString = try string.stripWhitespace()
         var (name, args) = try extractGradientNameAndArguments(cleanString)
+        
+        // First argument could be a direction
+        var direction: Direction? = nil
+        let directionParser = DirectionParser()
+        if directionParser.isDirection(args[0]) {
+            direction = try directionParser.parse(args[0])
+            args.removeFirst()
+        }
+        
+        // All other arguments should be colors
         let colors = try args.map { string in try parseHexColor(string) }
-        return try createGradientColorType(name: name, colors: colors)
+        
+        return try createGradientColorType(name: name, colors: colors, direction: direction)
     }
     
     /// Parses the given single color definition string, after stripping all whitespace.
@@ -66,9 +85,9 @@ public class ColorParser {
     public func parseHexColor(_ string: String) throws -> CGColor {
         let cleanString = try string.stripWhitespace()
         let rgb = try extractRGB(cleanString)
-        let r = CGFloat(rgb.r) / 255
-        let g = CGFloat(rgb.g) / 255
-        let b = CGFloat(rgb.b) / 255
+        let r = CGFloat(rgb.r) / CGFloat(255)
+        let g = CGFloat(rgb.g) / CGFloat(255)
+        let b = CGFloat(rgb.b) / CGFloat(255)
         return CGColor(red: r, green: g, blue: b, alpha: 1.0)
     }
     
@@ -96,19 +115,22 @@ public class ColorParser {
     }
 
     /// Creates an instance of `ColorType.linearGradient` or `ColorType.radialGradient`
-    /// based on the given gradient name and including the attached list of colors.
+    /// based on the given gradient name, including the attached list of colors and an optional direction.
+    ///
+    /// If direction is not given, then `.toBottom` is used as default.
     ///
     /// - Parameters:
     ///   - name: The gradient name.
     ///   - colors: The list of colors.
+    ///   - direction: The direction (optional).
     /// - Returns: The `ColorType` instance.
     ///
-    private func createGradientColorType(name: String, colors: [CGColor]) throws -> ColorType {
+    private func createGradientColorType(name: String, colors: [CGColor], direction: Direction?) throws -> ColorType {
         switch name {
         case "linear-gradient":
-            return .linearGradient(colors: colors)
+            return .linearGradient(colors: colors, direction: direction ?? .toBottom)
         case "radial-gradient":
-            return .radialGradient(colors: colors)
+            return .radialGradient(colors: colors, direction: direction ?? .toBottom)
         default:
             throw RuntimeError("Unsupported gradient type: \(name)")
         }

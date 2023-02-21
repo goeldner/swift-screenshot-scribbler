@@ -10,7 +10,7 @@ import Foundation
 public class DirectionParser {
  
     /// Matches a direction, e.g. "to-right", "to-top", "to-top-right" or "to-bottom-left"
-    private static let DirectionPattern = "to\\-(top|right|bottom|left|top\\-right|top\\-left|bottom\\-right|bottom\\-left)"
+    internal static let DirectionPattern = "to\\-(top|right|bottom|left|top\\-right|top\\-left|bottom\\-right|bottom\\-left)"
     
     /// Public initializer.
     public init() {

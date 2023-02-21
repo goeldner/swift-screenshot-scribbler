@@ -12,20 +12,31 @@ final class ColorParserTests: XCTestCase {
         let parser = ColorParser()
         var result: ColorType
         var expected: ColorType
+        let defaultDirection: Direction = .toBottom
         
         // two colors
         result = try parser.parseGradient("linear-gradient(#000000,#FFFFFF)")
-        expected = .linearGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white])
+        expected = .linearGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white], direction: defaultDirection)
+        XCTAssertEqual(result, expected)
+        
+        // two colors and direction
+        result = try parser.parseGradient("linear-gradient(to-top-right,#000000,#FFFFFF)")
+        expected = .linearGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white], direction: .toTopRight)
         XCTAssertEqual(result, expected)
         
         // more colors
         result = try parser.parseGradient("linear-gradient(#000000,#FFFFFF,#FF0000)")
-        expected = .linearGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white, DefaultColor.CSS.red])
+        expected = .linearGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white, DefaultColor.CSS.red], direction: defaultDirection)
         XCTAssertEqual(result, expected)
         
         // whitespace
         result = try parser.parseGradient("linear-gradient ( #000000 , #FFFFFF ,  #FF0000  )")
-        expected = .linearGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white, DefaultColor.CSS.red])
+        expected = .linearGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white, DefaultColor.CSS.red], direction: defaultDirection)
+        XCTAssertEqual(result, expected)
+        
+        // whitespace and direction
+        result = try parser.parseGradient("linear-gradient ( to-top-right , #000000 , #FFFFFF ,  #FF0000  )")
+        expected = .linearGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white, DefaultColor.CSS.red], direction: .toTopRight)
         XCTAssertEqual(result, expected)
     }
     
@@ -34,20 +45,31 @@ final class ColorParserTests: XCTestCase {
         let parser = ColorParser()
         var result: ColorType
         var expected: ColorType
+        let defaultDirection: Direction = .toBottom
         
         // two colors
         result = try parser.parseGradient("radial-gradient(#000000,#FFFFFF)")
-        expected = .radialGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white])
+        expected = .radialGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white], direction: defaultDirection)
+        XCTAssertEqual(result, expected)
+        
+        // two colors and direction
+        result = try parser.parseGradient("radial-gradient(to-top-right,#000000,#FFFFFF)")
+        expected = .radialGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white], direction: .toTopRight)
         XCTAssertEqual(result, expected)
         
         // more colors
         result = try parser.parseGradient("radial-gradient(#000000,#FFFFFF,#FF0000)")
-        expected = .radialGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white, DefaultColor.CSS.red])
+        expected = .radialGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white, DefaultColor.CSS.red], direction: defaultDirection)
         XCTAssertEqual(result, expected)
         
         // whitespace
         result = try parser.parseGradient("radial-gradient ( #000000 , #FFFFFF ,  #FF0000  )")
-        expected = .radialGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white, DefaultColor.CSS.red])
+        expected = .radialGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white, DefaultColor.CSS.red], direction: defaultDirection)
+        XCTAssertEqual(result, expected)
+        
+        // whitespace and direction
+        result = try parser.parseGradient("radial-gradient ( to-top-right , #000000 , #FFFFFF ,  #FF0000  )")
+        expected = .radialGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white, DefaultColor.CSS.red], direction: .toTopRight)
         XCTAssertEqual(result, expected)
     }
     
@@ -67,6 +89,9 @@ final class ColorParserTests: XCTestCase {
         
         // unknown gradient
         XCTAssertThrowsError(try parser.parseGradient("foo-gradient(#000000,#FFFFFF)"))
+        
+        // unknown direction
+        XCTAssertThrowsError(try parser.parseGradient("linear-gradient(to-foo,#000000,#FFFFFF)"))
         
         // syntax errors
         XCTAssertThrowsError(try parser.parseGradient("linear gradient(#000000,#FFFFFF)"))
@@ -96,7 +121,7 @@ final class ColorParserTests: XCTestCase {
         
         // valid color (mixed case and numbers)
         result = try parser.parseHexColor("#ffA500")
-        expected = DefaultColor.CSS.orange
+        expected = CGColor(red: 1.0, green: (CGFloat(165) / CGFloat(255)), blue: 0.0, alpha: 1.0) // ~= orange
         XCTAssertEqual(result, expected)
         
         // whitespace (prefix/suffix)

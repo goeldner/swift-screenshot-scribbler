@@ -11,10 +11,10 @@ public enum ColorType: Equatable {
     /// One solid color.
     case solid(color: CGColor)
     
-    /// Multiple colors defining a linear gradient.
-    case linearGradient(colors: [CGColor])
+    /// A linear gradient defined by multiple colors and a direction.
+    case linearGradient(colors: [CGColor], direction: Direction)
     
-    /// Multiple colors defining a radial gradient.
-    case radialGradient(colors: [CGColor])
+    /// A radial gradient defined by multiple colors and a direction.
+    case radialGradient(colors: [CGColor], direction: Direction)
     
 }

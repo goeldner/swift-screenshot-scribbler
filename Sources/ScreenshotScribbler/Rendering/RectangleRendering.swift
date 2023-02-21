@@ -51,9 +51,9 @@ public class RectangleRendering {
         switch fillColor {
         case .solid(let color):
             drawSolidRect(rect: rect, color: color, context: context)
-        case .linearGradient(let colors):
+        case .linearGradient(let colors, _):
             drawLinearGradientRect(rect: rect, colors: colors, context: context)
-        case .radialGradient(let colors):
+        case .radialGradient(let colors, _):
             drawRadialGradientRect(rect: rect, colors: colors, context: context)
         case .none:
             break // no fill
