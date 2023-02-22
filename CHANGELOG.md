@@ -4,7 +4,9 @@
 
 <!-- After release: *No unreleased changes yet.* -->
 
-*No unreleased changes yet.*
+### Added
+
+- Specify gradient directions by using an optional direction argument before the list of color arguments. This is "to-bottom" by default but can be a horizontal direction (i.e. "to-right" or "to-left"), a vertical direction (i.e. "to-bottom" or "to-top") or a diagonal direction (i.e. "to-bottom-right", "to-bottom-left", "to-top-right" or "to-top-left").
 
 ## [1.1.0] (2023-01-10)
 

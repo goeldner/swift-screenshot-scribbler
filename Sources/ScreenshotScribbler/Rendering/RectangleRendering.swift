@@ -51,10 +51,10 @@ public class RectangleRendering {
         switch fillColor {
         case .solid(let color):
             drawSolidRect(rect: rect, color: color, context: context)
-        case .linearGradient(let colors, _):
-            drawLinearGradientRect(rect: rect, colors: colors, context: context)
-        case .radialGradient(let colors, _):
-            drawRadialGradientRect(rect: rect, colors: colors, context: context)
+        case .linearGradient(let colors, let direction):
+            drawLinearGradientRect(rect: rect, colors: colors, direction: direction, context: context)
+        case .radialGradient(let colors, let direction):
+            drawRadialGradientRect(rect: rect, colors: colors, direction: direction, context: context)
         case .none:
             break // no fill
         }
@@ -100,23 +100,25 @@ public class RectangleRendering {
         context.restoreGState()
     }
     
-    /// Draws the rectangle filled with a linear gradient of given colors,
-    /// starting with the first color at the top edge and the last color at the bottom edge.
+    /// Draws the rectangle filled with a linear gradient of given colors.
+    ///
+    /// The direction defines the start and end point of the first and last color, e.g. `.toBottom` starts with the
+    /// first color at the top edge and the last color at the bottom edge.
     ///
     /// Considers also optionally defined rounded corners. Ignores the shadow.
     ///
     /// - Parameters:
     ///   - rect: The rectangle to draw.
     ///   - colors: The colors defining the gradient.
+    ///   - direction: The direction of the gradient.
     ///   - context: The graphics context.
     ///
-    private func drawLinearGradientRect(rect: CGRect, colors: [CGColor], context: CGContext) {
+    private func drawLinearGradientRect(rect: CGRect, colors: [CGColor], direction: Direction, context: CGContext) {
         
         let colorSpace = context.colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB)!
         let colorLocations = try! distributeColorLocationsEqually(numColors: colors.count)
         let gradient = CGGradient(colorsSpace: colorSpace, colors: colors as CFArray, locations: colorLocations)!
-        let startPoint = CGPoint(x: rect.midX, y: rect.maxY)
-        let endPoint = CGPoint(x: rect.midX, y: rect.minY)
+        let (startPoint, endPoint, _) = resolveGradientStartEndAndRadius(rect: rect, direction: direction)
         
         context.saveGState()
         context.beginPath()
@@ -132,25 +134,25 @@ public class RectangleRendering {
         context.restoreGState()
     }
     
-    /// Draws the rectangle filled with a radial gradient of given colors,
-    /// starting with the first color at the top edge and the last color at the bottom edge
-    /// and using a radius of half the width of the rectangle.
+    /// Draws the rectangle filled with a radial gradient of given colors, using a radius of half the width of the rectangle.
+    ///
+    /// The direction defines the start and end point of the first and last color, e.g. `.toBottom` starts with the
+    /// first color at the top edge and the last color at the bottom edge.
     ///
     /// Considers also optionally defined rounded corners. Ignores the shadow.
     ///
     /// - Parameters:
     ///   - rect: The rectangle to draw.
     ///   - colors: The colors defining the gradient.
+    ///   - direction: The direction of the gradient.
     ///   - context: The graphics context.
     ///
-    private func drawRadialGradientRect(rect: CGRect, colors: [CGColor], context: CGContext) {
+    private func drawRadialGradientRect(rect: CGRect, colors: [CGColor], direction: Direction, context: CGContext) {
         
         let colorSpace = context.colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB)!
         let colorLocations = try! distributeColorLocationsEqually(numColors: colors.count)
         let gradient = CGGradient(colorsSpace: colorSpace, colors: colors as CFArray, locations: colorLocations)!
-        let startPoint = CGPoint(x: rect.midX, y: rect.maxY)
-        let endPoint = CGPoint(x: rect.midX, y: rect.minY)
-        let radius = rect.width / 2
+        let (startPoint, endPoint, radius) = resolveGradientStartEndAndRadius(rect: rect, direction: direction)
         
         context.saveGState()
         context.beginPath()
@@ -166,6 +168,80 @@ public class RectangleRendering {
             options: [.drawsBeforeStartLocation, .drawsAfterEndLocation]
         )
         context.restoreGState()
+    }
+    
+    /// Calculates the start and end point of the gradient inside the given rectangle,
+    /// depending on the given direction. Additionally, calculates the radius that is
+    /// required to fill the rectangle when following the direction.
+    ///
+    /// - Parameters:
+    ///   - rect: The rectangle that will contain the gradient.
+    ///   - direction: The direction of the gradient.
+    /// - Returns: The start point, end point and radius.
+    ///
+    private func resolveGradientStartEndAndRadius(rect: CGRect, direction: Direction) -> (start: CGPoint, end: CGPoint, radius: CGFloat) {
+        switch direction {
+        //
+        // horizontal
+        //
+        case .toRight:
+            return (start: CGPoint(x: rect.minX, y: rect.midY),
+                      end: CGPoint(x: rect.maxX, y: rect.midY),
+                   radius: rect.height / 2)
+        case .toLeft:
+            return (start: CGPoint(x: rect.maxX, y: rect.midY),
+                      end: CGPoint(x: rect.minX, y: rect.midY),
+                   radius: rect.height / 2)
+        //
+        // vertical
+        //
+        case .toBottom:
+            return (start: CGPoint(x: rect.midX, y: rect.maxY),
+                      end: CGPoint(x: rect.midX, y: rect.minY),
+                   radius: rect.width / 2)
+        case .toTop:
+            return (start: CGPoint(x: rect.midX, y: rect.minY),
+                      end: CGPoint(x: rect.midX, y: rect.maxY),
+                   radius: rect.width / 2)
+        //
+        // diagonal
+        //
+        case .toBottomRight:
+            return (start: CGPoint(x: rect.minX, y: rect.maxY),
+                      end: CGPoint(x: rect.maxX, y: rect.minY),
+                   radius: calculateDiagonalMaxHeight(rect: rect))
+        case .toBottomLeft:
+            return (start: CGPoint(x: rect.maxX, y: rect.maxY),
+                      end: CGPoint(x: rect.minX, y: rect.minY),
+                   radius: calculateDiagonalMaxHeight(rect: rect))
+        case .toTopRight:
+            return (start: CGPoint(x: rect.minX, y: rect.minY),
+                      end: CGPoint(x: rect.maxX, y: rect.maxY),
+                   radius: calculateDiagonalMaxHeight(rect: rect))
+        case .toTopLeft:
+            return (start: CGPoint(x: rect.maxX, y: rect.minY),
+                      end: CGPoint(x: rect.minX, y: rect.maxY),
+                   radius: calculateDiagonalMaxHeight(rect: rect))
+        }
+    }
+    
+    /// Calculates the length "c" of the diagonal line through the given rectangle first by using the Pythagoras theorem,
+    /// where the two other edges of the triangle are the rectangle width "a" and the rectangle height "b".
+    ///
+    /// Then calculates the max height on top of that line "c" by using the cathetus theorem (Kathetensatz)
+    /// first, in order to get the length of "p" and "q". Then using the altitude theorem (Höhensatz) in order
+    /// to get the height "h".
+    ///
+    /// - Parameter rect: The rectangle that will contain the gradient.
+    /// - Returns: The start and end point and the required radius to fill the rectangle when following the direction.
+    private func calculateDiagonalMaxHeight(rect: CGRect) -> CGFloat {
+        let a = rect.width
+        let b = rect.height
+        let c = sqrt(pow(a, 2) + pow(b, 2))
+        let p = pow(a, 2) / c
+        let q = pow(b, 2) / c
+        let h = sqrt(p * q)
+        return h
     }
     
     /// Creates an array starting with 0.0 and ending with 1.0 and filling the steps equally

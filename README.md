@@ -123,7 +123,7 @@ A single color may be defined in hexadecimal syntax as follows, where each two d
 --background-color "#0099FF"
 ```
 
-Some options also support gradients, i.e. the `--background-color` and `--screenshot-border-color`. For gradients, at least two colors have to be defined. The colors are rendered from top to bottom.
+Some options also support gradients, i.e. the `--background-color` and `--screenshot-border-color`. For gradients, at least two colors have to be defined. The colors are rendered from top to bottom by default.
 
 Linear gradients:
 
@@ -135,6 +135,12 @@ Radial gradients:
 
 ```
 --background-color "radial-gradient(#FF0000, #0000FF)"
+```
+
+Specify gradient directions by using an optional direction argument before the list of color arguments. This is "to-bottom" by default but can be a horizontal direction (i.e. "to-right" or "to-left"), a vertical direction (i.e. "to-bottom" or "to-top") or a diagonal direction (i.e. "to-bottom-right", "to-bottom-left", "to-top-right" or "to-top-left"):
+
+```
+--background-color "linear-gradient(to-bottom-right, #FFFFFF, #000000)"
 ```
 
 More specialized backgrounds are possible by defining a background image that is rendered behind the screenshot, for example with following options:
