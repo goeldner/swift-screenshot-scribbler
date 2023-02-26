@@ -74,8 +74,8 @@ struct ScreenshotScribblerCommand: ParsableCommand {
         @Option(name: .long, help: "Horizontal alignment of the caption. (\(HorizontalTextAlignment.defaultAndOptionsDescription(.center)))")
         var captionAlignment: HorizontalTextAlignment?
         
-        @Option(name: .long, help: "Color of the caption. (Default: \"#000000\" (black))", transform: CGColor.initFromArgument)
-        var captionColor: CGColor?
+        @Option(name: .long, help: "Color of the caption. (Default: \"#000000\" (black); Supports gradients)")
+        var captionColor: ColorType?
         
         @Option(name: .long, help: "Font family name of the caption. (Default: \"SF Compact\")")
         var captionFontName: String?

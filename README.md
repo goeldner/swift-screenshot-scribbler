@@ -123,7 +123,7 @@ A single color may be defined in hexadecimal syntax as follows, where each two d
 --background-color "#0099FF"
 ```
 
-Some options also support gradients, i.e. the `--background-color` and `--screenshot-border-color`. For gradients, at least two colors have to be defined. The colors are rendered from top to bottom by default.
+Some options also support gradients, i.e. the `--caption-color`, `--background-color` and `--screenshot-border-color`. For gradients, at least two colors have to be defined. The colors are rendered from top to bottom by default.
 
 Linear gradients:
 

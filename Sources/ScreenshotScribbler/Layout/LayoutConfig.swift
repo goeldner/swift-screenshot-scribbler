@@ -27,7 +27,7 @@ public struct LayoutConfig {
     public var captionAlignment: HorizontalTextAlignment = .center
     
     /// Color of the caption. (Default: black)
-    public var captionColor: CGColor = DefaultColor.CSS.black
+    public var captionColor: ColorType = .solid(color: DefaultColor.CSS.black)
     
     /// Font family name of the caption. (Default: "SF Compact")
     public var captionFontName: String = "SF Compact"

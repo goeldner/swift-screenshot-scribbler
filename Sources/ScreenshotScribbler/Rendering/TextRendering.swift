@@ -15,7 +15,7 @@ public class TextRendering {
     private let text: String
     
     /// Color of the text.
-    private let color: CGColor
+    private let color: ColorType
     
     /// Font family name of the text.
     private let fontName: String
@@ -43,7 +43,7 @@ public class TextRendering {
     ///   - horizontalAlignment: Horizontal alignment of the text.
     ///   - verticalAlignment: Vertical alignment of the text.
     ///
-    public init(text: String, color: CGColor, fontName: String, fontStyle: String, fontSize: Int, horizontalAlignment: HorizontalTextAlignment, verticalAlignment: VerticalAlignment) {
+    public init(text: String, color: ColorType, fontName: String, fontStyle: String, fontSize: Int, horizontalAlignment: HorizontalTextAlignment, verticalAlignment: VerticalAlignment) {
         self.text = text
         self.color = color
         self.fontName = fontName
@@ -60,18 +60,55 @@ public class TextRendering {
     ///   - context: The graphics context.
     ///
     public func draw(in rect: CGRect, context: CGContext) {
-        context.saveGState()
         
-        // Create the font
+        // Pre-calculate the actual area that is needed to draw the text.
+        // This is necessary if a gradient shall be used as color, because the pattern
+        // drawing logic needs to be defined for a specific area that shall be covered.
+        let actualTextRect = resolveActualTextRect(in: rect)
+        
+        // We could use a pattern based color also for solid colors, but to avoid
+        // overhead, we use the patterns only for gradients.
+        let textColor: CGColor
+        switch self.color {
+        case .solid(let color):
+            textColor = color
+        default:
+            textColor = try! createPatternBasedColor(for: actualTextRect, fillColor: self.color)
+        }
+        
+        // Create an attributed string with defined font, paragraph settings and color (maybe a gradient)
         let font = createFont(name: self.fontName, size: self.fontSize, style: self.fontStyle)
-        
-        // Create a paragraph style with text alignment
         let paragraphStyle = createParagraphStyle(alignment: self.horizontalAlignment)
-        
-        // Create an attributed string with that font, color and paragraph settings
         let attributes: [CFString : Any] = [
             kCTFontAttributeName : font,
-            kCTForegroundColorAttributeName : self.color,
+            kCTForegroundColorAttributeName : textColor,
+            kCTParagraphStyleAttributeName : paragraphStyle
+        ]
+        let attributedString = CFAttributedStringCreate(kCFAllocatorDefault, text as CFString, attributes as CFDictionary)!
+        
+        // Draw the text inside the calculated frame
+        context.saveGState()
+        let path = CGMutablePath()
+        path.addRect(actualTextRect)
+        let framesetter = CTFramesetterCreateWithAttributedString(attributedString)
+        let frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), path, nil)
+        CTFrameDraw(frame, context)
+        context.restoreGState()
+    }
+
+    /// Calculates the actual text position to use inside the given rectangle by letting a CoreText framesetter
+    /// calculate the suggested frame size of the text for the defined font and paragraph style.
+    ///
+    /// - Parameter rect: The available space to use.
+    /// - Returns: The actual rectangle that will be used for drawing the text.
+    ///
+    private func resolveActualTextRect(in rect: CGRect) -> CGRect {
+        
+        // Create an attributed string with defined font and paragraph settings (i.e. no color yet)
+        let font = createFont(name: self.fontName, size: self.fontSize, style: self.fontStyle)
+        let paragraphStyle = createParagraphStyle(alignment: self.horizontalAlignment)
+        let attributes: [CFString : Any] = [
+            kCTFontAttributeName : font,
             kCTParagraphStyleAttributeName : paragraphStyle
         ]
         let attributedString = CFAttributedStringCreate(kCFAllocatorDefault, text as CFString, attributes as CFDictionary)!
@@ -90,13 +127,8 @@ public class TextRendering {
             textPosY = rect.minY
         }
         
-        // Draw the text inside the calculated frame
-        let path = CGMutablePath()
-        path.addRect(CGRect(x: rect.origin.x, y: textPosY, width: rect.width, height: actualTextSize.height))
-        let frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), path, nil)
-        CTFrameDraw(frame, context)
-        
-        context.restoreGState()
+        // Span the whole available width, but only the actual vertical space to use
+        return CGRect(x: rect.origin.x, y: textPosY, width: rect.width, height: actualTextSize.height)
     }
 
     /// Creates a CoreText font with given font family name, size and style by using CoreText APIs only.
@@ -154,5 +186,93 @@ public class TextRendering {
         }
         
         return result
+    }
+    
+    /// Creates a `CGColor` instance that is backed by custom pattern drawing logic. The drawing logic uses
+    /// the `RectangleRendering` class internally, which for example enables to draw gradients.
+    ///
+    /// - Parameters:
+    ///   - rect: The area that shall be filled by the drawing logic.
+    ///   - fillColor: The color (i.e. gradient definition) that shall be used for drawing.
+    /// - Returns: The `CGColor` with the defined pattern drawing logic.
+    ///
+    private func createPatternBasedColor(for rect: CGRect, fillColor: ColorType) throws -> CGColor {
+        
+        // Wrap all needed data inside the context helper
+        let renderer = RectangleRendering(fillColor: fillColor)
+        let renderContext = PatternRenderContext(rect: rect, renderer: renderer)
+        
+        // The custom pattern
+        guard let pattern = createPattern(renderContext: renderContext) else {
+            throw RuntimeError("Could not create CGPattern.")
+        }
+        
+        // Default pattern color space
+        guard let patternSpace = CGColorSpace(patternBaseSpace: nil) else {
+            throw RuntimeError("Could not create pattern based CGColorSpace.")
+        }
+        
+        // The `CGColor` wrapping the pattern
+        let alpha: CGFloat = 1.0
+        let patternBasedColor = withUnsafePointer(to: alpha) { alphaPointer in
+            return CGColor(patternSpace: patternSpace, pattern: pattern, components: alphaPointer)
+        }
+        guard let patternBasedColor else {
+            throw RuntimeError("Could not create pattern based CGColor.")
+        }
+        
+        return patternBasedColor
+    }
+    
+    /// Creates a `CGPattern` that performs drawing logic by defining a `CGPatternCallbacks` implemenation,
+    /// which uses the renderer of the given `PatternRenderContext` to fill the area of the given rectangle.
+    ///
+    /// Note: The implementation is based on the description from https://stackoverflow.com/a/44215903
+    ///
+    /// - Parameter renderContext: The context containing the renderer and rectangle.
+    /// - Returns: The created pattern or `nil` if something went wrong.
+    ///
+    private func createPattern(renderContext: PatternRenderContext) -> CGPattern? {
+        
+        // Create the callback that performs the actual pattern drawing logic
+        let callbacks = CGPatternCallbacks(version: 0, drawPattern: { (info, context) in
+            
+            // Everything needed here has to be provided through the `info` pointer
+            let renderContext = Unmanaged<PatternRenderContext>.fromOpaque(info!).takeUnretainedValue()
+            let renderer = renderContext.renderer
+            let rect = renderContext.rect
+            
+            // Draw one tile of the pattern into graphics context
+            renderer.draw(in: rect, context: context)
+            
+        }, releaseInfo: { (info) in
+            // When the `CGPattern` is freed, release the +1 retain of the `info` pointer
+            Unmanaged<PatternRenderContext>.fromOpaque(info!).release()
+        })
+        
+        // The rectangle
+        let rect = renderContext.rect
+        
+        // Passing `info` as +1 retained opaque pointer
+        let unsafeInfo = Unmanaged.passRetained(renderContext).toOpaque()
+        
+        // Create the actual pattern
+        let pattern = withUnsafePointer(to: callbacks) { callbacksPointer in
+            return CGPattern(info: unsafeInfo, bounds: rect, matrix: .identity, xStep: rect.width, yStep: rect.height, tiling: .noDistortion, isColored: true, callbacks: callbacksPointer)
+        }
+        
+        return pattern
+    }
+    
+    /// Helper class to pass data as unmanaged `info` pointer to the `CGPatternCallbacks` structure.
+    private class PatternRenderContext {
+        
+        let rect: CGRect
+        let renderer: RectangleRendering
+        
+        init(rect: CGRect, renderer: RectangleRendering) {
+            self.rect = rect
+            self.renderer = renderer
+        }
     }
 }
