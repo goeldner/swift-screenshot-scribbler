@@ -128,15 +128,15 @@ swift run scrscr \
     --screenshot-border-size 5 \
     --screenshot-border-color "radial-gradient(#FFFF00, #FFA500)" \
 
-# Gradient: Background with two color linear gradient in diagonal direction
+# Gradient: Background with linear gradient in diagonal direction and caption with horizontal gradient
 swift run scrscr \
-    --caption "Diagonal gradient" \
+    --caption "Diagonal gradient background and gradient caption" \
     --screenshot Examples/example-input.png \
     --output Examples/example-output-gradient-diagonal-black-white.png \
     --layout "caption-before-screenshot" \
-    --background-color "linear-gradient(to-bottom-right, #000000, #FFFFFF)" \
-    --caption-size-factor 0.20 \
-    --caption-color "#FFFFFF" \
+    --background-color "linear-gradient(to-bottom-right, #000000, #000000, #AAAAAA, #0000FF)" \
+    --caption-size-factor 0.25 \
+    --caption-color "linear-gradient(to-right, #FF0000, #0000FF)" \
     --screenshot-size-factor 0.70 \
     --screenshot-corner-radius 0 \
     --screenshot-shadow-size 20 \
