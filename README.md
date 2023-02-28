@@ -47,16 +47,17 @@ Following example uses the default settings:
 $ scrscr --caption "Scribble this caption" --screenshot example-input.png --output example-output.png
 ```
 
-The layout may be customized by using several command line options. The `--help` describes all options:
+The layout may be customized by using several command line options. Display the help about all available commands and options:
 
 ```
 $ scrscr --help
+$ scrscr help decorate
 ```
 
 Following example defines all possible options including their default values:
 
 ```
-$ scrscr \
+$ scrscr decorate \
     --caption "Example output with default options and long caption" \
     --screenshot example-input.png \
     --output example-output-default.png \
