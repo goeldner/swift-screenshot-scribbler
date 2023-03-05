@@ -17,8 +17,11 @@ struct DecorateCommand: ParsableCommand {
         abstract: "Decorates a screenshot with a nice background and caption."
     )
 
-    @OptionGroup(title: "Basic")
-    var basicOptions: BasicOptions
+    @OptionGroup(title: "Output")
+    var outputOptions: OutputOptions
+    
+    @OptionGroup(title: "Layout")
+    var layoutOptions: LayoutOptions
     
     @OptionGroup(title: "Screenshot")
     var screenshotOptions: ScreenshotOptions
@@ -32,13 +35,10 @@ struct DecorateCommand: ParsableCommand {
     @Flag(name: .long, help: "Show detailed progress updates.")
     var verbose = false
 
-    struct BasicOptions: ParsableArguments {
+    struct OutputOptions: ParsableArguments {
         
-        @Option(name: .customLong("output"), help: "The output image file to write. (Required)")
+        @Option(name: .customLong("output"), help: "The image file to write as output. (Required)")
         var outputFile: String
-        
-        @Option(name: .customLong("layout"), help: "Arrangement of the caption and screenshot. (\(LayoutType.defaultAndOptionsDescription(.captionBeforeScreenshot)))")
-        var layoutType: LayoutType?
         
     }
     
@@ -73,8 +73,8 @@ struct DecorateCommand: ParsableCommand {
             let output = try scrscr.generate()
             
             // Write data to output file
-            print("Output: \(self.basicOptions.outputFile)")
-            try output.writeToFilePath(self.basicOptions.outputFile)
+            print("Output: \(self.outputOptions.outputFile)")
+            try output.writeToFilePath(self.outputOptions.outputFile)
             
             printVerbose("Finished successful.")
         } catch {
@@ -100,9 +100,7 @@ struct DecorateCommand: ParsableCommand {
     ///
     private func createLayoutConfigFromOptions() -> LayoutConfig {
         var layout = LayoutConfig()
-        if let layoutType = self.basicOptions.layoutType {
-            layout.layoutType = layoutType
-        }
+        layout = self.layoutOptions.applyToLayoutConfig(layout)
         layout = self.screenshotOptions.applyToLayoutConfig(layout)
         layout = self.captionOptions.applyToLayoutConfig(layout)
         layout = self.backgroundOptions.applyToLayoutConfig(layout)
