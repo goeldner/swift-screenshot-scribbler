@@ -14,18 +14,21 @@ struct LayoutOptions: ParsableArguments {
     @Option(name: .customLong("layout"), help: "Arrangement of the caption and screenshot. (\(LayoutType.defaultAndOptionsDescription(.captionBeforeScreenshot)))")
     var layoutType: LayoutType?
 
-    /// Creates a new `LayoutConfig` based on the given pre-filled `LayoutConfig` and
-    /// overwrites some attributes with the option values that are defined here, i.e. that are not `nil`.
-    ///
-    /// - Parameter layoutConfig: The current `LayoutConfig`.
-    /// - Returns: The modified `LayoutConfig`.
-    ///
-    func applyToLayoutConfig(_ layoutConfig: LayoutConfig) -> LayoutConfig {
-        var layout = layoutConfig
-        if let layoutType {
-            layout.layoutType = layoutType
-        }
-        return layout
-    }
+}
+
+///
+/// Extension of the `LayoutConfig` with functionality related to `LayoutOptions`.
+///
+extension LayoutConfig {
     
+    /// Overwrites some attributes of this pre-filled `LayoutConfig` with the option values that are defined
+    /// in the given `LayoutOptions` instance, i.e. those where the options are not `nil`.
+    ///
+    /// - Parameter options: The `LayoutOptions` to apply.
+    ///
+    mutating func applyOptions(_ options: LayoutOptions) {
+        if let layoutType = options.layoutType {
+            self.layoutType = layoutType
+        }
+    }
 }

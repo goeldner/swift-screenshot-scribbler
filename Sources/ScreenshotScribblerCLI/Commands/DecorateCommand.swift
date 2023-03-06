@@ -59,9 +59,9 @@ struct DecorateCommand: ParsableCommand {
                 backgroundImageData = nil
             }
             
-            // Parse the layout configuration options
-            printVerbose("Preparing layout configuration...")
-            let layoutConfig = createLayoutConfigFromOptions()
+            // Parse the configuration options
+            printVerbose("Preparing configuration...")
+            let config = createConfigFromOptions()
             
             // Generate the new image
             printVerbose("Generating output image...")
@@ -69,8 +69,8 @@ struct DecorateCommand: ParsableCommand {
             let scrscr = ScreenshotScribbler(screenshot: screenshotData,
                                              backgroundImage: backgroundImageData,
                                              caption: caption,
-                                             layout: layoutConfig)
-            let output = try scrscr.generate()
+                                             config: config)
+            let output = try scrscr.decorate()
             
             // Write data to output file
             print("Output: \(self.outputOptions.outputFile)")
@@ -93,18 +93,18 @@ struct DecorateCommand: ParsableCommand {
         }
     }
     
-    /// Creates a default `LayoutConfig` instance and overwrites all values with those
-    /// that were defined on command line.
+    /// Creates a default `DecorateActionConfig` instance and overwrites all values
+    /// with those that were defined on command line.
     ///
-    /// - Returns: The `LayoutConfig` adapted to command line options.
+    /// - Returns: The `DecorateActionConfig` adapted to command line options.
     ///
-    private func createLayoutConfigFromOptions() -> LayoutConfig {
-        var layout = LayoutConfig()
-        layout = self.layoutOptions.applyToLayoutConfig(layout)
-        layout = self.screenshotOptions.applyToLayoutConfig(layout)
-        layout = self.captionOptions.applyToLayoutConfig(layout)
-        layout = self.backgroundOptions.applyToLayoutConfig(layout)
-        return layout
+    private func createConfigFromOptions() -> DecorateActionConfig {
+        var config = DecorateActionConfig()
+        config.layout.applyOptions(self.layoutOptions)
+        config.screenshot.applyOptions(self.screenshotOptions)
+        config.caption.applyOptions(self.captionOptions)
+        config.background.applyOptions(self.backgroundOptions)
+        return config
     }
 
 }

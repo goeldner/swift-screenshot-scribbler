@@ -32,33 +32,36 @@ struct CaptionOptions: ParsableArguments {
     @Option(name: .long, help: "Font size of the caption. (Default: 32)")
     var captionFontSize: Int?
 
-    /// Creates a new `LayoutConfig` based on the given pre-filled `LayoutConfig` and
-    /// overwrites some attributes with the option values that are defined here, i.e. that are not `nil`.
-    ///
-    /// - Parameter layoutConfig: The current `LayoutConfig`.
-    /// - Returns: The modified `LayoutConfig`.
-    ///
-    func applyToLayoutConfig(_ layoutConfig: LayoutConfig) -> LayoutConfig {
-        var layout = layoutConfig
-        if let captionSizeFactor {
-            layout.captionSizeFactor = captionSizeFactor
-        }
-        if let captionAlignment {
-            layout.captionAlignment = captionAlignment
-        }
-        if let captionColor {
-            layout.captionColor = captionColor
-        }
-        if let captionFontName {
-            layout.captionFontName = captionFontName
-        }
-        if let captionFontStyle {
-            layout.captionFontStyle = captionFontStyle
-        }
-        if let captionFontSize {
-            layout.captionFontSize = captionFontSize
-        }
-        return layout
-    }
+}
+
+///
+/// Extension of the `CaptionConfig` with functionality related to `CaptionOptions`.
+///
+extension CaptionConfig {
     
+    /// Overwrites some attributes of this pre-filled `CaptionConfig` with the option values that are defined
+    /// in the given `CaptionOptions` instance, i.e. those where the options are not `nil`.
+    ///
+    /// - Parameter options: The `CaptionOptions` to apply.
+    ///
+    mutating func applyOptions(_ options: CaptionOptions) {
+        if let captionSizeFactor = options.captionSizeFactor {
+            self.captionSizeFactor = captionSizeFactor
+        }
+        if let captionAlignment = options.captionAlignment {
+            self.captionAlignment = captionAlignment
+        }
+        if let captionColor = options.captionColor {
+            self.captionColor = captionColor
+        }
+        if let captionFontName = options.captionFontName {
+            self.captionFontName = captionFontName
+        }
+        if let captionFontStyle = options.captionFontStyle {
+            self.captionFontStyle = captionFontStyle
+        }
+        if let captionFontSize = options.captionFontSize {
+            self.captionFontSize = captionFontSize
+        }
+    }
 }

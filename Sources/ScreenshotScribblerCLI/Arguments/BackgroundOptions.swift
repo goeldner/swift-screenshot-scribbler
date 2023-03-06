@@ -23,24 +23,27 @@ struct BackgroundOptions: ParsableArguments {
     @Option(name: .long, help: "Horizontal and/or vertical alignment of the background image, separated by space character. (Default: \"center middle\"; Options horizontal: \(HorizontalAlignment.allValueStrings); Options vertical: \(VerticalAlignment.allValueStrings))")
     var backgroundImageAlignment: Alignment?
 
-    /// Creates a new `LayoutConfig` based on the given pre-filled `LayoutConfig` and
-    /// overwrites some attributes with the option values that are defined here, i.e. that are not `nil`.
-    ///
-    /// - Parameter layoutConfig: The current `LayoutConfig`.
-    /// - Returns: The modified `LayoutConfig`.
-    ///
-    func applyToLayoutConfig(_ layoutConfig: LayoutConfig) -> LayoutConfig {
-        var layout = layoutConfig
-        if let backgroundColor {
-            layout.backgroundColor = backgroundColor
-        }
-        if let backgroundImageScaling {
-            layout.backgroundImageScaling = backgroundImageScaling
-        }
-        if let backgroundImageAlignment {
-            layout.backgroundImageAlignment = backgroundImageAlignment
-        }
-        return layout
-    }
+}
 
+///
+/// Extension of the `BackgroundConfig` with functionality related to `BackgroundOptions`.
+///
+extension BackgroundConfig {
+    
+    /// Overwrites some attributes of this pre-filled `BackgroundConfig` with the option values that are defined
+    /// in the given `BackgroundOptions` instance, i.e. those where the options are not `nil`.
+    ///
+    /// - Parameter options: The `BackgroundOptions` to apply.
+    ///
+    mutating func applyOptions(_ options: BackgroundOptions) {
+        if let backgroundColor = options.backgroundColor {
+            self.backgroundColor = backgroundColor
+        }
+        if let backgroundImageScaling = options.backgroundImageScaling {
+            self.backgroundImageScaling = backgroundImageScaling
+        }
+        if let backgroundImageAlignment = options.backgroundImageAlignment {
+            self.backgroundImageAlignment = backgroundImageAlignment
+        }
+    }
 }

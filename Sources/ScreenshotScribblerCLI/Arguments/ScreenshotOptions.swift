@@ -33,33 +33,36 @@ struct ScreenshotOptions: ParsableArguments {
     @Option(name: .long, help: "Color of the border around the screenshot. (Default: \"#000000\" (black); Supports gradients)")
     var screenshotBorderColor: ColorType?
 
-    /// Creates a new `LayoutConfig` based on the given pre-filled `LayoutConfig` and
-    /// overwrites some attributes with the option values that are defined here, i.e. that are not `nil`.
-    ///
-    /// - Parameter layoutConfig: The current `LayoutConfig`.
-    /// - Returns: The modified `LayoutConfig`.
-    ///
-    func applyToLayoutConfig(_ layoutConfig: LayoutConfig) -> LayoutConfig {
-        var layout = layoutConfig
-        if let screenshotSizeFactor {
-            layout.screenshotSizeFactor = screenshotSizeFactor
-        }
-        if let screenshotCornerRadius {
-            layout.screenshotCornerRadius = screenshotCornerRadius
-        }
-        if let screenshotShadowSize {
-            layout.screenshotShadowSize = screenshotShadowSize
-        }
-        if let screenshotShadowColor {
-            layout.screenshotShadowColor = screenshotShadowColor
-        }
-        if let screenshotBorderSize {
-            layout.screenshotBorderSize = screenshotBorderSize
-        }
-        if let screenshotBorderColor {
-            layout.screenshotBorderColor = screenshotBorderColor
-        }
-        return layout
-    }
+}
+
+///
+/// Extension of the `ScreenshotConfig` with functionality related to `ScreenshotOptions`.
+///
+extension ScreenshotConfig {
     
+    /// Overwrites some attributes of this pre-filled `ScreenshotConfig` with the option values that are defined
+    /// in the given `ScreenshotOptions` instance, i.e. those where the options are not `nil`.
+    ///
+    /// - Parameter options: The `ScreenshotOptions` to apply.
+    ///
+    mutating func applyOptions(_ options: ScreenshotOptions) {
+        if let screenshotSizeFactor = options.screenshotSizeFactor {
+            self.screenshotSizeFactor = screenshotSizeFactor
+        }
+        if let screenshotCornerRadius = options.screenshotCornerRadius {
+            self.screenshotCornerRadius = screenshotCornerRadius
+        }
+        if let screenshotShadowSize = options.screenshotShadowSize {
+            self.screenshotShadowSize = screenshotShadowSize
+        }
+        if let screenshotShadowColor = options.screenshotShadowColor {
+            self.screenshotShadowColor = screenshotShadowColor
+        }
+        if let screenshotBorderSize = options.screenshotBorderSize {
+            self.screenshotBorderSize = screenshotBorderSize
+        }
+        if let screenshotBorderColor = options.screenshotBorderColor {
+            self.screenshotBorderColor = screenshotBorderColor
+        }
+    }
 }
