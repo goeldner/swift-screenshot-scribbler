@@ -3,9 +3,10 @@
 //
 
 import Foundation
-import CoreGraphics
 
-/// Configuration of the `decorate` action.
+///
+/// Configuration settings that contol the appearance of the `decorate` action output.
+///
 public struct DecorateActionConfig {
     
     /// Layout configuration.
@@ -14,11 +15,11 @@ public struct DecorateActionConfig {
     /// Screenshot configuration.
     public var screenshot = ScreenshotConfig()
     
-    /// Caption configuration.
-    public var caption = CaptionConfig()
-    
     /// Background configuration.
     public var background = BackgroundConfig()
+    
+    /// Caption configuration.
+    public var caption = CaptionConfig()
     
     /// Public initializer.
     public init() {}

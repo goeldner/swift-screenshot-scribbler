@@ -14,7 +14,7 @@ struct BackgroundOptions: ParsableArguments {
     @Option(name: .long, help: "Color which covers the whole background. (Default: \"#FFFFFF\" (white); Supports gradients)")
     var backgroundColor: ColorType?
     
-    @Option(name: .customLong("background-image"), help: "The background image file to read. (Default: none)")
+    @Option(name: .customLong("background-image"), help: "The background image file to read. (Optional)")
     var backgroundImageFile: String?
     
     @Option(name: .long, help: "Scaling mode or factor (as decimal number) of the background image. (\(ImageScalingMode.defaultAndOptionsDescription(.stretchFill)))")

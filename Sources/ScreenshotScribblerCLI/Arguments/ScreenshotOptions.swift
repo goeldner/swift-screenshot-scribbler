@@ -12,8 +12,8 @@ import ScreenshotScribbler
 ///
 struct ScreenshotOptions: ParsableArguments {
     
-    @Option(name: .customLong("screenshot"), help: "The screenshot image file to read. (Required)")
-    var screenshotFile: String
+    @Option(name: .customLong("screenshot"), help: "The screenshot image file to read. (Optional)")
+    var screenshotImageFile: String?
     
     @Option(name: .long, help: "Percentage of the rendered screenshot size relative to its original size. (Default: 0.85 (85%))")
     var screenshotSizeFactor: Double?

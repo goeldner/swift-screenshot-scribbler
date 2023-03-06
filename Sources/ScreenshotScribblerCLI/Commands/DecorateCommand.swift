@@ -4,7 +4,6 @@
 
 import Foundation
 import ArgumentParser
-import CoreGraphics
 import ScreenshotScribbler
 
 ///
@@ -26,12 +25,12 @@ struct DecorateCommand: ParsableCommand {
     @OptionGroup(title: "Screenshot")
     var screenshotOptions: ScreenshotOptions
     
-    @OptionGroup(title: "Caption")
-    var captionOptions: CaptionOptions
-
     @OptionGroup(title: "Background")
     var backgroundOptions: BackgroundOptions
     
+    @OptionGroup(title: "Caption")
+    var captionOptions: CaptionOptions
+
     @Flag(name: .long, help: "Show detailed progress updates.")
     var verbose = false
 
@@ -46,31 +45,18 @@ struct DecorateCommand: ParsableCommand {
         do {
             printVerbose("Starting...")
             
-            // Read data of screenshot file
-            print("Screenshot: \(self.screenshotOptions.screenshotFile)")
-            let screenshotData = try Data(fromFilePath: self.screenshotOptions.screenshotFile)
-            
-            // Optionally read data of background image file
-            let backgroundImageData: Data?
-            if let backgroundImage = self.backgroundOptions.backgroundImageFile {
-                print("Background: \(backgroundImage)")
-                backgroundImageData = try Data(fromFilePath: backgroundImage)
-            } else {
-                backgroundImageData = nil
-            }
+            // Load the assets
+            printVerbose("Loading assets from options...")
+            let assets = try loadAssetsFromOptions()
             
             // Parse the configuration options
-            printVerbose("Preparing configuration...")
+            printVerbose("Preparing configuration from options...")
             let config = createConfigFromOptions()
             
             // Generate the new image
             printVerbose("Generating output image...")
-            let caption = self.captionOptions.caption
-            let scrscr = ScreenshotScribbler(screenshot: screenshotData,
-                                             backgroundImage: backgroundImageData,
-                                             caption: caption,
-                                             config: config)
-            let output = try scrscr.decorate()
+            let scrscr = ScreenshotScribbler()
+            let output = try scrscr.decorate(assets: assets, config: config)
             
             // Write data to output file
             print("Output: \(self.outputOptions.outputFile)")
@@ -93,8 +79,40 @@ struct DecorateCommand: ParsableCommand {
         }
     }
     
+    /// Creates a `DecorateActionAssets` instance and loads all available
+    /// assets that are defined as command line options.
+    ///
+    /// - Returns: The `DecorateActionAssets` with loaded assets, if defined as command line options.
+    ///
+    private func loadAssetsFromOptions() throws -> DecorateActionAssets {
+        
+        // Read data of screenshot file if defined
+        let screenshotImageData: Data?
+        if let screenshotImageFile = self.screenshotOptions.screenshotImageFile {
+            print("Screenshot: \(screenshotImageFile)")
+            screenshotImageData = try Data(fromFilePath: screenshotImageFile)
+        } else {
+            screenshotImageData = nil
+        }
+        
+        // Read data of background image file if defined
+        let backgroundImageData: Data?
+        if let backgroundImageFile = self.backgroundOptions.backgroundImageFile {
+            print("Background: \(backgroundImageFile)")
+            backgroundImageData = try Data(fromFilePath: backgroundImageFile)
+        } else {
+            backgroundImageData = nil
+        }
+        
+        var assets = DecorateActionAssets()
+        assets.screenshot = screenshotImageData
+        assets.background = backgroundImageData
+        assets.caption = self.captionOptions.caption
+        return assets
+    }
+
     /// Creates a default `DecorateActionConfig` instance and overwrites all values
-    /// with those that were defined on command line.
+    /// with those that were defined as command line options.
     ///
     /// - Returns: The `DecorateActionConfig` adapted to command line options.
     ///
@@ -102,8 +120,8 @@ struct DecorateCommand: ParsableCommand {
         var config = DecorateActionConfig()
         config.layout.applyOptions(self.layoutOptions)
         config.screenshot.applyOptions(self.screenshotOptions)
-        config.caption.applyOptions(self.captionOptions)
         config.background.applyOptions(self.backgroundOptions)
+        config.caption.applyOptions(self.captionOptions)
         return config
     }
 

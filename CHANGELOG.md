@@ -4,10 +4,16 @@
 
 <!-- After release: *No unreleased changes yet.* -->
 
+This release adds two missing pieces for gradients – changing the gradient direction and using gradients also for the caption.
+
 ### Added
 
 - The caption color now also supports gradients. Use the same syntax as for the background and shadow color.
 - Specify gradient directions by using an optional direction argument before the list of color arguments. This is "to-bottom" by default but can be a horizontal direction (i.e. "to-right" or "to-left"), a vertical direction (i.e. "to-bottom" or "to-top") or a diagonal direction (i.e. "to-bottom-right", "to-bottom-left", "to-top-right" or "to-top-left").
+
+### Changed
+
+- The CLI functionality has been refactored into a subcommand called `decorate` in order to support more subcommands in the future. This is the default command, so the CLI is compatible to previous versions. You can type `scrscr help decorate` in order to see the whole description. Internal option, config and action classes have also been refactored for reusability by other commands and actions in the future.
 
 ## [1.1.0] (2023-01-10)
 
