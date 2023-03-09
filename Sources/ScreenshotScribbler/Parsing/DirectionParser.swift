@@ -13,11 +13,25 @@ public class DirectionParser {
     internal static let DirectionPattern = "to\\-(top|right|bottom|left|top\\-right|top\\-left|bottom\\-right|bottom\\-left)"
     
     /// Public initializer.
-    public init() {
-    }
+    public init() {}
     
+    /// Parses the given string to a `Direction` if supported. Throws a `RuntimeError` otherwise.
+    ///
+    /// - Parameter string: The string to parse.
+    /// - Returns: The parsed `Direction` instance.
+    /// - Throws: `RuntimeError` if string cannot be parsed successfully for any reason.
+    ///
+    public func parse(_ string: String) throws -> Direction {
+        let cleanString = try string.stripWhitespace()
+        if let direction = Direction(rawValue: cleanString) {
+            return direction
+        } else {
+            throw RuntimeError("Unsupported Direction string: \(string)")
+        }
+    }
+
     /// Checks whether the given string is a direction definition, after stripping all whitespace.
-    public func isDirection(_ string: String) -> Bool {
+    internal func isDirection(_ string: String) -> Bool {
         do {
             let cleanString = try string.stripWhitespace()
             return try cleanString.wholeMatch(pattern: DirectionParser.DirectionPattern)
@@ -26,31 +40,4 @@ public class DirectionParser {
         }
     }
     
-    /// Parses the given direction string.
-    ///
-    /// - Parameter string: The string to parse.
-    /// - Returns: A `Direction` instance.
-    /// - Throws: `RuntimeError` if string cannot be parsed successfully for any reason.
-    ///
-    public func parse(_ string: String) throws -> Direction {
-        
-        let candidateString = try string.stripWhitespace()
-        
-        // find a matching direction
-        var direction: Direction? = nil
-        for candidate in Direction.allCases {
-            if candidateString == candidate.rawValue {
-                direction = candidate
-                break
-            }
-        }
-        
-        // ensure that a value was found
-        guard let direction else {
-            throw RuntimeError("Could not parse direction from: \(string)")
-        }
-        
-        return direction
-    }
-
 }

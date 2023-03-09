@@ -5,7 +5,7 @@
 import Foundation
 
 /// Vertical alignment.
-public enum VerticalAlignment: String, CaseIterable {
+public enum VerticalAlignment: String, CaseIterable, Codable {
     
     /// Vertical top alignment.
     case top

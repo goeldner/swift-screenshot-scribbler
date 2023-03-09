@@ -9,18 +9,16 @@ import ScreenshotScribbler
 extension ImageScaling: ExpressibleByArgument {
     
     /// Creates a `ImageScaling` instance by parsing the given string argument.
-    /// Returns `nil` if argument cannot be parsed to be either a factor (decimal number)
-    /// or one of the predefined `ImageScalingMode` options.
+    /// Returns `nil` if argument cannot be parsed by `ImageScalingParser`.
     ///
-    /// - Parameter argument: The string to parse.
+    /// - Parameter argument: The string to parse with `ImageScalingParser`.
     /// - Returns: The `ImageScaling` instance or `nil`.
     ///
     public init?(argument: String) {
-        if let factor = Double(argument: argument) {
-            self = .factor(factor)
-        } else if let mode = ImageScalingMode(argument: argument) {
-            self = .mode(mode)
-        } else {
+        do {
+            let parser = ImageScalingParser()
+            self = try parser.parse(argument)
+        } catch {
             return nil
         }
     }

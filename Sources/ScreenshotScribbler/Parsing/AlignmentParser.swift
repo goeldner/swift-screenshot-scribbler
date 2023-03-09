@@ -10,7 +10,15 @@ import Foundation
 public class AlignmentParser {
  
     /// Public initializer.
-    public init() {
+    public init() {}
+    
+    /// Encodes the given `Alignment` to a string that can be parsed again by the `parse` method.
+    ///
+    /// - Parameter alignment: The `Alignment` to encode.
+    /// - Returns: The encoded string.
+    ///
+    public func encode(_ alignment: Alignment) -> String {
+        return "\(alignment.vertical.rawValue) \(alignment.horizontal.rawValue)"
     }
     
     /// Parses the given alignment definition string.

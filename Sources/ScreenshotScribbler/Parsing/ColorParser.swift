@@ -1,49 +1,74 @@
 //
-// Copyright © 2022 Christoph Göldner. All rights reserved.
+// Copyright © 2023 Christoph Göldner. All rights reserved.
 //
 
 import Foundation
 import CoreGraphics
 
 ///
-/// Parser for gradient and color syntax strings.
+/// Parser for color syntax strings.
 ///
 public class ColorParser {
  
-    /// Matches a single color, e.g. "#0099FF"
-    private static let HexColorPattern = "\\#([A-Fa-f0-9]{2})([A-Fa-f0-9]{2})([A-Fa-f0-9]{2})"
-    
-    /// Matches a list of two or more colors, e.g. "#112233,#AABBCC"
-    private static let HexColorListPattern = "(\(HexColorPattern)[,])+\(HexColorPattern)"
-    
-    /// Matches a gradient type, e.g. "linear-gradient" or "radial-gradient"
-    private static let GradientTypePattern = "linear\\-gradient|radial\\-gradient"
-    
-    /// Matches a gradient definition with a list of two or more colors and an optional direction as first argument.
-    ///
-    /// Examples:
-    /// - "linear-gradient(#112233,#AABBCC,#aabbcc)"
-    /// - "linear-gradient(to-bottom-right,#112233,#AABBCC)"
-    /// - "radial-gradient(#112233,#AABBCC)"
-    ///
-    private static let GradientPattern = "(\(GradientTypePattern))\\(((\(DirectionParser.DirectionPattern)[,])?\(HexColorListPattern))\\)"
+    /// Matches a single color with optional alpha channel, e.g. "#0099FF" or "#0099FF80".
+    internal static let HexColorPattern = "\\#([A-Fa-f0-9]{2})([A-Fa-f0-9]{2})([A-Fa-f0-9]{2})([A-Fa-f0-9]{2})?"
     
     /// Public initializer.
-    public init() {
+    public init() {}
+    
+    /// Encodes the given `Color` to a string in hex-format, e.g. "#FFFFFF" or "#FFFFFF80" if custom alpha opacity is defined.
+    ///
+    /// - Parameter color: The `Color` to encode.
+    /// - Returns: The encoded string.
+    ///
+    public func encode(_ color: Color) -> String {
+        return encode(red: color.red, green: color.green, blue: color.blue, alpha: color.alpha)
     }
     
-    /// Checks whether the given string is a gradient definition, after stripping all whitespace.
-    public func isGradient(_ string: String) -> Bool {
-        do {
-            let cleanString = try string.stripWhitespace()
-            return try cleanString.wholeMatch(pattern: ColorParser.GradientPattern)
-        } catch {
-            return false
+    /// Encodes the given `CGColor` to a string in hex-format, e.g. "#FFFFFF" or "#FFFFFF80" if custom alpha opacity is defined.
+    ///
+    /// - Parameter color: The `CGColor` to encode.
+    /// - Returns: The encoded string.
+    ///
+    public func encode(_ color: CGColor) -> String {
+        return encode(Color(color))
+    }
+    
+    /// Encodes the given color components to a string in hex-format, e.g. "#FFFFFF" or "#FFFFFF80" if custom alpha opacity is defined.
+    ///
+    /// - Parameters:
+    ///   - red: Red color component (0 - 255)
+    ///   - green: Green color component (0 - 255)
+    ///   - blue: Blue color component (0 - 255)
+    ///   - alpha: Alpha channel (0 - 255; default: 255)
+    /// - Returns: The encoded string.
+    ///
+    internal func encode(red: Int, green: Int, blue: Int, alpha: Int = 255) -> String {
+        if alpha != 255 {
+            // include alpha channel only if not default
+            return String(format: "#%02X%02X%02X%02X", red, green, blue, alpha)
+        } else {
+            // default is RGB only
+            return String(format: "#%02X%02X%02X", red, green, blue)
+        }
+    }
+    
+    /// Parses the given string to a `Color` if supported. Throws a `RuntimeError` otherwise.
+    ///
+    /// - Parameter string: The string to parse.
+    /// - Returns: The parsed `Color` instance.
+    /// - Throws: `RuntimeError` if string cannot be parsed successfully for any reason.
+    ///
+    public func parse(_ string: String) throws -> Color {
+        if isHexColor(string) {
+            return try parseHexColor(string)
+        } else {
+            throw RuntimeError("Unsupported Color string: \(string)")
         }
     }
     
     /// Checks whether the given string is a single color definition, after stripping all whitespace.
-    public func isHexColor(_ string: String) -> Bool {
+    internal func isHexColor(_ string: String) -> Bool {
         do {
             let cleanString = try string.stripWhitespace()
             return try cleanString.wholeMatch(pattern: ColorParser.HexColorPattern)
@@ -52,113 +77,43 @@ public class ColorParser {
         }
     }
     
-    /// Parses the given gradient definition string, after stripping all whitespace.
+    /// Parses the given color string, after stripping all whitespace.
     ///
     /// - Parameter string: The string to parse.
-    /// - Returns: `ColorType.linearGradient` or `ColorType.radialGradient`.
+    /// - Returns: A `Color`.
     /// - Throws: `RuntimeError` if string cannot be parsed successfully for any reason.
     ///
-    public func parseGradient(_ string: String) throws -> ColorType {
+    internal func parseHexColor(_ string: String) throws -> Color {
         let cleanString = try string.stripWhitespace()
-        var (name, args) = try extractGradientNameAndArguments(cleanString)
-        
-        // First argument could be a direction
-        var direction: Direction? = nil
-        let directionParser = DirectionParser()
-        if directionParser.isDirection(args[0]) {
-            direction = try directionParser.parse(args[0])
-            args.removeFirst()
-        }
-        
-        // All other arguments should be colors
-        let colors = try args.map { string in try parseHexColor(string) }
-        
-        return try createGradientColorType(name: name, colors: colors, direction: direction)
+        let rgba = try extractRGBA(cleanString)
+        return Color(red: rgba.r, green: rgba.g, blue: rgba.b, alpha: rgba.a)
     }
     
-    /// Parses the given single color definition string, after stripping all whitespace.
-    ///
-    /// - Parameter string: The string to parse.
-    /// - Returns: A `CGColor`.
-    /// - Throws: `RuntimeError` if string cannot be parsed successfully for any reason.
-    ///
-    public func parseHexColor(_ string: String) throws -> CGColor {
-        let cleanString = try string.stripWhitespace()
-        let rgb = try extractRGB(cleanString)
-        let r = CGFloat(rgb.r) / CGFloat(255)
-        let g = CGFloat(rgb.g) / CGFloat(255)
-        let b = CGFloat(rgb.b) / CGFloat(255)
-        return CGColor(red: r, green: g, blue: b, alpha: 1.0)
-    }
-    
-    /// Extracts the gradient name (the string part before the brackets) and the list of gradient arguments
-    /// (the string part inside the brackets, splitted at each comma) from the given string.
+    /// Extracts the red, green and blue color value and the alpha channel from the given string, each in range 0 to 255.
     ///
     /// Whitespace is not supported.
     ///
-    /// The expected format is: `<name>(arg1,arg2,...)`
+    /// The expected format is: `#AABBCC` or `#AABBCCDD`
     ///
     /// - Parameter string: The input string.
-    /// - Returns: The tuple of name and arguments.
+    /// - Returns: The tuple of red, green, blue and alpha.
     ///
-    private func extractGradientNameAndArguments(_ string: String) throws -> (name: String, args: [String]) {
-        let regex = try NSRegularExpression(pattern: ColorParser.GradientPattern)
-        let match = regex.firstMatch(in: string, options: [], range: string.nsRange())
-        guard let match else {
-            throw RuntimeError("Unsupported gradient syntax. Format: <name>(arg1,arg2,...)")
-        }
-        let nsString = string as NSString
-        let name = nsString.substring(with: match.range(at: 1))
-        let rawArgs = nsString.substring(with: match.range(at: 2))
-        let args = rawArgs.components(separatedBy: ",")
-        return (name, args)
-    }
-
-    /// Creates an instance of `ColorType.linearGradient` or `ColorType.radialGradient`
-    /// based on the given gradient name, including the attached list of colors and an optional direction.
-    ///
-    /// If direction is not given, then `.toBottom` is used as default.
-    ///
-    /// - Parameters:
-    ///   - name: The gradient name.
-    ///   - colors: The list of colors.
-    ///   - direction: The direction (optional).
-    /// - Returns: The `ColorType` instance.
-    ///
-    private func createGradientColorType(name: String, colors: [CGColor], direction: Direction?) throws -> ColorType {
-        switch name {
-        case "linear-gradient":
-            return .linearGradient(colors: colors, direction: direction ?? .toBottom)
-        case "radial-gradient":
-            return .radialGradient(colors: colors, direction: direction ?? .toBottom)
-        default:
-            throw RuntimeError("Unsupported gradient type: \(name)")
-        }
-    }
-    
-    /// Extracts the red, green and blue color value from the given string, each in range 0 to 255.
-    ///
-    /// Whitespace is not supported.
-    ///
-    /// The expected format is: `#AABBCC`
-    ///
-    /// - Parameter string: The input string.
-    /// - Returns: The tuple of red, green and blue.
-    ///
-    private func extractRGB(_ string: String) throws -> (r: Int, g: Int, b: Int) {
+    private func extractRGBA(_ string: String) throws -> (r: Int, g: Int, b: Int, a: Int) {
         let regex = try NSRegularExpression(pattern: ColorParser.HexColorPattern)
         let match = regex.firstMatch(in: string, options: [], range: string.nsRange())
         guard let match else {
-            throw RuntimeError("Unsupported hex color string syntax. Format: #xxxxxx")
+            throw RuntimeError("Unsupported hex color string syntax. Format: #xxxxxx or #xxxxxxxx")
         }
         let nsString = string as NSString
         let hexR = nsString.substring(with: match.range(at: 1))
         let hexG = nsString.substring(with: match.range(at: 2))
         let hexB = nsString.substring(with: match.range(at: 3))
+        let hexA = match.range(at: 4).length > 0 ? nsString.substring(with: match.range(at: 4)) : "FF"
         let r = Int(hexR, radix: 16)!
         let g = Int(hexG, radix: 16)!
         let b = Int(hexB, radix: 16)!
-        return (r, g, b)
+        let a = Int(hexA, radix: 16)!
+        return (r, g, b, a)
     }
 
 }

@@ -5,7 +5,7 @@
 import Foundation
 
 /// Horizontal, vertical and diagonal directions.
-public enum Direction: String, CaseIterable {
+public enum Direction: String, CaseIterable, Codable {
     
     /// Horizontal **to right**.
     case toRight = "to-right"

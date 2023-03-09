@@ -7,8 +7,22 @@ import XCTest
 
 final class AlignmentParserTests: XCTestCase {
     
-    /// Test all horizontal strings.
-    func testHorizontal() throws {
+    /// Test `encode` method.
+    func testEncode() throws {
+        let parser = AlignmentParser()
+        var value: Alignment
+        var expected: String
+        var result: String
+        
+        // top right
+        value = Alignment(horizontal: .right, vertical: .top)
+        expected = "top right"
+        result = parser.encode(value)
+        XCTAssertEqual(result, expected)
+    }
+    
+    /// Test parsing of all horizontal strings.
+    func testParseHorizontal() throws {
         let parser = AlignmentParser()
         var result: Alignment
         let defaultVertical = VerticalAlignment.middle
@@ -31,8 +45,8 @@ final class AlignmentParserTests: XCTestCase {
         XCTAssertEqual(result.vertical, defaultVertical)
     }
     
-    /// Test all vertical strings.
-    func testVertical() throws {
+    /// Test parsing of all vertical strings.
+    func testParseVertical() throws {
         let parser = AlignmentParser()
         var result: Alignment
         let defaultHorizontal = HorizontalAlignment.center
@@ -55,8 +69,8 @@ final class AlignmentParserTests: XCTestCase {
         XCTAssertEqual(result.horizontal, defaultHorizontal)
     }
     
-    /// Test some horizontal and vertical combinations.
-    func testCombinations() throws {
+    /// Test parsing of some horizontal and vertical combinations.
+    func testParseCombinations() throws {
         let parser = AlignmentParser()
         var result: Alignment
         
@@ -93,8 +107,8 @@ final class AlignmentParserTests: XCTestCase {
         XCTAssertEqual(result.vertical, .middle)
     }
     
-    /// Test invalid values.
-    func testErrors() throws {
+    /// Test parsing of invalid values.
+    func testParseErrors() throws {
         let parser = AlignmentParser()
         
         XCTAssertThrowsError(try parser.parse(","))

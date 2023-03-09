@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Christoph Göldner. All rights reserved.
+// Copyright © 2023 Christoph Göldner. All rights reserved.
 //
 
 import XCTest
@@ -7,131 +7,118 @@ import XCTest
 
 final class ColorParserTests: XCTestCase {
     
-    /// Test parsing to `ColorType.linearGradient` instances.
-    func testLinearGradientParsing() throws {
+    /// Test `encode` method with a `Color` instance.
+    func testEncodeColor() throws {
         let parser = ColorParser()
-        var result: ColorType
-        var expected: ColorType
-        let defaultDirection: Direction = .toBottom
+        var value: Color
+        var expected: String
+        var result: String
         
-        // two colors
-        result = try parser.parseGradient("linear-gradient(#000000,#FFFFFF)")
-        expected = .linearGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white], direction: defaultDirection)
+        // color with default alpha
+        value = Color(red: 0, green: 128, blue: 255)
+        expected = "#0080FF"
+        result = parser.encode(value)
         XCTAssertEqual(result, expected)
         
-        // two colors and direction
-        result = try parser.parseGradient("linear-gradient(to-top-right,#000000,#FFFFFF)")
-        expected = .linearGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white], direction: .toTopRight)
-        XCTAssertEqual(result, expected)
-        
-        // more colors
-        result = try parser.parseGradient("linear-gradient(#000000,#FFFFFF,#FF0000)")
-        expected = .linearGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white, DefaultColor.CSS.red], direction: defaultDirection)
-        XCTAssertEqual(result, expected)
-        
-        // whitespace
-        result = try parser.parseGradient("linear-gradient ( #000000 , #FFFFFF ,  #FF0000  )")
-        expected = .linearGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white, DefaultColor.CSS.red], direction: defaultDirection)
-        XCTAssertEqual(result, expected)
-        
-        // whitespace and direction
-        result = try parser.parseGradient("linear-gradient ( to-top-right , #000000 , #FFFFFF ,  #FF0000  )")
-        expected = .linearGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white, DefaultColor.CSS.red], direction: .toTopRight)
+        // color with custom alpha
+        value = Color(red: 0, green: 128, blue: 255, alpha: 128)
+        expected = "#0080FF80"
+        result = parser.encode(value)
         XCTAssertEqual(result, expected)
     }
     
-    /// Test parsing to `ColorType.radialGradient` instances.
-    func testRadialGradientParsing() throws {
+    /// Test `encode` method with a `CGColor` instance.
+    func testEncodeCGColor() throws {
         let parser = ColorParser()
-        var result: ColorType
-        var expected: ColorType
-        let defaultDirection: Direction = .toBottom
+        var value: CGColor
+        var expected: String
+        var result: String
         
-        // two colors
-        result = try parser.parseGradient("radial-gradient(#000000,#FFFFFF)")
-        expected = .radialGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white], direction: defaultDirection)
+        // color with default alpha
+        value = CGColor(red: 0.0, green: 0.5, blue: 1.0, alpha: 1.0)
+        expected = "#0080FF"
+        result = parser.encode(value)
         XCTAssertEqual(result, expected)
         
-        // two colors and direction
-        result = try parser.parseGradient("radial-gradient(to-top-right,#000000,#FFFFFF)")
-        expected = .radialGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white], direction: .toTopRight)
-        XCTAssertEqual(result, expected)
-        
-        // more colors
-        result = try parser.parseGradient("radial-gradient(#000000,#FFFFFF,#FF0000)")
-        expected = .radialGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white, DefaultColor.CSS.red], direction: defaultDirection)
-        XCTAssertEqual(result, expected)
-        
-        // whitespace
-        result = try parser.parseGradient("radial-gradient ( #000000 , #FFFFFF ,  #FF0000  )")
-        expected = .radialGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white, DefaultColor.CSS.red], direction: defaultDirection)
-        XCTAssertEqual(result, expected)
-        
-        // whitespace and direction
-        result = try parser.parseGradient("radial-gradient ( to-top-right , #000000 , #FFFFFF ,  #FF0000  )")
-        expected = .radialGradient(colors: [DefaultColor.CSS.black, DefaultColor.CSS.white, DefaultColor.CSS.red], direction: .toTopRight)
+        // color with custom alpha
+        value = CGColor(red: 0.0, green: 0.5, blue: 1.0, alpha: 0.5)
+        expected = "#0080FF80"
+        result = parser.encode(value)
         XCTAssertEqual(result, expected)
     }
     
-    /// Test invalid gradient values.
-    func testGradientParsingErrors() throws {
+    /// Test common `parse` method.
+    func testParse() throws {
         let parser = ColorParser()
+        var result: Color
+        var expected: Color
         
-        // empty
-        XCTAssertThrowsError(try parser.parseGradient(""))
-        XCTAssertThrowsError(try parser.parseGradient(" "))
+        // color without alpha
+        result = try parser.parse("#FFFFFF")
+        expected = Color(DefaultColor.CSS.white)
+        XCTAssertEqual(result, expected)
         
-        // not enough colors
-        XCTAssertThrowsError(try parser.parseGradient("linear-gradient()"))
-        XCTAssertThrowsError(try parser.parseGradient("linear-gradient(#000000)"))
-        XCTAssertThrowsError(try parser.parseGradient("radial-gradient()"))
-        XCTAssertThrowsError(try parser.parseGradient("radial-gradient(#000000)"))
+        // color with alpha
+        result = try parser.parse("#FFFFFFFF")
+        expected = Color(DefaultColor.CSS.white)
+        XCTAssertEqual(result, expected)
         
-        // unknown gradient
-        XCTAssertThrowsError(try parser.parseGradient("foo-gradient(#000000,#FFFFFF)"))
+        // color with custom values
+        result = try parser.parse("#00204080")
+        expected = Color(red: 0, green: 32, blue: 64, alpha: 128)
+        XCTAssertEqual(result, expected)
         
-        // unknown direction
-        XCTAssertThrowsError(try parser.parseGradient("linear-gradient(to-foo,#000000,#FFFFFF)"))
-        
-        // syntax errors
-        XCTAssertThrowsError(try parser.parseGradient("linear gradient(#000000,#FFFFFF)"))
-        XCTAssertThrowsError(try parser.parseGradient("linear-gradient(#000000 #FFFFFF)"))
+        // unsupported
+        XCTAssertThrowsError(try parser.parse("#1122334455"))
     }
     
-    /// Test parsing to `CGColor` instances.
+    /// Test parsing to `Color` instances.
     func testHexColorParsing() throws {
         let parser = ColorParser()
-        var result: CGColor
-        var expected: CGColor
+        var value: String
+        var result: Color
+        var expected: Color
         
         // valid color (numbers)
-        result = try parser.parseHexColor("#000000")
-        expected = DefaultColor.CSS.black
+        value = "#000000"
+        XCTAssertTrue(parser.isHexColor(value))
+        result = try parser.parseHexColor(value)
+        expected = Color(DefaultColor.CSS.black)
         XCTAssertEqual(result, expected)
         
         // valid color (upper case)
-        result = try parser.parseHexColor("#FFFFFF")
-        expected = DefaultColor.CSS.white
+        value = "#FFFFFF"
+        XCTAssertTrue(parser.isHexColor(value))
+        result = try parser.parseHexColor(value)
+        expected = Color(DefaultColor.CSS.white)
         XCTAssertEqual(result, expected)
         
         // valid color (lower case)
-        result = try parser.parseHexColor("#ffffff")
-        expected = DefaultColor.CSS.white
+        value = "#ffffff"
+        XCTAssertTrue(parser.isHexColor(value))
+        result = try parser.parseHexColor(value)
+        expected = Color(DefaultColor.CSS.white)
         XCTAssertEqual(result, expected)
         
         // valid color (mixed case and numbers)
-        result = try parser.parseHexColor("#ffA500")
-        expected = CGColor(red: 1.0, green: (CGFloat(165) / CGFloat(255)), blue: 0.0, alpha: 1.0) // ~= orange
+        value = "#ffA500"
+        XCTAssertTrue(parser.isHexColor(value))
+        result = try parser.parseHexColor(value)
+        expected = Color(red: 255, green: 165, blue: 0) // ~= orange
         XCTAssertEqual(result, expected)
         
         // whitespace (prefix/suffix)
-        result = try parser.parseHexColor("  #FFFFFF  ")
-        expected = DefaultColor.CSS.white
+        value = "  #FFFFFF  "
+        XCTAssertTrue(parser.isHexColor(value))
+        result = try parser.parseHexColor(value)
+        expected = Color(DefaultColor.CSS.white)
         XCTAssertEqual(result, expected)
         
         // whitespace (everywhere)
-        result = try parser.parseHexColor("# FF FFF F")
-        expected = DefaultColor.CSS.white
+        value = "# FF FFF F"
+        XCTAssertTrue(parser.isHexColor(value))
+        result = try parser.parseHexColor(value)
+        expected = Color(DefaultColor.CSS.white)
         XCTAssertEqual(result, expected)
     }
     

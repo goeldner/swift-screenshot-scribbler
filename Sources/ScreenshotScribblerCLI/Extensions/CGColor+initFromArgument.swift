@@ -15,10 +15,7 @@ extension CGColor {
     /// - Throws: `RuntimeError` if string cannot be parsed.
     ///
     public static func initFromArgument(_ argument: String) throws -> CGColor {
-        let colorParser = ColorParser()
-        if colorParser.isHexColor(argument) {
-            return try colorParser.parseHexColor(argument)
-        }
-        throw RuntimeError("Unsupported color format: \(argument)")
+        let parser = ColorParser()
+        return try parser.parse(argument).CGColor
     }
 }

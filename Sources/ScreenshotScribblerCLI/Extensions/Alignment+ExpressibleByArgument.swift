@@ -16,8 +16,8 @@ extension Alignment: ExpressibleByArgument {
     ///
     public init?(argument: String) {
         do {
-            let alignmentParser = AlignmentParser()
-            self = try alignmentParser.parse(argument)
+            let parser = AlignmentParser()
+            self = try parser.parse(argument)
         } catch {
             return nil
         }
