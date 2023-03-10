@@ -3,10 +3,9 @@
 //
 
 import Foundation
-import CoreGraphics
 
 ///
-/// Abstraction of `CGColor` that enables implementing additional protocols like `Codable`.
+/// Abstraction of an RGBA color independent from CoreGraphics, which enables implementing additional protocols like `Codable`.
 ///
 public struct Color: Equatable {
 
@@ -35,31 +34,6 @@ public struct Color: Equatable {
         self.green = green
         self.blue = blue
         self.alpha = alpha
-    }
-}
-
-/// Extension providing convenience methods for working with `CGColor` instances.
-extension Color {
-    
-    /// Convenience access to a `CGColor` instance.
-    public var CGColor: CGColor {
-        let r = CGFloat(red) / 255
-        let g = CGFloat(green) / 255
-        let b = CGFloat(blue) / 255
-        let a = CGFloat(alpha) / 255
-        return CoreGraphics.CGColor(red: r, green: g, blue: b, alpha: a)
-    }
-    
-    /// Public initializer based on a `CGColor` instance.
-    ///
-    /// - Parameter color: The `CGColor` instance.
-    ///
-    public init(_ color: CoreGraphics.CGColor) {
-        let r = Int(round(color.components![0] * 255))
-        let g = Int(round(color.components![1] * 255))
-        let b = Int(round(color.components![2] * 255))
-        let a = color.numberOfComponents > 3 ? Int(round(color.components![3] * 255)) : 255
-        self = Color(red: r, green: g, blue: b, alpha: a)
     }
 }
 

@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import CoreGraphics
 
 ///
 /// Parser for color syntax strings.
@@ -25,15 +24,6 @@ public class ColorParser {
         return encode(red: color.red, green: color.green, blue: color.blue, alpha: color.alpha)
     }
     
-    /// Encodes the given `CGColor` to a string in hex-format, e.g. "#FFFFFF" or "#FFFFFF80" if custom alpha opacity is defined.
-    ///
-    /// - Parameter color: The `CGColor` to encode.
-    /// - Returns: The encoded string.
-    ///
-    public func encode(_ color: CGColor) -> String {
-        return encode(Color(color))
-    }
-    
     /// Encodes the given color components to a string in hex-format, e.g. "#FFFFFF" or "#FFFFFF80" if custom alpha opacity is defined.
     ///
     /// - Parameters:
@@ -43,7 +33,7 @@ public class ColorParser {
     ///   - alpha: Alpha channel (0 - 255; default: 255)
     /// - Returns: The encoded string.
     ///
-    internal func encode(red: Int, green: Int, blue: Int, alpha: Int = 255) -> String {
+    private func encode(red: Int, green: Int, blue: Int, alpha: Int = 255) -> String {
         if alpha != 255 {
             // include alpha channel only if not default
             return String(format: "#%02X%02X%02X%02X", red, green, blue, alpha)

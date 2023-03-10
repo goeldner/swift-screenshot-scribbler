@@ -71,7 +71,7 @@ public class TextRendering {
         let textColor: CGColor
         switch self.color {
         case .solid(let color):
-            textColor = color
+            textColor = color.CGColor
         default:
             textColor = try! createPatternBasedColor(for: actualTextRect, fillColor: self.color)
         }

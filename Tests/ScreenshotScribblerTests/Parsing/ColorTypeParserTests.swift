@@ -15,7 +15,7 @@ final class ColorTypeParserTests: XCTestCase {
         var result: String
         
         // color
-        value = .solid(color: CGColor(red: 0.0, green: 0.5, blue: 1.0, alpha: 1.0))
+        value = .solid(color: Color(red: 0, green: 128, blue: 255))
         expected = "#0080FF"
         result = parser.encode(value)
         XCTAssertEqual(result, expected)

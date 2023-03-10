@@ -3,19 +3,18 @@
 //
 
 import Foundation
-import CoreGraphics
 
 /// Types of one or more colors that may be drawn in different ways.
 public enum ColorType: Equatable {
     
     /// One solid color.
-    case solid(color: CGColor)
+    case solid(color: Color)
     
     /// A linear gradient defined by multiple colors and a direction.
-    case linearGradient(colors: [CGColor], direction: Direction)
+    case linearGradient(colors: [Color], direction: Direction)
     
     /// A radial gradient defined by multiple colors and a direction.
-    case radialGradient(colors: [CGColor], direction: Direction)
+    case radialGradient(colors: [Color], direction: Direction)
     
 }
 

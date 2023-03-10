@@ -27,26 +27,6 @@ final class ColorParserTests: XCTestCase {
         XCTAssertEqual(result, expected)
     }
     
-    /// Test `encode` method with a `CGColor` instance.
-    func testEncodeCGColor() throws {
-        let parser = ColorParser()
-        var value: CGColor
-        var expected: String
-        var result: String
-        
-        // color with default alpha
-        value = CGColor(red: 0.0, green: 0.5, blue: 1.0, alpha: 1.0)
-        expected = "#0080FF"
-        result = parser.encode(value)
-        XCTAssertEqual(result, expected)
-        
-        // color with custom alpha
-        value = CGColor(red: 0.0, green: 0.5, blue: 1.0, alpha: 0.5)
-        expected = "#0080FF80"
-        result = parser.encode(value)
-        XCTAssertEqual(result, expected)
-    }
-    
     /// Test common `parse` method.
     func testParse() throws {
         let parser = ColorParser()
@@ -55,12 +35,12 @@ final class ColorParserTests: XCTestCase {
         
         // color without alpha
         result = try parser.parse("#FFFFFF")
-        expected = Color(DefaultColor.CSS.white)
+        expected = DefaultColor.CSS.white
         XCTAssertEqual(result, expected)
         
         // color with alpha
         result = try parser.parse("#FFFFFFFF")
-        expected = Color(DefaultColor.CSS.white)
+        expected = DefaultColor.CSS.white
         XCTAssertEqual(result, expected)
         
         // color with custom values
@@ -83,21 +63,21 @@ final class ColorParserTests: XCTestCase {
         value = "#000000"
         XCTAssertTrue(parser.isHexColor(value))
         result = try parser.parseHexColor(value)
-        expected = Color(DefaultColor.CSS.black)
+        expected = DefaultColor.CSS.black
         XCTAssertEqual(result, expected)
         
         // valid color (upper case)
         value = "#FFFFFF"
         XCTAssertTrue(parser.isHexColor(value))
         result = try parser.parseHexColor(value)
-        expected = Color(DefaultColor.CSS.white)
+        expected = DefaultColor.CSS.white
         XCTAssertEqual(result, expected)
         
         // valid color (lower case)
         value = "#ffffff"
         XCTAssertTrue(parser.isHexColor(value))
         result = try parser.parseHexColor(value)
-        expected = Color(DefaultColor.CSS.white)
+        expected = DefaultColor.CSS.white
         XCTAssertEqual(result, expected)
         
         // valid color (mixed case and numbers)
@@ -111,14 +91,14 @@ final class ColorParserTests: XCTestCase {
         value = "  #FFFFFF  "
         XCTAssertTrue(parser.isHexColor(value))
         result = try parser.parseHexColor(value)
-        expected = Color(DefaultColor.CSS.white)
+        expected = DefaultColor.CSS.white
         XCTAssertEqual(result, expected)
         
         // whitespace (everywhere)
         value = "# FF FFF F"
         XCTAssertTrue(parser.isHexColor(value))
         result = try parser.parseHexColor(value)
-        expected = Color(DefaultColor.CSS.white)
+        expected = DefaultColor.CSS.white
         XCTAssertEqual(result, expected)
     }
     

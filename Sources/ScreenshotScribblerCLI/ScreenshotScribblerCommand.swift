@@ -4,7 +4,6 @@
 
 import Foundation
 import ArgumentParser
-import CoreGraphics
 import ScreenshotScribbler
 
 ///

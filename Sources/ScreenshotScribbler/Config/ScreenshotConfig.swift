@@ -18,7 +18,7 @@ public struct ScreenshotConfig {
     public var screenshotShadowSize: CGFloat = 5
     
     /// Color of the shadow behind the screenshot. (Default: black)
-    public var screenshotShadowColor: CGColor = DefaultColor.CSS.black
+    public var screenshotShadowColor: Color = DefaultColor.CSS.black
     
     /// Size of the border around the screenshot. (Default: 0)
     public var screenshotBorderSize: CGFloat = 0

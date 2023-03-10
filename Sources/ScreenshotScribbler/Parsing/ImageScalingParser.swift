@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import CoreGraphics
 
 ///
 /// Parser for image scaling strings.

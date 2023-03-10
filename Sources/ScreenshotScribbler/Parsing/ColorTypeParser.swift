@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import CoreGraphics
 
 ///
 /// Parser for gradient and color syntax strings.
@@ -47,21 +46,10 @@ public class ColorTypeParser {
     
     /// Encodes the given array of `Color` instances to a string list in hex-format, e.g. "#000000, #FFFFFF".
     ///
-    /// - Parameter colors: The `CGColor`array to encode.
+    /// - Parameter colors: The `Color`array to encode.
     /// - Returns: The encoded string.
     ///
-    internal func encode(_ colors: [Color]) -> String {
-        let colorParser = ColorParser()
-        let colorStrings = colors.map{ color in colorParser.encode(color) }
-        return colorStrings.joined(separator: ", ")
-    }
-    
-    /// Encodes the given array of `CGColor` instances to a string list in hex-format, e.g. "#000000, #FFFFFF".
-    ///
-    /// - Parameter colors: The `CGColor`array to encode.
-    /// - Returns: The encoded string.
-    ///
-    internal func encode(_ colors: [CGColor]) -> String {
+    private func encode(_ colors: [Color]) -> String {
         let colorParser = ColorParser()
         let colorStrings = colors.map{ color in colorParser.encode(color) }
         return colorStrings.joined(separator: ", ")
@@ -76,7 +64,7 @@ public class ColorTypeParser {
     public func parse(_ string: String) throws -> ColorType {
         let colorParser = ColorParser()
         if colorParser.isHexColor(string) {
-            return .solid(color: try colorParser.parse(string).CGColor)
+            return .solid(color: try colorParser.parse(string))
         } else if self.isGradient(string) {
             return try self.parseGradient(string)
         } else {
@@ -114,7 +102,7 @@ public class ColorTypeParser {
         
         // All other arguments should be colors
         let colorParser = ColorParser()
-        let colors = try args.map { string in try colorParser.parse(string).CGColor }
+        let colors = try args.map { string in try colorParser.parse(string) }
         
         return try createGradientColorType(name: name, colors: colors, direction: direction)
     }
@@ -153,7 +141,7 @@ public class ColorTypeParser {
     ///   - direction: The direction (optional).
     /// - Returns: The `ColorType` instance.
     ///
-    private func createGradientColorType(name: String, colors: [CGColor], direction: Direction?) throws -> ColorType {
+    private func createGradientColorType(name: String, colors: [Color], direction: Direction?) throws -> ColorType {
         switch name {
         case "linear-gradient":
             return .linearGradient(colors: colors, direction: direction ?? .toBottom)

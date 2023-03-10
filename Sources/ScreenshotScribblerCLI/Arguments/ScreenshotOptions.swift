@@ -4,7 +4,6 @@
 
 import Foundation
 import ArgumentParser
-import CoreGraphics
 import ScreenshotScribbler
 
 ///
@@ -24,8 +23,8 @@ struct ScreenshotOptions: ParsableArguments {
     @Option(name: .long, help: "Size of the shadow blur behind the screenshot. (Default: 5)")
     var screenshotShadowSize: Double?
     
-    @Option(name: .long, help: "Color of the shadow behind the screenshot. (Default: \"#000000\" (black))", transform: CGColor.initFromArgument)
-    var screenshotShadowColor: CGColor?
+    @Option(name: .long, help: "Color of the shadow behind the screenshot. (Default: \"#000000\" (black))")
+    var screenshotShadowColor: Color?
 
     @Option(name: .long, help: "Size of the border around the screenshot. (Default: 0)")
     var screenshotBorderSize: Double?

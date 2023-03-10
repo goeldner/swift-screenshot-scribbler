@@ -20,7 +20,7 @@ public class RectangleRendering {
     private let shadowSize: CGFloat?
     
     /// Shadow color.
-    private let shadowColor: CGColor?
+    private let shadowColor: Color?
     
     /// Initializes the rendering definition.
     ///
@@ -30,7 +30,7 @@ public class RectangleRendering {
     ///   - shadowSize: Optional shadow size.
     ///   - shadowColor: Optional shadow color.
     ///
-    public init(fillColor: ColorType? = nil, cornerRadius: CGFloat? = nil, shadowSize: CGFloat? = nil, shadowColor: CGColor? = nil) {
+    public init(fillColor: ColorType? = nil, cornerRadius: CGFloat? = nil, shadowSize: CGFloat? = nil, shadowColor: Color? = nil) {
         self.fillColor = fillColor
         self.cornerRadius = cornerRadius
         self.shadowSize = shadowSize
@@ -50,11 +50,14 @@ public class RectangleRendering {
         
         switch fillColor {
         case .solid(let color):
-            drawSolidRect(rect: rect, color: color, context: context)
+            let cgColor = color.CGColor
+            drawSolidRect(rect: rect, color: cgColor, context: context)
         case .linearGradient(let colors, let direction):
-            drawLinearGradientRect(rect: rect, colors: colors, direction: direction, context: context)
+            let cgColors = colors.map { color in color.CGColor }
+            drawLinearGradientRect(rect: rect, colors: cgColors, direction: direction, context: context)
         case .radialGradient(let colors, let direction):
-            drawRadialGradientRect(rect: rect, colors: colors, direction: direction, context: context)
+            let cgColors = colors.map { color in color.CGColor }
+            drawRadialGradientRect(rect: rect, colors: cgColors, direction: direction, context: context)
         case .none:
             break // no fill
         }
@@ -74,8 +77,8 @@ public class RectangleRendering {
             context.beginPath()
             context.addPath(path(of: rect))
             context.closePath()
-            context.setShadow(offset: CGSize(width: 0, height: 0), blur: shadowSize, color: shadowColor)
-            context.setFillColor(shadowColor)
+            context.setShadow(offset: CGSize(width: 0, height: 0), blur: shadowSize, color: shadowColor.CGColor)
+            context.setFillColor(shadowColor.CGColor)
             context.fillPath()
             context.restoreGState()
         }

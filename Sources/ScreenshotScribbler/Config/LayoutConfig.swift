@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import CoreGraphics
 
 /// Layout configuration
 public struct LayoutConfig {
