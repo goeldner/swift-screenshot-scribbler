@@ -3,13 +3,12 @@
 //
 
 import Foundation
-import CoreGraphics
 
 /// Caption configuration
 public struct CaptionConfig {
     
     /// Percentage of the caption area height relative to the total height of the output image. (Default: 0.25 (25%))
-    public var captionSizeFactor: CGFloat = 0.25
+    public var captionSizeFactor: Double = 0.25
     
     /// Horizontal alignment of the caption. (Default: center)
     public var captionAlignment: HorizontalTextAlignment = .center

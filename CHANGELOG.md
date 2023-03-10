@@ -14,7 +14,7 @@ This release adds two missing pieces for gradients – changing the gradient dir
 ### Changed
 
 - The CLI functionality has been refactored into a subcommand called `decorate` in order to support more subcommands in the future. This is the default command, so the CLI is compatible to previous versions. You can type `scrscr help decorate` in order to see the whole description. Internal option, config and action classes have also been refactored for reusability by other commands and actions in the future.
-- References to `CGColor` inside the public API of the library have been removed. This affects the option, config and common enum types. A new `Color` type has been introduced additionally to the previously introduced `ColorType` enum.
+- References to `CGColor`, `CGFloat` and CoreGraphics inside the public API of the library have been removed. This affects the option, config and common enum types. A new `Color` type has been introduced additionally to the previously introduced `ColorType` enum.
 
 ## [1.1.0] (2023-01-10)
 
