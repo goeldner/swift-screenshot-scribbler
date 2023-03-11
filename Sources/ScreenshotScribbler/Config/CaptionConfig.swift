@@ -5,7 +5,7 @@
 import Foundation
 
 /// Caption configuration
-public struct CaptionConfig {
+public struct CaptionConfig: Equatable, Codable {
     
     /// Percentage of the caption area height relative to the total height of the output image. (Default: 0.25 (25%))
     public var captionSizeFactor: Double = 0.25

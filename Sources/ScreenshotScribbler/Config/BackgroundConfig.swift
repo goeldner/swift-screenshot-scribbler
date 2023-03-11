@@ -5,7 +5,7 @@
 import Foundation
 
 /// Background configuration
-public struct BackgroundConfig {
+public struct BackgroundConfig: Equatable, Codable {
     
     /// Color which covers the whole background. (Default: white)
     public var backgroundColor: ColorType = .solid(color: DefaultColor.CSS.white)

@@ -5,7 +5,7 @@
 import Foundation
 
 /// Screenshot configuration
-public struct ScreenshotConfig {
+public struct ScreenshotConfig: Equatable, Codable {
     
     /// Percentage of the rendered screenshot size relative to its original size. (Default: 0.85 (85%))
     public var screenshotSizeFactor: Double = 0.85

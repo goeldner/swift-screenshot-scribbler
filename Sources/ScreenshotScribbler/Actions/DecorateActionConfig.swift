@@ -7,7 +7,7 @@ import Foundation
 ///
 /// Configuration settings that contol the appearance of the `decorate` action output.
 ///
-public struct DecorateActionConfig {
+public struct DecorateActionConfig: Equatable, Codable {
     
     /// Layout configuration.
     public var layout = LayoutConfig()

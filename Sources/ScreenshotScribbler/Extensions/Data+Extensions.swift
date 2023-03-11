@@ -33,6 +33,18 @@ public extension Data {
         }
     }
     
+    /// Converts this `Data` instance to a string with given encoding.
+    ///
+    /// - Parameter encoding: The encoding. Default: UTF-8
+    /// - Returns: The string.
+    ///
+    func toString(encoding: String.Encoding = .utf8) throws -> String {
+        guard let string = String(data: self, encoding: encoding) else {
+            throw RuntimeError("Could not convert data to string.")
+        }
+        return string
+    }
+    
     /// Creates a CoreGraphics `CGImage` based on the encoded PNG or JPEG data.
     /// If no encoding is provided, it tries to resolve the type by examining the first bytes of this data instance.
     ///

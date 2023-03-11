@@ -5,7 +5,7 @@
 import Foundation
 
 /// Layout configuration
-public struct LayoutConfig {
+public struct LayoutConfig: Equatable, Codable {
     
     /// Arrangement of the caption and screenshot. (Default: captionBeforeScreenshot)
     public var layoutType: LayoutType = .captionBeforeScreenshot
