@@ -25,3 +25,19 @@ public struct DecorateActionConfig: Equatable, Codable {
     public init() {}
 
 }
+
+/// Extension that enables decoding partial data.
+extension DecorateActionConfig {
+    
+    /// Initializes this instance by allowing to be decoded based on partial data.
+    ///
+    /// - Parameter decoder: The decoder.
+    ///
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        try container.decodeAndSetIfPresent(LayoutConfig.self, .layout) { decoded in self.layout = decoded }
+        try container.decodeAndSetIfPresent(ScreenshotConfig.self, .screenshot) { decoded in self.screenshot = decoded }
+        try container.decodeAndSetIfPresent(BackgroundConfig.self, .background) { decoded in self.background = decoded }
+        try container.decodeAndSetIfPresent(CaptionConfig.self, .caption) { decoded in self.caption = decoded }
+    }
+}

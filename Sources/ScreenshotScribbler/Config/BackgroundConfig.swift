@@ -20,3 +20,18 @@ public struct BackgroundConfig: Equatable, Codable {
     public init() {}
 
 }
+
+/// Extension that enables decoding partial data.
+extension BackgroundConfig {
+    
+    /// Initializes this instance by allowing to be decoded based on partial data.
+    ///
+    /// - Parameter decoder: The decoder.
+    ///
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        try container.decodeAndSetIfPresent(ColorType.self, .backgroundColor) { decoded in self.backgroundColor = decoded }
+        try container.decodeAndSetIfPresent(ImageScaling.self, .backgroundImageScaling) { decoded in self.backgroundImageScaling = decoded }
+        try container.decodeAndSetIfPresent(Alignment.self, .backgroundImageAlignment) { decoded in self.backgroundImageAlignment = decoded }
+    }
+}

@@ -29,3 +29,21 @@ public struct ScreenshotConfig: Equatable, Codable {
     public init() {}
 
 }
+
+/// Extension that enables decoding partial data.
+extension ScreenshotConfig {
+    
+    /// Initializes this instance by allowing to be decoded based on partial data.
+    ///
+    /// - Parameter decoder: The decoder.
+    ///
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        try container.decodeAndSetIfPresent(Double.self, .screenshotSizeFactor) { decoded in self.screenshotSizeFactor = decoded }
+        try container.decodeAndSetIfPresent(Double.self, .screenshotCornerRadius) { decoded in self.screenshotCornerRadius = decoded }
+        try container.decodeAndSetIfPresent(Double.self, .screenshotShadowSize) { decoded in self.screenshotShadowSize = decoded }
+        try container.decodeAndSetIfPresent(Color.self, .screenshotShadowColor) { decoded in self.screenshotShadowColor = decoded }
+        try container.decodeAndSetIfPresent(Double.self, .screenshotBorderSize) { decoded in self.screenshotBorderSize = decoded }
+        try container.decodeAndSetIfPresent(ColorType.self, .screenshotBorderColor) { decoded in self.screenshotBorderColor = decoded }
+    }
+}

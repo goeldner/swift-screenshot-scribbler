@@ -7,7 +7,7 @@ import XCTest
 
 final class DecorateActionConfigTests: XCTestCase {
     
-    let defaultConfigJSON =
+    let defaultsJSON =
         """
         {
           "screenshot" : {
@@ -37,29 +37,107 @@ final class DecorateActionConfigTests: XCTestCase {
         }
         """
     
-    /// Test encoding to JSON.
-    func testEncodableJSON() throws {
+    let oneSettingJSON =
+        """
+        {
+          "layout" : {
+            "layoutType" : "screenshot-only"
+          }
+        }
+        """
+    
+    let emptySectionsJSON =
+        """
+        {
+          "screenshot" : {
+          },
+          "background" : {
+          },
+          "caption" : {
+          },
+          "layout" : {
+          }
+        }
+        """
+    
+    let emptyJSON =
+        """
+        {
+        }
+        """
+    
+    /// Test encoding of default settings to JSON.
+    func testEncodeDefaultSettingsToJSON() throws {
         
         // the config to encode
         let config = DecorateActionConfig()
         
         // the expected JSON
-        let expected = defaultConfigJSON
+        let expected = defaultsJSON
         
         // encode and check
         let jsonString = try config.toJSON().toString()
         XCTAssertEqual(jsonString, expected)
     }
     
-    /// Test decoding from JSON.
-    func testDecodableJSON() throws {
+    /// Test decoding of default settings from JSON.
+    func testDecodeDefaultSettingsFromCompletelyFilledJSON() throws {
         
         // the JSON to decode
-        let jsonString = defaultConfigJSON
+        let jsonString = defaultsJSON
         let jsonData = jsonString.data(using: .utf8)!
         
         // the expected config
         let expected = DecorateActionConfig()
+        
+        // decode and check
+        let config = try DecorateActionConfig(fromJSON: jsonData)
+        XCTAssertEqual(config, expected)
+    }
+    
+    /// Test decoding of JSON with empty sections.
+    /// Should result into default settings because no value is overridden by JSON.
+    func testDecodeDefaultSettingsFromEmptySectionsJSON() throws {
+        
+        // the JSON to decode
+        let jsonString = emptySectionsJSON
+        let jsonData = jsonString.data(using: .utf8)!
+        
+        // the expected config
+        let expected = DecorateActionConfig()
+        
+        // decode and check
+        let config = try DecorateActionConfig(fromJSON: jsonData)
+        XCTAssertEqual(config, expected)
+    }
+    
+    /// Test decoding of empty JSON.
+    /// Should result into default settings because nothing is overridden by JSON.
+    func testDecodeDefaultSettingsFromEmptyJSON() throws {
+        
+        // the JSON to decode
+        let jsonString = emptyJSON
+        let jsonData = jsonString.data(using: .utf8)!
+        
+        // the expected config
+        let expected = DecorateActionConfig()
+        
+        // decode and check
+        let config = try DecorateActionConfig(fromJSON: jsonData)
+        XCTAssertEqual(config, expected)
+    }
+    
+    /// Test decoding of JSON with one custom setting defined.
+    /// Should result into default settings, except the one value that is overwritten.
+    func testDecodeDefaultSettingsFromOneSettingJSON() throws {
+        
+        // the JSON to decode
+        let jsonString = oneSettingJSON
+        let jsonData = jsonString.data(using: .utf8)!
+        
+        // the expected config
+        var expected = DecorateActionConfig()
+        expected.layout.layoutType = .screenshotOnly
         
         // decode and check
         let config = try DecorateActionConfig(fromJSON: jsonData)

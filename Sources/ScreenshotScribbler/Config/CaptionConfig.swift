@@ -29,3 +29,21 @@ public struct CaptionConfig: Equatable, Codable {
     public init() {}
 
 }
+
+/// Extension that enables decoding partial data.
+extension CaptionConfig {
+    
+    /// Initializes this instance by allowing to be decoded based on partial data.
+    ///
+    /// - Parameter decoder: The decoder.
+    ///
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        try container.decodeAndSetIfPresent(Double.self, .captionSizeFactor) { decoded in self.captionSizeFactor = decoded }
+        try container.decodeAndSetIfPresent(HorizontalTextAlignment.self, .captionAlignment) { decoded in self.captionAlignment = decoded }
+        try container.decodeAndSetIfPresent(ColorType.self, .captionColor) { decoded in self.captionColor = decoded }
+        try container.decodeAndSetIfPresent(String.self, .captionFontName) { decoded in self.captionFontName = decoded }
+        try container.decodeAndSetIfPresent(String.self, .captionFontStyle) { decoded in self.captionFontStyle = decoded }
+        try container.decodeAndSetIfPresent(Int.self, .captionFontSize) { decoded in self.captionFontSize = decoded }
+    }
+}
