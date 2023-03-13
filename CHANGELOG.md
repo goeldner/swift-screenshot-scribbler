@@ -4,12 +4,13 @@
 
 <!-- After release: *No unreleased changes yet.* -->
 
-This release adds two missing pieces for gradients – changing the gradient direction and using gradients also for the caption.
+This release adds two missing pieces for gradients: changing the gradient direction and using gradients also for the caption. Additionally, it supports loading options from a JSON file.
 
 ### Added
 
 - The caption color now also supports gradients. Use the same syntax as for the background and shadow color.
 - Specify gradient directions by using an optional direction argument before the list of color arguments. This is "to-bottom" by default but can be a horizontal direction (i.e. "to-right" or "to-left"), a vertical direction (i.e. "to-bottom" or "to-top") or a diagonal direction (i.e. "to-bottom-right", "to-bottom-left", "to-top-right" or "to-top-left").
+- It is now possible to load all options from a JSON file instead of defining them on command line. Specify a path to a JSON file using the new `--config` option. The settings from the file are applied first and can be overridden by settings from command line. All settings have the same names as on command line, but written in camel case.
 
 ### Changed
 

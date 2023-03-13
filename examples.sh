@@ -19,6 +19,8 @@ swift run scrscr \
     --output Examples/example-output-default-3.png \
     --layout "caption-before-screenshot" \
     --background-color "#FFFFFF" \
+    --background-image-scaling "stretch-fill" \
+    --background-image-alignment "middle center" \
     --caption-size-factor 0.25 \
     --caption-alignment "center" \
     --caption-color "#000000" \
@@ -141,3 +143,10 @@ swift run scrscr \
     --screenshot-corner-radius 0 \
     --screenshot-shadow-size 20 \
     --screenshot-border-size 0
+
+# Load all options from JSON file
+swift run scrscr \
+    --caption "Example with options from JSON file" \
+    --screenshot Examples/example-input.png \
+    --config Examples/example-config-rainbow.json \
+    --output Examples/example-output-config-file.png

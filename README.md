@@ -54,7 +54,7 @@ $ scrscr --help
 $ scrscr help decorate
 ```
 
-Following example defines all possible options including their default values:
+Following example defines all basic options including their default values:
 
 ```
 $ scrscr decorate \
@@ -63,6 +63,8 @@ $ scrscr decorate \
     --output example-output-default.png \
     --layout "caption-before-screenshot" \
     --background-color "#FFFFFF" \
+    --background-image-scaling "stretch-fill" \
+    --background-image-alignment "middle center" \
     --caption-size-factor 0.25 \
     --caption-alignment "center" \
     --caption-color "#000000" \
@@ -169,6 +171,43 @@ Examples of background gradients and images:
   alt="Background: background-image"
   title="Background: background-image"
   width="160">
+
+### Config file
+
+It is possible to load all options from a JSON file instead of defining them on command line. Specify a path to a JSON file using the `--config` option. The settings from the file are applied first and can be overridden by settings from command line.
+
+All settings have the same names as on command line, but written in camel case. Partial JSON files are supported, so it is possible to define only a small set of options inside the file. All missing options are supplied with default values.
+
+Following example defines all options and their default values in JSON:
+
+```
+{
+  "layout" : {
+    "layoutType" : "caption-before-screenshot"
+  },
+  "screenshot" : {
+    "screenshotBorderColor" : "#000000",
+    "screenshotBorderSize" : 0,
+    "screenshotCornerRadius" : 5,
+    "screenshotShadowColor" : "#000000",
+    "screenshotShadowSize" : 5,
+    "screenshotSizeFactor" : 0.85
+  },
+  "background" : {
+    "backgroundColor" : "#FFFFFF",
+    "backgroundImageAlignment" : "middle center",
+    "backgroundImageScaling" : "stretch-fill"
+  },
+  "caption" : {
+    "captionAlignment" : "center",
+    "captionColor" : "#000000",
+    "captionFontName" : "SF Compact",
+    "captionFontSize" : 32,
+    "captionFontStyle" : "Bold",
+    "captionSizeFactor" : 0.25
+  }
+}
+```
 
 ## About
 

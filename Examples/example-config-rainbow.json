@@ -1,0 +1,21 @@
+{
+    "layout" : {
+        "layoutType" : "caption-after-screenshot"
+    },
+    "screenshot" : {
+        "screenshotSizeFactor" : 0.70,
+        "screenshotBorderSize" : 5,
+        "screenshotBorderColor" : "#FFFFFF",
+        "screenshotCornerRadius" : 3,
+        "screenshotShadowSize" : 15,
+        "screenshotShadowColor" : "#FFFFFF"
+    },
+    "background" : {
+        "backgroundColor" : "linear-gradient(to-bottom-right,#FF0000,#FFA500,#FFFF00,#00FF00,#0000FF,#FF00FF)"
+    },
+    "caption" : {
+        "captionColor" : "#FFFFFF",
+        "captionFontSize" : 35,
+        "captionSizeFactor" : 0.33
+    }
+}

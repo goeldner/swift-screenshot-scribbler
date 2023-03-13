@@ -16,8 +16,8 @@ struct DecorateCommand: ParsableCommand {
         abstract: "Decorates a screenshot with a nice background and caption."
     )
 
-    @OptionGroup(title: "Output")
-    var outputOptions: OutputOptions
+    @OptionGroup(title: "Files")
+    var fileOptions: FileOptions
     
     @OptionGroup(title: "Layout")
     var layoutOptions: LayoutOptions
@@ -34,10 +34,13 @@ struct DecorateCommand: ParsableCommand {
     @Flag(name: .long, help: "Show detailed progress updates.")
     var verbose = false
 
-    struct OutputOptions: ParsableArguments {
+    struct FileOptions: ParsableArguments {
         
         @Option(name: .customLong("output"), help: "The image file to write as output. (Required)")
         var outputFile: String
+        
+        @Option(name: .customLong("config"), help: "Provide a JSON file that contains all the options that could be defined on command line. This file is read first. Command line options override the settings of the file. (Optional)")
+        var configFile: String?
         
     }
     
@@ -51,7 +54,7 @@ struct DecorateCommand: ParsableCommand {
             
             // Parse the configuration options
             printVerbose("Preparing configuration from options...")
-            let config = createConfigFromOptions()
+            let config = try createConfigFromOptions()
             
             // Generate the new image
             printVerbose("Generating output image...")
@@ -59,8 +62,8 @@ struct DecorateCommand: ParsableCommand {
             let output = try scrscr.decorate(assets: assets, config: config)
             
             // Write data to output file
-            print("Output: \(self.outputOptions.outputFile)")
-            try output.writeToFilePath(self.outputOptions.outputFile)
+            print("Output: \(self.fileOptions.outputFile)")
+            try output.writeToFilePath(self.fileOptions.outputFile)
             
             printVerbose("Finished successful.")
         } catch {
@@ -116,12 +119,25 @@ struct DecorateCommand: ParsableCommand {
     ///
     /// - Returns: The `DecorateActionConfig` adapted to command line options.
     ///
-    private func createConfigFromOptions() -> DecorateActionConfig {
-        var config = DecorateActionConfig()
+    private func createConfigFromOptions() throws -> DecorateActionConfig {
+        var config: DecorateActionConfig
+
+        if let configFile = self.fileOptions.configFile {
+            // load the options from JSON first if defined
+            print("Config: \(configFile)")
+            let configFileData = try Data(fromFilePath: configFile)
+            config = try DecorateActionConfig(fromJSON: configFileData)
+        } else {
+            // otherwise use defaults
+            config = DecorateActionConfig()
+        }
+
+        // override with options from command line
         config.layout.applyOptions(self.layoutOptions)
         config.screenshot.applyOptions(self.screenshotOptions)
         config.background.applyOptions(self.backgroundOptions)
         config.caption.applyOptions(self.captionOptions)
+        
         return config
     }
 
