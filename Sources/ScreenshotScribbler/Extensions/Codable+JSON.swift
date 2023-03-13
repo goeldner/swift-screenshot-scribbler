@@ -12,7 +12,7 @@ public extension Encodable {
     ///
     func toJSON() throws -> Data {
         let encoder = JSONEncoder()
-        encoder.outputFormatting = .prettyPrinted
+        encoder.outputFormatting = [.sortedKeys, .prettyPrinted]
         let json = try encoder.encode(self)
         return json
     }

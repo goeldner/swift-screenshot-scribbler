@@ -10,29 +10,29 @@ final class DecorateActionConfigTests: XCTestCase {
     let defaultsJSON =
         """
         {
-          "screenshot" : {
-            "screenshotSizeFactor" : 0.84999999999999998,
-            "screenshotShadowSize" : 5,
-            "screenshotShadowColor" : "#000000",
-            "screenshotBorderSize" : 0,
-            "screenshotBorderColor" : "#000000",
-            "screenshotCornerRadius" : 5
-          },
           "background" : {
-            "backgroundImageScaling" : "stretch-fill",
             "backgroundColor" : "#FFFFFF",
-            "backgroundImageAlignment" : "middle center"
+            "backgroundImageAlignment" : "middle center",
+            "backgroundImageScaling" : "stretch-fill"
           },
           "caption" : {
             "captionAlignment" : "center",
             "captionColor" : "#000000",
             "captionFontName" : "SF Compact",
-            "captionFontStyle" : "Bold",
             "captionFontSize" : 32,
+            "captionFontStyle" : "Bold",
             "captionSizeFactor" : 0.25
           },
           "layout" : {
             "layoutType" : "caption-before-screenshot"
+          },
+          "screenshot" : {
+            "screenshotBorderColor" : "#000000",
+            "screenshotBorderSize" : 0,
+            "screenshotCornerRadius" : 5,
+            "screenshotShadowColor" : "#000000",
+            "screenshotShadowSize" : 5,
+            "screenshotSizeFactor" : 0.84999999999999998
           }
         }
         """
@@ -49,13 +49,13 @@ final class DecorateActionConfigTests: XCTestCase {
     let emptySectionsJSON =
         """
         {
-          "screenshot" : {
-          },
           "background" : {
           },
           "caption" : {
           },
           "layout" : {
+          },
+          "screenshot" : {
           }
         }
         """
