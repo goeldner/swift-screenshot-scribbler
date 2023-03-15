@@ -15,7 +15,7 @@ struct ScreenshotScribblerCommand: ParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "scrscr",
         abstract: "A command line tool that decorates screenshots with nice backgrounds and captions.",
-        version: "1.1.0",
+        version: "1.2.0",
         subcommands: [DecorateCommand.self],
         defaultSubcommand: DecorateCommand.self
     )

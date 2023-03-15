@@ -4,6 +4,10 @@
 
 <!-- After release: *No unreleased changes yet.* -->
 
+*No unreleased changes yet.*
+
+## [1.2.0] (2023-03-15)
+
 This release adds two missing pieces for gradients: changing the gradient direction and using gradients also for the caption. Additionally, it supports loading options from a JSON file.
 
 ### Added
@@ -72,6 +76,7 @@ about the possible options.
 
 <!-- Link references for releases -->
 
-[Unreleased]: https://github.com/goeldner/swift-screenshot-scribbler/compare/1.1.0...HEAD
+[Unreleased]: https://github.com/goeldner/swift-screenshot-scribbler/compare/1.2.0...HEAD
+[1.2.0]: https://github.com/goeldner/swift-screenshot-scribbler/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/goeldner/swift-screenshot-scribbler/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/goeldner/swift-screenshot-scribbler/releases/tag/1.0.0

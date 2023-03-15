@@ -6,6 +6,7 @@
   - move content of Unreleased section into release section
   - add short summary
   - update version links at end of file
+- Commit with message "Prepare x.x.x release"
 - Create GitHub release
   - use release version as tag and name
   - copy contents of release section from CHANGELOG.md
