@@ -21,7 +21,10 @@ public class RectangleRendering {
     
     /// Shadow color.
     private let shadowColor: Color?
-    
+
+    /// Rotation support.
+    private let rotation: RotationSupport
+
     /// Initializes the rendering definition.
     ///
     /// - Parameters:
@@ -29,12 +32,14 @@ public class RectangleRendering {
     ///   - cornerRadius: Optional corner radius.
     ///   - shadowSize: Optional shadow size.
     ///   - shadowColor: Optional shadow color.
+    ///   - rotation: Optional rotation angle in radians.
     ///
-    public init(fillColor: ColorType? = nil, cornerRadius: CGFloat? = nil, shadowSize: CGFloat? = nil, shadowColor: Color? = nil) {
+    public init(fillColor: ColorType? = nil, cornerRadius: CGFloat? = nil, shadowSize: CGFloat? = nil, shadowColor: Color? = nil, rotation: CGFloat = 0) {
         self.fillColor = fillColor
         self.cornerRadius = cornerRadius
         self.shadowSize = shadowSize
         self.shadowColor = shadowColor
+        self.rotation = RotationSupport(angle: rotation)
     }
 
     /// Draws the rectangle with optional solid or gradient fill, optional shadow and optional rounded corners.
@@ -73,14 +78,16 @@ public class RectangleRendering {
     ///   
     private func drawShadowRect(rect: CGRect, context: CGContext) {
         if let shadowColor, let shadowSize, shadowSize > 0 {
-            context.saveGState()
-            context.beginPath()
-            context.addPath(path(of: rect))
-            context.closePath()
-            context.setShadow(offset: CGSize(width: 0, height: 0), blur: shadowSize, color: shadowColor.CGColor)
-            context.setFillColor(shadowColor.CGColor)
-            context.fillPath()
-            context.restoreGState()
+            rotation.rotate(rect: rect, context: context) { rect, context in
+                context.saveGState()
+                context.beginPath()
+                context.addPath(path(of: rect))
+                context.closePath()
+                context.setShadow(offset: CGSize(width: 0, height: 0), blur: shadowSize, color: shadowColor.CGColor)
+                context.setFillColor(shadowColor.CGColor)
+                context.fillPath()
+                context.restoreGState()
+            }
         }
     }
     
@@ -94,13 +101,15 @@ public class RectangleRendering {
     ///   - context: The graphics context.
     ///
     private func drawSolidRect(rect: CGRect, color: CGColor, context: CGContext) {
-        context.saveGState()
-        context.beginPath()
-        context.addPath(path(of: rect))
-        context.closePath()
-        context.setFillColor(color)
-        context.fillPath()
-        context.restoreGState()
+        rotation.rotate(rect: rect, context: context) { rect, context in
+            context.saveGState()
+            context.beginPath()
+            context.addPath(path(of: rect))
+            context.closePath()
+            context.setFillColor(color)
+            context.fillPath()
+            context.restoreGState()
+        }
     }
     
     /// Draws the rectangle filled with a linear gradient of given colors.
@@ -117,24 +126,26 @@ public class RectangleRendering {
     ///   - context: The graphics context.
     ///
     private func drawLinearGradientRect(rect: CGRect, colors: [CGColor], direction: Direction, context: CGContext) {
-        
-        let colorSpace = context.colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB)!
-        let colorLocations = try! distributeColorLocationsEqually(numColors: colors.count)
-        let gradient = CGGradient(colorsSpace: colorSpace, colors: colors as CFArray, locations: colorLocations)!
-        let (startPoint, endPoint, _) = resolveGradientStartEndAndRadius(rect: rect, direction: direction)
-        
-        context.saveGState()
-        context.beginPath()
-        context.addPath(path(of: rect))
-        context.closePath()
-        context.clip()
-        context.drawLinearGradient(
-            gradient,
-            start: startPoint,
-            end: endPoint,
-            options: [.drawsBeforeStartLocation, .drawsAfterEndLocation]
-        )
-        context.restoreGState()
+        rotation.rotate(rect: rect, context: context) { rect, context in
+
+            let colorSpace = context.colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB)!
+            let colorLocations = try! distributeColorLocationsEqually(numColors: colors.count)
+            let gradient = CGGradient(colorsSpace: colorSpace, colors: colors as CFArray, locations: colorLocations)!
+            let (startPoint, endPoint, _) = resolveGradientStartEndAndRadius(rect: rect, direction: direction)
+
+            context.saveGState()
+            context.beginPath()
+            context.addPath(path(of: rect))
+            context.closePath()
+            context.clip()
+            context.drawLinearGradient(
+                gradient,
+                start: startPoint,
+                end: endPoint,
+                options: [.drawsBeforeStartLocation, .drawsAfterEndLocation]
+            )
+            context.restoreGState()
+        }
     }
     
     /// Draws the rectangle filled with a radial gradient of given colors, using a radius of half the width of the rectangle.
@@ -151,26 +162,28 @@ public class RectangleRendering {
     ///   - context: The graphics context.
     ///
     private func drawRadialGradientRect(rect: CGRect, colors: [CGColor], direction: Direction, context: CGContext) {
-        
-        let colorSpace = context.colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB)!
-        let colorLocations = try! distributeColorLocationsEqually(numColors: colors.count)
-        let gradient = CGGradient(colorsSpace: colorSpace, colors: colors as CFArray, locations: colorLocations)!
-        let (startPoint, endPoint, radius) = resolveGradientStartEndAndRadius(rect: rect, direction: direction)
-        
-        context.saveGState()
-        context.beginPath()
-        context.addPath(path(of: rect))
-        context.closePath()
-        context.clip()
-        context.drawRadialGradient(
-            gradient,
-            startCenter: startPoint,
-            startRadius: radius,
-            endCenter: endPoint,
-            endRadius: radius,
-            options: [.drawsBeforeStartLocation, .drawsAfterEndLocation]
-        )
-        context.restoreGState()
+        rotation.rotate(rect: rect, context: context) { rect, context in
+
+            let colorSpace = context.colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB)!
+            let colorLocations = try! distributeColorLocationsEqually(numColors: colors.count)
+            let gradient = CGGradient(colorsSpace: colorSpace, colors: colors as CFArray, locations: colorLocations)!
+            let (startPoint, endPoint, radius) = resolveGradientStartEndAndRadius(rect: rect, direction: direction)
+
+            context.saveGState()
+            context.beginPath()
+            context.addPath(path(of: rect))
+            context.closePath()
+            context.clip()
+            context.drawRadialGradient(
+                gradient,
+                startCenter: startPoint,
+                startRadius: radius,
+                endCenter: endPoint,
+                endRadius: radius,
+                options: [.drawsBeforeStartLocation, .drawsAfterEndLocation]
+            )
+            context.restoreGState()
+        }
     }
     
     /// Calculates the start and end point of the gradient inside the given rectangle,
@@ -273,19 +286,6 @@ public class RectangleRendering {
             steps.append(1.0)
         }
         return steps
-    }
-    
-    /// Clips the graphics context to the rectangle, optionally also clipped to the defined rounded corners.
-    ///
-    /// - Parameters:
-    ///   - rect: The rectangle to clip.
-    ///   - context: The graphics context.
-    ///
-    public func clip(to rect: CGRect, context: CGContext) {
-        context.beginPath()
-        context.addPath(path(of: rect))
-        context.closePath()
-        context.clip()
     }
     
     /// Creates a path of the rectangle, also considering optionally defined rounded corners.

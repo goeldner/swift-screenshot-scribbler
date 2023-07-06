@@ -217,10 +217,9 @@ public struct DecorateAction {
             imagePosY = area.minY + borderSize
         }
         
-        // Prepare the original image rect and a rendering definition that considers the rounded corners
+        // Prepare the original image rect
         let imageRect = CGRect(x: imagePosX, y: imagePosY, width: reducedSize.width, height: reducedSize.height)
-        let imageRectRendering = RectangleRendering(cornerRadius: cornerRadius)
-        
+
         // Prepare another rect for applying the border and shadow, also considering the rounded corners.
         // If only a shadow is rendered, this rect is slightly smaller to avoid artifacts at the screenshot edges.
         let borderRelatedCornerRadius = cornerRadius + borderSize
@@ -232,12 +231,9 @@ public struct DecorateAction {
         // Otherwise it would be clipped away, if drawn inside the clipped image range.
         borderAndShadowRectRendering.draw(in: borderAndShadowRect, context: context)
         
-        // Draw image to the context, that is optionally clipped to the rounded corners of the image
-        let imageRendering = ImageRendering(image: image, scaling: .mode(.stretchFill))
-        context.saveGState()
-        imageRectRendering.clip(to: imageRect, context: context)
+        // Draw image to the context
+        let imageRendering = ImageRendering(image: image, scaling: .mode(.stretchFill), cornerRadius: cornerRadius)
         imageRendering.draw(in: imageRect, context: context)
-        context.restoreGState()
     }
     
     /// Draws the given text inside the given area.

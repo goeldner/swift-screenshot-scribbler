@@ -31,7 +31,10 @@ public class TextRendering {
     
     /// Vertical alignment of the text.
     private let verticalAlignment: VerticalAlignment
-    
+
+    /// Rotation support.
+    private let rotation: RotationSupport
+
     /// Initializes the rendering definition.
     ///
     /// - Parameters:
@@ -42,8 +45,9 @@ public class TextRendering {
     ///   - fontSize: Font size of the text.
     ///   - horizontalAlignment: Horizontal alignment of the text.
     ///   - verticalAlignment: Vertical alignment of the text.
+    ///   - rotation: Rotation in radians.
     ///
-    public init(text: String, color: ColorType, fontName: String, fontStyle: String, fontSize: Int, horizontalAlignment: HorizontalTextAlignment, verticalAlignment: VerticalAlignment) {
+    public init(text: String, color: ColorType, fontName: String, fontStyle: String, fontSize: Int, horizontalAlignment: HorizontalTextAlignment, verticalAlignment: VerticalAlignment, rotation: CGFloat = 0) {
         self.text = text
         self.color = color
         self.fontName = fontName
@@ -51,6 +55,7 @@ public class TextRendering {
         self.fontSize = fontSize
         self.horizontalAlignment = horizontalAlignment
         self.verticalAlignment = verticalAlignment
+        self.rotation = RotationSupport(angle: rotation)
     }
     
     /// Draws the text inside the given rectangle.
@@ -65,7 +70,7 @@ public class TextRendering {
         // This is necessary if a gradient shall be used as color, because the pattern
         // drawing logic needs to be defined for a specific area that shall be covered.
         let actualTextRect = resolveActualTextRect(in: rect)
-        
+
         // We could use a pattern based color also for solid colors, but to avoid
         // overhead, we use the patterns only for gradients.
         let textColor: CGColor
@@ -75,7 +80,7 @@ public class TextRendering {
         default:
             textColor = try! createPatternBasedColor(for: actualTextRect, fillColor: self.color)
         }
-        
+
         // Create an attributed string with defined font, paragraph settings and color (maybe a gradient)
         let font = createFont(name: self.fontName, size: self.fontSize, style: self.fontStyle)
         let paragraphStyle = createParagraphStyle(alignment: self.horizontalAlignment)
@@ -85,15 +90,17 @@ public class TextRendering {
             kCTParagraphStyleAttributeName : paragraphStyle
         ]
         let attributedString = CFAttributedStringCreate(kCFAllocatorDefault, text as CFString, attributes as CFDictionary)!
-        
-        // Draw the text inside the calculated frame
-        context.saveGState()
-        let path = CGMutablePath()
-        path.addRect(actualTextRect)
-        let framesetter = CTFramesetterCreateWithAttributedString(attributedString)
-        let frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), path, nil)
-        CTFrameDraw(frame, context)
-        context.restoreGState()
+
+        // Draw the text inside the calculated frame, optionally rotated
+        rotation.rotate(rect: actualTextRect, context: context) { rect, context in
+            context.saveGState()
+            let path = CGMutablePath()
+            path.addRect(rect)
+            let framesetter = CTFramesetterCreateWithAttributedString(attributedString)
+            let frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), path, nil)
+            CTFrameDraw(frame, context)
+            context.restoreGState()
+        }
     }
 
     /// Calculates the actual text position to use inside the given rectangle by letting a CoreText framesetter

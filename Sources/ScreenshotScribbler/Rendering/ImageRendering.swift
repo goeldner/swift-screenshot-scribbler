@@ -21,7 +21,13 @@ public class ImageRendering {
     
     /// Vertical alignment of the image, if it is not stretched to fill.
     private let verticalAlignment: VerticalAlignment
+
+    /// Corner radius.
+    private let cornerRadius: CGFloat?
     
+    /// Rotation support.
+    private let rotation: RotationSupport
+
     /// Initializes the rendering definition.
     ///
     /// - Parameters:
@@ -29,12 +35,16 @@ public class ImageRendering {
     ///   - scaling: The image scaling option. (Default: stretchFill)
     ///   - horizontalAlignment: Horizontal alignment of the image, if it is not stretched to fill. (Default: center)
     ///   - verticalAlignment: Vertical alignment of the image, if it is not stretched to fill. (Default: middle)
+    ///   - cornerRadius: Corner radius that shall be applied to the image by clipping its corners. (Default: none)
+    ///   - rotation: Rotation angle of the image in radians. (Default: 0 = no rotation)
     ///
-    public init(image: CGImage, scaling: ImageScaling = .mode(.stretchFill), horizontalAlignment: HorizontalAlignment = .center, verticalAlignment: VerticalAlignment = .middle) {
+    public init(image: CGImage, scaling: ImageScaling = .mode(.stretchFill), horizontalAlignment: HorizontalAlignment = .center, verticalAlignment: VerticalAlignment = .middle, cornerRadius: CGFloat? = nil, rotation: CGFloat = 0) {
         self.image = image
         self.scaling = scaling
         self.horizontalAlignment = horizontalAlignment
         self.verticalAlignment = verticalAlignment
+        self.cornerRadius = cornerRadius
+        self.rotation = RotationSupport(angle: rotation)
     }
 
     /// Draws the image scaled and aligned to the given rectangle.
@@ -109,9 +119,29 @@ public class ImageRendering {
             // nothing to change
             imageRect = rect
         }
-        
-        // draw into the calculated area
-        context.draw(image, in: imageRect)
+
+        // draw into the calculated area, optionally rotated and clipped to the corner radius
+        rotation.rotate(rect: imageRect, context: context) { rotatedRect, context in
+            context.saveGState()
+            context.beginPath()
+            context.addPath(path(of: rotatedRect))
+            context.closePath()
+            context.clip()
+            context.draw(image, in: rotatedRect)
+            context.restoreGState()
+        }
     }
 
+    /// Creates a path of the rectangle, also considering optionally defined rounded corners.
+    ///
+    /// - Parameter rect: The rectangle.
+    /// - Returns: The path of the rectangle.
+    ///
+    private func path(of rect: CGRect) -> CGPath {
+        if let cornerRadius, cornerRadius > 0 {
+            return CGPath(roundedRect: rect, cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
+        } else {
+            return CGPath(rect: rect, transform: nil)
+        }
+    }
 }
