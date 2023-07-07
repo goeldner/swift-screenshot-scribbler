@@ -36,9 +36,9 @@ public class ImageRendering {
     ///   - horizontalAlignment: Horizontal alignment of the image, if it is not stretched to fill. (Default: center)
     ///   - verticalAlignment: Vertical alignment of the image, if it is not stretched to fill. (Default: middle)
     ///   - cornerRadius: Corner radius that shall be applied to the image by clipping its corners. (Default: none)
-    ///   - rotation: Rotation angle of the image in radians. (Default: 0 = no rotation)
+    ///   - rotation: Rotation angle of the image. (Default: none)
     ///
-    public init(image: CGImage, scaling: ImageScaling = .mode(.stretchFill), horizontalAlignment: HorizontalAlignment = .center, verticalAlignment: VerticalAlignment = .middle, cornerRadius: CGFloat? = nil, rotation: CGFloat = 0) {
+    public init(image: CGImage, scaling: ImageScaling = .mode(.stretchFill), horizontalAlignment: HorizontalAlignment = .center, verticalAlignment: VerticalAlignment = .middle, cornerRadius: CGFloat? = nil, rotation: Angle = Angle.zero) {
         self.image = image
         self.scaling = scaling
         self.horizontalAlignment = horizontalAlignment

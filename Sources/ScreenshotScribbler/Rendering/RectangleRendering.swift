@@ -32,9 +32,9 @@ public class RectangleRendering {
     ///   - cornerRadius: Optional corner radius.
     ///   - shadowSize: Optional shadow size.
     ///   - shadowColor: Optional shadow color.
-    ///   - rotation: Optional rotation angle in radians.
+    ///   - rotation: Optional rotation angle.
     ///
-    public init(fillColor: ColorType? = nil, cornerRadius: CGFloat? = nil, shadowSize: CGFloat? = nil, shadowColor: Color? = nil, rotation: CGFloat = 0) {
+    public init(fillColor: ColorType? = nil, cornerRadius: CGFloat? = nil, shadowSize: CGFloat? = nil, shadowColor: Color? = nil, rotation: Angle = Angle.zero) {
         self.fillColor = fillColor
         self.cornerRadius = cornerRadius
         self.shadowSize = shadowSize
@@ -287,7 +287,7 @@ public class RectangleRendering {
         }
         return steps
     }
-    
+
     /// Creates a path of the rectangle, also considering optionally defined rounded corners.
     ///
     /// - Parameter rect: The rectangle.

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Christoph Göldner. All rights reserved.
+// Copyright © 2023 Christoph Göldner. All rights reserved.
 //
 
 import Foundation
@@ -9,20 +9,17 @@ import CoreGraphics
 /// Support rotation of the graphics context for a given rectangle by a given angle.
 /// Execute any drawing logic on the rotated context inside the adjusted rectangle.
 ///
-/// The angle is defined in radians. Positive values rotate to the left (counter clockwise) and negative numbers to the right (clockwise).
-/// For example, pi/2 rotates 90° to the left; -pi rotates 180° to the right.
-///
 public class RotationSupport {
 
-    /// Rotation angle in radians.
-    private let angle: CGFloat
+    /// The rotation angle.
+    private let angle: Angle
 
     /// Initializes the rotation.
     ///
     /// - Parameters:
-    ///   - angle: The rotation angle in radians.
+    ///   - angle: The rotation angle.
     ///
-    public init(angle: CGFloat) {
+    public init(angle: Angle) {
         self.angle = angle
     }
 
@@ -38,7 +35,7 @@ public class RotationSupport {
     public func rotate(rect: CGRect, context: CGContext, draw: (CGRect, CGContext) -> ()) {
 
         // Support direct unrotated drawing
-        if angle == 0 {
+        if angle == Angle.zero {
             draw(rect, context)
             return
         }
@@ -49,8 +46,11 @@ public class RotationSupport {
         let center = CGPoint(x: rect.midX, y: rect.midY)
         context.translateBy(x: center.x, y: center.y)
 
-        // Rotate the context
-        context.rotate(by: angle)
+        // Rotate the context, using radians in the opposite direction as declared. The angle is defined throughout the code
+        // base in natural direction, so positive values rotate clockwise and negative values rotate counter clockwise.
+        // CoreGraphics does it the other way round, so we negate it here.
+        let radians = angle.radians * -1
+        context.rotate(by: radians)
 
         // Translate rect's lower left corner, because of the context action point that was shifted to the center
         let shiftedRect = CGRect(origin: CGPoint(x: -rect.size.width / 2, y: -rect.size.height / 2), size: rect.size)
