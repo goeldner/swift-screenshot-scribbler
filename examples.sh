@@ -27,12 +27,14 @@ swift run scrscr \
     --caption-font-name "SF Compact" \
     --caption-font-style "Bold" \
     --caption-font-size 32 \
+    --caption-rotation "0" \
     --screenshot-size-factor 0.85 \
     --screenshot-corner-radius 5 \
     --screenshot-shadow-size 5 \
     --screenshot-shadow-color "#000000" \
     --screenshot-border-size 0 \
-    --screenshot-border-color "#000000"
+    --screenshot-border-color "#000000" \
+    --screenshot-rotation "0"
 
 # Layout: caption-before-screenshot
 swift run scrscr \
@@ -143,6 +145,22 @@ swift run scrscr \
     --screenshot-corner-radius 0 \
     --screenshot-shadow-size 20 \
     --screenshot-border-size 0
+
+# Rotation: Screenshot rotated to the left, caption to the right, like a zig-zag
+swift run scrscr \
+    --caption "Rotated caption and screenshots" \
+    --screenshot Examples/example-input.png \
+    --output Examples/example-output-rotation.png \
+    --layout "caption-between-screenshots" \
+    --background-color "#000000" \
+    --caption-size-factor 0.20 \
+    --caption-color "linear-gradient(to-right, #FF0000, #0000FF)" \
+    --caption-rotation "-5deg" \
+    --screenshot-size-factor 0.75 \
+    --screenshot-shadow-size 0 \
+    --screenshot-border-size 5 \
+    --screenshot-border-color "radial-gradient(#FF0000, #0000FF)" \
+    --screenshot-rotation "5deg"
 
 # Load all options from JSON file
 swift run scrscr \
