@@ -16,7 +16,18 @@ public extension String {
         let regex = try NSRegularExpression(pattern: "[[:whitespace:]]")
         return regex.stringByReplacingMatches(in: string, range: string.nsRange(), withTemplate: "")
     }
-    
+
+    /// Strips all non-numeric characters from this string – at the begin, at the end, and everywhere in between
+    /// by using the `NSRegularExpression` pattern `[^\d\.]`. This keeps only digits and dots.
+    ///
+    /// - Returns: The cleaned string.
+    ///
+    func stripNonNumeric() throws -> String {
+        let string = self
+        let regex = try NSRegularExpression(pattern: "[^\\d\\.]")
+        return regex.stringByReplacingMatches(in: string, range: string.nsRange(), withTemplate: "")
+    }
+
     /// Checks whether this string matches the given pattern completely.
     ///
     /// - Parameter pattern: The regular expression pattern.

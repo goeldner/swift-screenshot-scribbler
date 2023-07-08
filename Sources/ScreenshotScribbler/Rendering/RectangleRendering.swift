@@ -34,7 +34,7 @@ public class RectangleRendering {
     ///   - shadowColor: Optional shadow color.
     ///   - rotation: Optional rotation angle.
     ///
-    public init(fillColor: ColorType? = nil, cornerRadius: CGFloat? = nil, shadowSize: CGFloat? = nil, shadowColor: Color? = nil, rotation: Angle = Angle.zero) {
+    public init(fillColor: ColorType? = nil, cornerRadius: CGFloat? = nil, shadowSize: CGFloat? = nil, shadowColor: Color? = nil, rotation: Angle = .zero) {
         self.fillColor = fillColor
         self.cornerRadius = cornerRadius
         self.shadowSize = shadowSize

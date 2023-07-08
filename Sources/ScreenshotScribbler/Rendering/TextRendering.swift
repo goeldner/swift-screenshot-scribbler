@@ -47,7 +47,7 @@ public class TextRendering {
     ///   - verticalAlignment: Vertical alignment of the text.
     ///   - rotation: Rotation angle of the text. (Default: none)
     ///
-    public init(text: String, color: ColorType, fontName: String, fontStyle: String, fontSize: Int, horizontalAlignment: HorizontalTextAlignment, verticalAlignment: VerticalAlignment, rotation: Angle = Angle.zero) {
+    public init(text: String, color: ColorType, fontName: String, fontStyle: String, fontSize: Int, horizontalAlignment: HorizontalTextAlignment, verticalAlignment: VerticalAlignment, rotation: Angle = .zero) {
         self.text = text
         self.color = color
         self.fontName = fontName
