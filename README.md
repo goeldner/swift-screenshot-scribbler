@@ -71,12 +71,14 @@ $ scrscr decorate \
     --caption-font-name "SF Compact" \
     --caption-font-style "Bold" \
     --caption-font-size 32 \
+    --caption-rotation "0" \
     --screenshot-size-factor 0.85 \
     --screenshot-corner-radius 5 \
     --screenshot-shadow-size 5 \
     --screenshot-shadow-color "#000000" \
     --screenshot-border-size 0 \
     --screenshot-border-color "#000000" \
+    --screenshot-rotation "0" \
     --verbose
 ```
 
@@ -154,7 +156,13 @@ More specialized backgrounds are possible by defining a background image that is
 --background-image-alignment "bottom"    
 ```
 
-Examples of background gradients and images:
+Also the caption color can be defined as gradient:
+
+```
+--caption-color "linear-gradient(to-right, #FF0000, #0000FF)"
+```
+
+Examples of gradients and background images:
 
 <img
   src="https://github.com/goeldner/swift-screenshot-scribbler/blob/main/Examples/example-output-gradient-linear-rainbow.png?raw=true"
@@ -167,9 +175,33 @@ Examples of background gradients and images:
   title="Background: radial-gradient"
   width="160"> &nbsp;
 <img
+  src="https://github.com/goeldner/swift-screenshot-scribbler/blob/main/Examples/example-output-gradient-diagonal-black-white.png?raw=true"
+  alt="Caption and background: linear-gradient"
+  title="Caption and background: linear-gradient"
+  width="160"> &nbsp;
+<img
   src="https://github.com/goeldner/swift-screenshot-scribbler/blob/main/Examples/example-output-background-image.png?raw=true"
   alt="Background: background-image"
   title="Background: background-image"
+  width="160">
+
+### Rotation
+
+The caption text and the screenshot can be rotated by using the options "caption-rotation" and "screenshot-rotation".
+
+The angle can be specified in degrees (e.g. "45deg") or radians (e.g. "-3.1415rad"). Default is "0". Positive angles result in clockwise rotation, negative values counter clockwise.
+
+```
+--caption-rotation "-5deg"
+--screenshot-rotation "5deg"
+```
+
+Example of rotated caption and screenshots:
+
+<img
+  src="https://github.com/goeldner/swift-screenshot-scribbler/blob/main/Examples/example-output-rotation.png?raw=true"
+  alt="Rotated caption and screenshots"
+  title="Rotated caption and screenshots"
   width="160">
 
 ### Config file
@@ -189,6 +221,7 @@ Following example defines all options and their default values in JSON:
     "screenshotBorderColor" : "#000000",
     "screenshotBorderSize" : 0,
     "screenshotCornerRadius" : 5,
+    "screenshotRotation" : "0",
     "screenshotShadowColor" : "#000000",
     "screenshotShadowSize" : 5,
     "screenshotSizeFactor" : 0.85
@@ -204,6 +237,7 @@ Following example defines all options and their default values in JSON:
     "captionFontName" : "SF Compact",
     "captionFontSize" : 32,
     "captionFontStyle" : "Bold",
+    "captionRotation" : "0",
     "captionSizeFactor" : 0.25
   }
 }
