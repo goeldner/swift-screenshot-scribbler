@@ -28,9 +28,12 @@ struct ScreenshotOptions: ParsableArguments {
 
     @Option(name: .long, help: "Size of the border around the screenshot. (Default: 0)")
     var screenshotBorderSize: Double?
-    
+
     @Option(name: .long, help: "Color of the border around the screenshot. (Default: \"#000000\" (black); Supports gradients)")
     var screenshotBorderColor: ColorType?
+
+    @Option(name: .long, parsing: .unconditional, help: "Rotation angle of the screenshot. (Default: \"0\"; Supports degrees e.g. \"45deg\" or radians e.g. \"-3.1415rad\")")
+    var screenshotRotation: Angle?
 
 }
 
@@ -62,6 +65,9 @@ extension ScreenshotConfig {
         }
         if let screenshotBorderColor = options.screenshotBorderColor {
             self.screenshotBorderColor = screenshotBorderColor
+        }
+        if let screenshotRotation = options.screenshotRotation {
+            self.screenshotRotation = screenshotRotation
         }
     }
 }

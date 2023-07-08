@@ -31,6 +31,12 @@ final class AngleParserTests: XCTestCase {
         expected = "0.1235rad"
         result = parser.encode(value)
         XCTAssertEqual(result, expected)
+
+        // negative value
+        value = Angle(radians: -3.1415)
+        expected = "-3.1415rad"
+        result = parser.encode(value)
+        XCTAssertEqual(result, expected)
     }
 
     /// Test `encode` method with degrees.
@@ -55,6 +61,12 @@ final class AngleParserTests: XCTestCase {
         // value with long fraction, rounded to 4 digits
         value = Angle(degrees: 0.12345)
         expected = "0.1235deg"
+        result = parser.encode(value)
+        XCTAssertEqual(result, expected)
+
+        // negative value
+        value = Angle(degrees: -3.1415)
+        expected = "-3.1415deg"
         result = parser.encode(value)
         XCTAssertEqual(result, expected)
     }
@@ -83,6 +95,16 @@ final class AngleParserTests: XCTestCase {
         // degrees -> radians conversion
         result = try parser.parse("180deg")
         expected = Angle(radians: .pi)
+        XCTAssertEqual(result, expected)
+
+        // negative radians
+        result = try parser.parse("-3.1415rad")
+        expected = Angle(radians: -3.1415)
+        XCTAssertEqual(result, expected)
+
+        // negative degrees
+        result = try parser.parse("-3.1415deg")
+        expected = Angle(degrees: -3.1415)
         XCTAssertEqual(result, expected)
 
         // missing suffix

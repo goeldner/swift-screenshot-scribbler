@@ -32,6 +32,9 @@ struct CaptionOptions: ParsableArguments {
     @Option(name: .long, help: "Font size of the caption. (Default: 32)")
     var captionFontSize: Int?
 
+    @Option(name: .long, parsing: .unconditional, help: "Rotation angle of the caption. (Default: \"0\"; Supports degrees e.g. \"45deg\" or radians e.g. \"-3.1415rad\")")
+    var captionRotation: Angle?
+
 }
 
 ///
@@ -62,6 +65,9 @@ extension CaptionConfig {
         }
         if let captionFontSize = options.captionFontSize {
             self.captionFontSize = captionFontSize
+        }
+        if let captionRotation = options.captionRotation {
+            self.captionRotation = captionRotation
         }
     }
 }

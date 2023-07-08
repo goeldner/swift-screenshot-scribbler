@@ -202,7 +202,8 @@ public struct DecorateAction {
         let shadowColor = self.config.screenshot.screenshotShadowColor
         let borderSize = self.config.screenshot.screenshotBorderSize * CGFloat(deviceScale(context.width))
         let borderColor = self.config.screenshot.screenshotBorderColor
-        
+        let rotation = self.config.screenshot.screenshotRotation
+
         // Center the image horizontally
         let imagePosX = area.midX - (reducedWidth / 2)
         
@@ -225,14 +226,14 @@ public struct DecorateAction {
         let borderRelatedCornerRadius = cornerRadius + borderSize
         let borderOrShadowInset = borderSize > 0 ? -borderSize : 1
         let borderAndShadowRect = imageRect.insetBy(dx: borderOrShadowInset, dy: borderOrShadowInset)
-        let borderAndShadowRectRendering = RectangleRendering(fillColor: borderColor, cornerRadius: borderRelatedCornerRadius, shadowSize: shadowSize, shadowColor: shadowColor)
+        let borderAndShadowRectRendering = RectangleRendering(fillColor: borderColor, cornerRadius: borderRelatedCornerRadius, shadowSize: shadowSize, shadowColor: shadowColor, rotation: rotation)
         
         // Draw the border and shadow in a first pass behind the image.
         // Otherwise it would be clipped away, if drawn inside the clipped image range.
         borderAndShadowRectRendering.draw(in: borderAndShadowRect, context: context)
         
         // Draw image to the context
-        let imageRendering = ImageRendering(image: image, scaling: .mode(.stretchFill), cornerRadius: cornerRadius)
+        let imageRendering = ImageRendering(image: image, scaling: .mode(.stretchFill), cornerRadius: cornerRadius, rotation: rotation)
         imageRendering.draw(in: imageRect, context: context)
     }
     
@@ -252,9 +253,10 @@ public struct DecorateAction {
         let fontSize = self.config.caption.captionFontSize * deviceScale(context.width)
         let horizontalAlignment = self.config.caption.captionAlignment
         let verticalAlignment = VerticalAlignment.middle
-        
+        let rotation = self.config.caption.captionRotation
+
         // Render the text
-        let textRendering = TextRendering(text: text, color: color, fontName: fontName, fontStyle: fontStyle, fontSize: fontSize, horizontalAlignment: horizontalAlignment, verticalAlignment: verticalAlignment)
+        let textRendering = TextRendering(text: text, color: color, fontName: fontName, fontStyle: fontStyle, fontSize: fontSize, horizontalAlignment: horizontalAlignment, verticalAlignment: verticalAlignment, rotation: rotation)
         textRendering.draw(in: area, context: context)
     }
     

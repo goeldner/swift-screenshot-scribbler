@@ -24,7 +24,10 @@ public struct ScreenshotConfig: Equatable, Codable {
     
     /// Color of the border around the screenshot. (Default: black)
     public var screenshotBorderColor: ColorType = .solid(color: DefaultColor.CSS.black)
-    
+
+    /// Rotation of the screenshot. (Default: 0)
+    public var screenshotRotation: Angle = .zero
+
     /// Public initializer.
     public init() {}
 
@@ -45,5 +48,6 @@ extension ScreenshotConfig {
         try container.decodeAndSetIfPresent(Color.self, .screenshotShadowColor) { decoded in self.screenshotShadowColor = decoded }
         try container.decodeAndSetIfPresent(Double.self, .screenshotBorderSize) { decoded in self.screenshotBorderSize = decoded }
         try container.decodeAndSetIfPresent(ColorType.self, .screenshotBorderColor) { decoded in self.screenshotBorderColor = decoded }
+        try container.decodeAndSetIfPresent(Angle.self, .screenshotRotation) { decoded in self.screenshotRotation = decoded }
     }
 }

@@ -21,6 +21,7 @@ final class DecorateActionConfigTests: XCTestCase {
             "captionFontName" : "SF Compact",
             "captionFontSize" : 32,
             "captionFontStyle" : "Bold",
+            "captionRotation" : "0",
             "captionSizeFactor" : 0.25
           },
           "layout" : {
@@ -30,6 +31,7 @@ final class DecorateActionConfigTests: XCTestCase {
             "screenshotBorderColor" : "#000000",
             "screenshotBorderSize" : 0,
             "screenshotCornerRadius" : 5,
+            "screenshotRotation" : "0",
             "screenshotShadowColor" : "#000000",
             "screenshotShadowSize" : 5,
             "screenshotSizeFactor" : 0.84999999999999998

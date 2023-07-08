@@ -24,7 +24,10 @@ public struct CaptionConfig: Equatable, Codable {
     
     /// Font size of the caption. (Default: 32)
     public var captionFontSize: Int = 32
-    
+
+    /// Rotation of the caption. (Default: 0)
+    public var captionRotation: Angle = .zero
+
     /// Public initializer.
     public init() {}
 
@@ -45,5 +48,6 @@ extension CaptionConfig {
         try container.decodeAndSetIfPresent(String.self, .captionFontName) { decoded in self.captionFontName = decoded }
         try container.decodeAndSetIfPresent(String.self, .captionFontStyle) { decoded in self.captionFontStyle = decoded }
         try container.decodeAndSetIfPresent(Int.self, .captionFontSize) { decoded in self.captionFontSize = decoded }
+        try container.decodeAndSetIfPresent(Angle.self, .captionRotation) { decoded in self.captionRotation = decoded }
     }
 }

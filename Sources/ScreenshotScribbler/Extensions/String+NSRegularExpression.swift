@@ -18,13 +18,13 @@ public extension String {
     }
 
     /// Strips all non-numeric characters from this string – at the begin, at the end, and everywhere in between
-    /// by using the `NSRegularExpression` pattern `[^\d\.]`. This keeps only digits and dots.
+    /// by using the `NSRegularExpression` pattern `[^\d\.\-]`. This keeps only digits and dots.
     ///
     /// - Returns: The cleaned string.
     ///
     func stripNonNumeric() throws -> String {
         let string = self
-        let regex = try NSRegularExpression(pattern: "[^\\d\\.]")
+        let regex = try NSRegularExpression(pattern: "[^\\d\\.\\-]")
         return regex.stringByReplacingMatches(in: string, range: string.nsRange(), withTemplate: "")
     }
 

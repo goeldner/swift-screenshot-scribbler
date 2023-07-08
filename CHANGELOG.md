@@ -4,7 +4,9 @@
 
 <!-- After release: *No unreleased changes yet.* -->
 
-*No unreleased changes yet.*
+### Added
+
+- The caption text and the screenshot image can now be rotated by using the new options "caption-rotation" and "screenshot-rotation". The angle can be specified in degrees (e.g. "45deg") or radians (e.g. "-3.1415rad"). Default is "0". Positive angles result in clockwise rotation, negative values counter clockwise.
 
 ## [1.2.0] (2023-03-15)
 
